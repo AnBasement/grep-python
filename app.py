@@ -560,6 +560,23 @@ def try_match_sequence(tokens, input_line, start_j, captures):
             ):
                 j += 1
 
+        elif token_type == "backreference":
+            ref_number = token["number"]
+
+            if ref_number not in captures:
+                return (False, start_j)
+
+            captured_text = captures[ref_number]
+            captured_len = len(captured_text)
+
+            if j + captured_len > len(input_line):
+                return (False, start_j)
+
+            if input_line[j:j+captured_len] != captured_text:
+                return (False, start_j)
+
+            j += captured_len
+
         else:
             if j >= len(input_line):
                 return (False, start_j)
