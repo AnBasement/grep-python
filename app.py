@@ -289,7 +289,9 @@ def try_match(tokens, input_line, has_end_anchor, token_index, j, captures):
         alternatives = token["alternatives"]
 
         if quantifier == "+":
+            group_start_position = j
             matched_once = False
+
             for alt_tokens in alternatives:
                 success, new_j = try_match_sequence(
                     alt_tokens,
@@ -314,9 +316,12 @@ def try_match(tokens, input_line, has_end_anchor, token_index, j, captures):
                         captures
                     ):
                         return True
-            return False
+
+            return matched_once and False
 
         elif quantifier == "?":
+            group_start_position = j
+
             for alt_tokens in alternatives:
                 success, new_j = try_match_sequence(
                     alt_tokens,
@@ -350,6 +355,7 @@ def try_match(tokens, input_line, has_end_anchor, token_index, j, captures):
                 captures
             ):
                 return True
+
             return False
 
         else:
