@@ -484,6 +484,7 @@ def try_match_sequence(tokens, input_line, start_j, captures):
         quantifier = token.get("quantifier")
 
         if token_type == "group":
+            group_start_position = j
             alternatives = token["alternatives"]
 
             if quantifier == "+":
@@ -496,6 +497,12 @@ def try_match_sequence(tokens, input_line, start_j, captures):
                         captures
                     )
                     if success:
+                        group_number = token.get("number")
+                        if group_number is not None:
+                            captures[group_number] = (
+                                input_line[group_start_position:new_j]
+                            )
+
                         j = new_j
                         matched = True
                         break
@@ -511,6 +518,11 @@ def try_match_sequence(tokens, input_line, start_j, captures):
                         captures
                     )
                     if success:
+                        group_number = token.get("number")
+                        if group_number is not None:
+                            captures[group_number] = (
+                                input_line[group_start_position:new_j]
+                            )
                         j = new_j
                         break
 
@@ -524,6 +536,11 @@ def try_match_sequence(tokens, input_line, start_j, captures):
                         captures
                     )
                     if success:
+                        group_number = token.get("number")
+                        if group_number is not None:
+                            captures[group_number] = (
+                                input_line[group_start_position:new_j]
+                            )
                         j = new_j
                         matched = True
                         break
