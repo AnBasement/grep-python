@@ -87,7 +87,10 @@ def parse_pattern(pattern, group_number=None):
                 digit_start = i + 1
                 digit_end = digit_start
 
-                while digit_end < len(pattern) and pattern[digit_end].isdigit():
+                while (
+                    digit_end < len(pattern)
+                    and pattern[digit_end].isdigit()
+                ):
                     digit_end += 1
 
                 number_str = pattern[digit_start:digit_end]
@@ -282,9 +285,11 @@ def try_match(tokens, input_line, has_end_anchor, token_index, j, captures):
     quantifier = token.get("quantifier")
 
     if token_type == "group":
+        group_start_position = j
         alternatives = token["alternatives"]
 
         if quantifier == "+":
+            matched_once = False
             for alt_tokens in alternatives:
                 success, new_j = try_match_sequence(
                     alt_tokens,
@@ -295,8 +300,11 @@ def try_match(tokens, input_line, has_end_anchor, token_index, j, captures):
                 if success:
                     group_number = token.get("number")
                     if group_number is not None:
-                        captures[group_number] = input_line[j:new_j]
+                        captures[group_number] = (
+                            input_line[group_start_position:new_j]
+                        )
 
+                    matched_once = True
                     if try_match(
                         tokens,
                         input_line,
@@ -319,7 +327,9 @@ def try_match(tokens, input_line, has_end_anchor, token_index, j, captures):
                 if success:
                     group_number = token.get("number")
                     if group_number is not None:
-                        captures[group_number] = input_line[j:new_j]
+                        captures[group_number] = (
+                            input_line[group_start_position:new_j]
+                        )
 
                     if try_match(
                         tokens,
@@ -353,7 +363,9 @@ def try_match(tokens, input_line, has_end_anchor, token_index, j, captures):
                 if success:
                     group_number = token.get("number")
                     if group_number is not None:
-                        captures[group_number] = input_line[j:new_j]
+                        captures[group_number] = (
+                            input_line[group_start_position:new_j]
+                        )
 
                     if try_match(
                         tokens,
@@ -366,7 +378,7 @@ def try_match(tokens, input_line, has_end_anchor, token_index, j, captures):
                         return True
             return False
 
-    if token_type == "backreference":
+    elif token_type == "backreference":
         ref_number = token["number"]
 
         if ref_number not in captures:
@@ -390,7 +402,7 @@ def try_match(tokens, input_line, has_end_anchor, token_index, j, captures):
             captures
         )
 
-    if quantifier == "+":
+    elif quantifier == "+":
         max_count = count_greedy_matches(input_line, j, token)
         if max_count == 0:
             return False
