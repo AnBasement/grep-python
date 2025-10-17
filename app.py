@@ -478,6 +478,7 @@ def try_match_sequence(tokens, input_line, start_j, captures):
     were matched.
     """
     j = start_j
+    saved_captures = captures.copy()
 
     for token in tokens:
         token_type = token["type"]
@@ -490,13 +491,17 @@ def try_match_sequence(tokens, input_line, start_j, captures):
             if quantifier == "+":
                 matched = False
                 for alt_tokens in alternatives:
+                    temporary_captures = saved_captures.copy()
                     success, new_j = try_match_sequence(
                         alt_tokens,
                         input_line,
                         j,
-                        captures
+                        temporary_captures
                     )
                     if success:
+                        captures.clear()
+                        captures.update(temporary_captures)
+
                         group_number = token.get("number")
                         if group_number is not None:
                             captures[group_number] = (
@@ -511,13 +516,17 @@ def try_match_sequence(tokens, input_line, start_j, captures):
 
             elif quantifier == "?":
                 for alt_tokens in alternatives:
+                    temporary_captures = saved_captures.copy()
                     success, new_j = try_match_sequence(
                         alt_tokens,
                         input_line,
                         j,
-                        captures
+                        temporary_captures
                     )
                     if success:
+                        captures.clear()
+                        captures.update(temporary_captures)
+
                         group_number = token.get("number")
                         if group_number is not None:
                             captures[group_number] = (
@@ -529,13 +538,17 @@ def try_match_sequence(tokens, input_line, start_j, captures):
             else:
                 matched = False
                 for alt_tokens in alternatives:
+                    temporary_captures = saved_captures.copy()
                     success, new_j = try_match_sequence(
                         alt_tokens,
                         input_line,
                         j,
-                        captures
+                        temporary_captures
                     )
                     if success:
+                        temporary_captures.clear()
+                        temporary_captures.update(captures)
+
                         group_number = token.get("number")
                         if group_number is not None:
                             captures[group_number] = (
