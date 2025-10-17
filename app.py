@@ -302,7 +302,6 @@ def try_match(tokens, input_line, has_end_anchor, token_index, j, captures):
                     temporary_captures
                 )
                 if success:
-                    captures.clear()
                     captures.update(temporary_captures)
                     group_number = token.get("number")
                     if group_number is not None:
@@ -335,7 +334,6 @@ def try_match(tokens, input_line, has_end_anchor, token_index, j, captures):
                     temporary_captures
                 )
                 if success:
-                    captures.clear()
                     captures.update(temporary_captures)
                     group_number = token.get("number")
                     if group_number is not None:
@@ -375,7 +373,6 @@ def try_match(tokens, input_line, has_end_anchor, token_index, j, captures):
                     temporary_captures
                 )
                 if success:
-                    captures.clear()
                     captures.update(temporary_captures)
                     group_number = token.get("number")
                     if group_number is not None:
@@ -509,7 +506,6 @@ def try_match_sequence(tokens, input_line, start_j, captures):
                         temporary_captures
                     )
                     if success:
-                        captures.clear()
                         captures.update(temporary_captures)
 
                         group_number = token.get("number")
@@ -534,7 +530,6 @@ def try_match_sequence(tokens, input_line, start_j, captures):
                         temporary_captures
                     )
                     if success:
-                        captures.clear()
                         captures.update(temporary_captures)
 
                         group_number = token.get("number")
@@ -556,7 +551,6 @@ def try_match_sequence(tokens, input_line, start_j, captures):
                         temporary_captures
                     )
                     if success:
-                        captures.clear()
                         captures.update(temporary_captures)
 
                         group_number = token.get("number")
