@@ -275,6 +275,7 @@ def try_match(tokens, input_line, has_end_anchor, token_index, j, captures):
     count_greedy_matches for '+' quantifiers, and character_matches for
     the rest.
     """
+    saved_captures = captures.copy()
     if token_index == len(tokens):
         if has_end_anchor:
             return j == len(input_line)
@@ -293,13 +294,16 @@ def try_match(tokens, input_line, has_end_anchor, token_index, j, captures):
             matched_once = False
 
             for alt_tokens in alternatives:
+                temporary_captures = saved_captures.copy()
                 success, new_j = try_match_sequence(
                     alt_tokens,
                     input_line,
                     j,
-                    captures
+                    temporary_captures
                 )
                 if success:
+                    captures.clear()
+                    captures.update(temporary_captures)
                     group_number = token.get("number")
                     if group_number is not None:
                         captures[group_number] = (
@@ -323,13 +327,16 @@ def try_match(tokens, input_line, has_end_anchor, token_index, j, captures):
             group_start_position = j
 
             for alt_tokens in alternatives:
+                temporary_captures = saved_captures.copy()
                 success, new_j = try_match_sequence(
                     alt_tokens,
                     input_line,
                     j,
-                    captures
+                    temporary_captures
                 )
                 if success:
+                    temporary_captures.clear()
+                    temporary_captures.update(captures)
                     group_number = token.get("number")
                     if group_number is not None:
                         captures[group_number] = (
@@ -360,13 +367,16 @@ def try_match(tokens, input_line, has_end_anchor, token_index, j, captures):
 
         else:
             for alt_tokens in alternatives:
+                temporary_captures = saved_captures.copy()
                 success, new_j = try_match_sequence(
                     alt_tokens,
                     input_line,
                     j,
-                    captures
+                    temporary_captures
                 )
                 if success:
+                    temporary_captures.clear()
+                    temporary_captures.update(captures)
                     group_number = token.get("number")
                     if group_number is not None:
                         captures[group_number] = (
