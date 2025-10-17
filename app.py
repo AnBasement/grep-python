@@ -799,24 +799,49 @@ def match_pattern(input_line, pattern):
     return False
 
 
+def file_search(filename, pattern):
+    """
+    Searches a file for lines matching a given pattern.
+    """
+    match_found = False
+
+    with open(filename, "r") as file:
+        for line in file:
+            line = line.rstrip("\n")
+
+            if match_pattern(line, pattern):
+                print(line)
+
+                match_found = True
+
+    return match_found
+
+
 def main():
-    if len(sys.argv) < 2:
-        print("Usage: python app.py PATTERN [FILE]")
-        sys.exit(1)
 
-    pattern = sys.argv[1]
+    if sys.argv[1] != "-E":
+        print("Expected first argument to be '-E'")
+        exit(1)
 
-    if len(sys.argv) > 2:
-        filename = sys.argv[2]
-        with open(filename, "r") as f:
-            lines = f.readlines()
+    pattern = sys.argv[2]
+
+    print("Logs from your program will appear here!", file=sys.stderr)
+
+    if len(sys.argv) >= 4:
+        filename = sys.argv[3]
+
+        if file_search(filename, pattern):
+            exit(0)
+        else:
+            exit(1)
+
     else:
-        lines = sys.stdin.readlines()
+        input_line = sys.stdin.read()
 
-    for line in lines:
-        line = line.rstrip("\n")
-        if match_pattern(line, pattern):
-            print(line)
+        if match_pattern(input_line, pattern):
+            exit(0)
+        else:
+            exit(1)
 
 
 if __name__ == "__main__":
