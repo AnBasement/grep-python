@@ -242,8 +242,6 @@ def calculate_start_indices(
     """
     if has_start_anchor:
         return [0]
-    elif has_end_anchor:
-        return [input_length - min_length]
     else:
         return range(input_length - min_length + 1)
 
