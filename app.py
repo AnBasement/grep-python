@@ -811,7 +811,7 @@ def file_search(filename, pattern, print_filename=False):
 
             if match_pattern(line, pattern):
                 if print_filename:
-                    print(f"{filename}: {line}")
+                    print(f"{filename}:{line}")
                 else:
                     print(line)
 
