@@ -886,8 +886,8 @@ def main():
             print("Expected first argument to be '-E'")
             exit(1)
 
-    pattern = sys.argv[2]
-    search_paths = sys.argv[3:]
+        pattern = sys.argv[2]
+        search_paths = sys.argv[3:]
 
     print("Logs from your program will appear here!", file=sys.stderr)
 
