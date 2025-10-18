@@ -799,7 +799,7 @@ def match_pattern(input_line, pattern):
     return False
 
 
-def file_search(filename, pattern):
+def file_search(filename, pattern, print_filename=False):
     """
     Searches a file for lines matching a given pattern.
     """
@@ -810,9 +810,32 @@ def file_search(filename, pattern):
             line = line.rstrip("\n")
 
             if match_pattern(line, pattern):
-                print(line)
+                if print_filename:
+                    print(f"{filename}: {line}")
+                else:
+                    print(line)
 
                 match_found = True
+
+    return match_found
+
+
+def multi_file_search(filenames, pattern):
+    """
+    Searches through multiple files for lines matching the pattern.
+    """
+
+    match_found = False
+
+    for filename in filenames:
+        file_with_match = file_search(
+            filename,
+            pattern,
+            print_filename=True
+        )
+
+        if file_with_match:
+            match_found = True
 
     return match_found
 
@@ -828,12 +851,22 @@ def main():
     print("Logs from your program will appear here!", file=sys.stderr)
 
     if len(sys.argv) >= 4:
-        filename = sys.argv[3]
+        filenames = sys.argv[3:]
 
-        if file_search(filename, pattern):
-            exit(0)
+        number_of_files = len(filenames)
+
+        if number_of_files == 1:
+            filename = filenames[0]
+            if file_search(filename, pattern, print_filename=False):
+                exit(0)
+            else:
+                exit(1)
+
         else:
-            exit(1)
+            if multi_file_search(filenames, pattern):
+                exit(0)
+            else:
+                exit(1)
 
     else:
         input_line = sys.stdin.read()
