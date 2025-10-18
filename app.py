@@ -838,15 +838,95 @@ def multi_file_search(filenames, pattern):
     return match_found
 
 
+def get_all_files_in_directory(directory):
+    """
+    Finds all files in a directory and the subdirectories.
+    """
+    all_files = []
+    for root, dirs, files in os.walk(directory):
+        for filename in files:
+            filepath = os.path.join(root, filename)
+            all_files.append(filepath)
+
+    return all_files
+
+
+def search_in_directories(directory, pattern):
+    """
+    Recursively search files in a directory for lines matching
+    the given pattern.
+    """
+    files = get_all_files_in_directory(directory)
+    any_match_found = False
+
+    for filepath in files:
+        file_had_match = file_search(filepath, pattern, print_filename=True)
+
+        if file_had_match:
+            any_match_found = True
+
+    return any_match_found
+
+
 def main():
 
-    if sys.argv[1] != "-E":
-        print("Expected first argument to be '-E'")
-        exit(1)
+    recursive = False
+
+    if len(sys.argv) >= 2 and sys.argv[1] == "-r":
+        recursive = True
+
+        if len(sys.argv) < 3 or sys.argv[2] != "-E":
+            print("Expected '-E' after '-r'", file=sys.stderr)
+            exit(1)
+
+        pattern = sys.argv[3]
+        search_paths = sys.argv[4:]
+    else:
+        if sys.argv[1] != "-E":
+            print("Expected first argument to be '-E'")
+            exit(1)
 
     pattern = sys.argv[2]
+    search_paths = sys.argv[3:]
 
     print("Logs from your program will appear here!", file=sys.stderr)
+
+    if len(search_paths) == 0:
+        input_line = sys.stdin.read()
+
+        if match_pattern(input_line, pattern):
+            exit(0)
+        else:
+            exit(1)
+
+    if recursive:
+        any_match_found = False
+
+        for path in search_paths:
+            if search_in_directories(path, pattern):
+                any_match_found = True
+
+        if any_match_found:
+            exit(0)
+        else:
+            exit(1)
+
+    else:
+        filenames = search_paths
+        num_files = len(filenames)
+
+        if num_files == 1:
+            filename = filenames[0]
+            if file_search(filename, pattern, print_filename=False):
+                exit(0)
+            else:
+                exit(1)
+
+        else:
+            if multi_file_search(filenames, pattern):
+                exit(0)
+            else:
+                exit(1)
 
     if len(sys.argv) >= 4:
         filenames = sys.argv[3:]
