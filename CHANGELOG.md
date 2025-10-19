@@ -8,6 +8,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Added full type hints to all functions in `src/` modules, including parameter and return types.
+
+### Changed
+
+- Updated API documentation in `docs/api.md` to show function signatures with type hints for clarity and consistency.
+- Updated example code in `docs/contributing.md` to use type hints.
+
+### Fixed
+
+- Resolved minor inconsistencies in function signatures between code and documentation.
+
 ## [0.3.1] - 2025-10-19
 
 ### Changed
