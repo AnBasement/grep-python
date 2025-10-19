@@ -1,6 +1,7 @@
 import sys
 from .pattern_matcher import match_pattern
 from .file_search import file_search, multi_file_search, search_in_directories
+from .constants import EXIT_MATCH_FOUND, EXIT_NO_MATCH, EXIT_ERROR
 
 
 def main():
@@ -12,14 +13,14 @@ def main():
 
             if len(sys.argv) < 3 or sys.argv[2] != "-E":
                 print("Expected '-E' after '-r'", file=sys.stderr)
-                exit(1)
+                sys.exit(EXIT_NO_MATCH)
 
             pattern = sys.argv[3]
             search_paths = sys.argv[4:]
         else:
             if sys.argv[1] != "-E":
                 print("Expected first argument to be '-E'")
-                exit(1)
+                sys.exit(EXIT_NO_MATCH)
 
             pattern = sys.argv[2]
             search_paths = sys.argv[3:]
@@ -28,12 +29,12 @@ def main():
             input_line = sys.stdin.read()
             try:
                 if match_pattern(input_line, pattern):
-                    exit(0)
+                    sys.exit(EXIT_MATCH_FOUND)
                 else:
-                    exit(1)
+                    sys.exit(EXIT_NO_MATCH)
             except Exception as e:
                 print(f"Error matching pattern in input: {e}", file=sys.stderr)
-                exit(2)
+                sys.exit(EXIT_ERROR)
 
         if recursive:
             any_match_found = False
@@ -49,9 +50,9 @@ def main():
                     )
 
             if any_match_found:
-                exit(0)
+                sys.exit(EXIT_MATCH_FOUND)
             else:
-                exit(1)
+                sys.exit(EXIT_NO_MATCH)
 
         else:
             filenames = search_paths
@@ -61,21 +62,21 @@ def main():
                 if num_files == 1:
                     filename = filenames[0]
                     if file_search(filename, pattern, print_filename=False):
-                        exit(0)
+                        sys.exit(EXIT_MATCH_FOUND)
                     else:
-                        exit(1)
+                        sys.exit(EXIT_NO_MATCH)
 
                 else:
                     if multi_file_search(filenames, pattern):
-                        exit(0)
+                        sys.exit(EXIT_MATCH_FOUND)
                     else:
-                        exit(1)
+                        sys.exit(EXIT_NO_MATCH)
             except Exception as e:
                 print(f"Error during file search: {e}", file=sys.stderr)
-                exit(2)
+                sys.exit(EXIT_ERROR)
     except Exception as e:
         print(f"Unexpected error: {e}", file=sys.stderr)
-        exit(2)
+        sys.exit(EXIT_ERROR)
 
 
 if __name__ == "__main__":
