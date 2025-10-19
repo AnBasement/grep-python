@@ -2,7 +2,7 @@ from typing import Optional
 
 
 def parse_pattern(
-    pattern: str, group_number: Optional[int] = None
+    pattern: str, group_number: Optional[list[int]] = None
 ) -> tuple[list[dict], bool, bool]:
     """
     Parses the input pattern into tokens and detects start and

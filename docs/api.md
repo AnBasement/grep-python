@@ -11,7 +11,7 @@ Converts regex strings into token lists that the matcher can use.
 
 #### Functions
 
-##### `parse_pattern(pattern: str, group_number: Optional[int] = None) -> tuple[list[dict], bool, bool]`
+##### `parse_pattern(pattern: str, group_number: Optional[list[int]] = None) -> tuple[list[dict], bool, bool]`
 
 Main function for parsing patterns.
 
