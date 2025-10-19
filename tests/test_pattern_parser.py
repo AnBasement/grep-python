@@ -30,8 +30,7 @@ class TestPatternParser:
         assert tokens[0]["number"] == 1
         assert tokens[1]["number"] == 2
         inner_alts = tokens[1]["alternatives"][0]
-        assert (inner_alts[0]["type"] == "literal" and
-                inner_alts[0]["value"] == "e")
+        assert inner_alts[0]["type"] == "literal" and inner_alts[0]["value"] == "e"
         assert inner_alts[1]["type"] == "group"
         assert inner_alts[1]["number"] == 3
         alts0 = tokens[0]["alternatives"]

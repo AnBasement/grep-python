@@ -8,6 +8,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `pyproject.toml` configuration file for Black and Pylint integration
+- Comprehensive code style documentation in README
+
+### Changed
+
+- Applied Black code formatting across all Python files for consistency
+- Updated README.md with detailed Black + Pylint workflow instructions
+- Configured Pylint to work harmoniously with Black (88-character line length)
+- Disabled overly strict Pylint warnings for complex pattern matching functions
+
 ## [0.1.1] - 2025-10-19
 
 ### Added

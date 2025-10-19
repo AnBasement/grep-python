@@ -31,38 +31,26 @@ def parse_pattern(pattern, group_number=None):
 
         if char == "\\" and i + 1 < len(pattern):
 
-            if pattern[i+1].isdigit():
+            if pattern[i + 1].isdigit():
                 digit_start = i + 1
                 digit_end = digit_start
 
-                while (
-                    digit_end < len(pattern)
-                    and pattern[digit_end].isdigit()
-                ):
+                while digit_end < len(pattern) and pattern[digit_end].isdigit():
                     digit_end += 1
 
                 number_str = pattern[digit_start:digit_end]
                 backref_number = int(number_str)
 
-                tokens.append({
-                    "type": "backreference",
-                    "number": backref_number
-                })
+                tokens.append({"type": "backreference", "number": backref_number})
                 i = digit_end
 
             else:
-                tokens.append({
-                    "type": "escape",
-                    "value": pattern[i:i+2]
-                })
+                tokens.append({"type": "escape", "value": pattern[i : i + 2]})
                 i += 2
 
         elif char == "[":
             end_index = pattern.find("]", i)
-            tokens.append({
-                "type": "char_class",
-                "value": pattern[i:end_index+1]
-            })
+            tokens.append({"type": "char_class", "value": pattern[i : end_index + 1]})
             i = end_index + 1
 
         elif char == ".":
@@ -74,7 +62,7 @@ def parse_pattern(pattern, group_number=None):
             current_group_number = group_number[0]
 
             end_index = find_matching_parentheses(pattern, i)
-            group_content = pattern[i+1:end_index]
+            group_content = pattern[i + 1 : end_index]
             alt_patterns = split_alternatives(group_content)
 
             alternatives = []
@@ -82,18 +70,17 @@ def parse_pattern(pattern, group_number=None):
                 alt_tokens, _, _ = parse_pattern(alt_pattern, group_number)
                 alternatives.append(alt_tokens)
 
-            tokens.append({
-                "type": "group",
-                "alternatives": alternatives,
-                "number": current_group_number
-            })
+            tokens.append(
+                {
+                    "type": "group",
+                    "alternatives": alternatives,
+                    "number": current_group_number,
+                }
+            )
 
             i = end_index + 1
         else:
-            tokens.append({
-                "type": "literal",
-                "value": char
-            })
+            tokens.append({"type": "literal", "value": char})
             i += 1
 
         if i < len(pattern) and pattern[i] in ("+", "?"):
@@ -120,9 +107,7 @@ def find_matching_parentheses(pattern, start_index):
                 return i
         i += 1
 
-    raise ValueError(
-        f"Unmatched opening parenthesis at position {start_index}"
-    )
+    raise ValueError(f"Unmatched opening parenthesis at position {start_index}")
 
 
 def split_alternatives(pattern):

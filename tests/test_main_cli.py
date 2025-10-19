@@ -66,6 +66,7 @@ class TestMainCLI:
             raise RuntimeError("boom")
 
         from src import main as mainmod
+
         monkeypatch.setattr(mainmod, "match_pattern", boom)
 
         code = self.run_main(["prog", "-E", "x"], stdin_data="abc")

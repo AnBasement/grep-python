@@ -9,7 +9,7 @@ from .constants import (
     ERROR_SEARCH_FAILED,
     ERROR_EXPECTED_E,
     ERROR_EXPECTED_E_AFTER_R,
-    ERROR_USAGE
+    ERROR_USAGE,
 )
 
 

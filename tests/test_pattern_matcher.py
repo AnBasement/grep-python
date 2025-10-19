@@ -51,31 +51,18 @@ class TestHelperFunctions:
     def test_character_matches_token(self):
         # literal
         assert character_matches_token("a", {"type": "literal", "value": "a"})
-        assert not character_matches_token(
-            "b",
-            {"type": "literal", "value": "a"}
-            )
+        assert not character_matches_token("b", {"type": "literal", "value": "a"})
         # escape \d
         assert character_matches_token("5", {"type": "escape", "value": "\\d"})
         # escape \w
         assert character_matches_token("_", {"type": "escape", "value": "\\w"})
-        assert not character_matches_token(
-            "-",
-            {"type": "escape", "value": "\\w"}
-            )
+        assert not character_matches_token("-", {"type": "escape", "value": "\\w"})
         # char class and negated
-        assert character_matches_token(
-            "a",
-            {"type": "char_class", "value": "[abc]"}
-            )
+        assert character_matches_token("a", {"type": "char_class", "value": "[abc]"})
         assert not character_matches_token(
-            "d",
-            {"type": "char_class", "value": "[abc]"}
-            )
-        assert character_matches_token(
-            "d",
-            {"type": "char_class", "value": "[^abc]"}
-            )
+            "d", {"type": "char_class", "value": "[abc]"}
+        )
+        assert character_matches_token("d", {"type": "char_class", "value": "[^abc]"})
         # wildcard
         assert character_matches_token("x", {"type": "wildcard"})
 

@@ -7,33 +7,21 @@ from src.file_search import (
 
 
 class TestFileSearch:
-    def test_file_search_single_file_matches_and_prints_line(
-            self,
-            tmp_path,
-            capsys
-            ):
+    def test_file_search_single_file_matches_and_prints_line(self, tmp_path, capsys):
         p = tmp_path / "sample.txt"
         p.write_text("hello\nworld\nfoo")
         assert file_search(str(p), "wo.+") is True
         captured = capsys.readouterr()
         assert "world" in captured.out
 
-    def test_file_search_prints_filename_when_flag_true(
-            self,
-            tmp_path,
-            capsys
-            ):
+    def test_file_search_prints_filename_when_flag_true(self, tmp_path, capsys):
         p = tmp_path / "sample.txt"
         p.write_text("alpha\nbeta\n")
         assert file_search(str(p), "^a.+", print_filename=True) is True
         out = capsys.readouterr().out
         assert f"{p}:alpha" in out
 
-    def test_file_search_handles_nonexistent_and_directory(
-            self,
-            tmp_path,
-            capsys
-            ):
+    def test_file_search_handles_nonexistent_and_directory(self, tmp_path, capsys):
         missing = tmp_path / "missing.txt"
         assert file_search(str(missing), "a") is False
         assert "Is not a valid file" in capsys.readouterr().err
@@ -52,10 +40,8 @@ class TestFileSearch:
         assert f"{p2}:abc" in out
 
     def test_get_all_files_in_directory_and_search_in_directories(
-            self,
-            tmp_path,
-            capsys
-            ):
+        self, tmp_path, capsys
+    ):
         sub = tmp_path / "sub"
         sub.mkdir()
         f1 = tmp_path / "root.txt"
@@ -71,12 +57,7 @@ class TestFileSearch:
         out = capsys.readouterr().out
         assert f"{f2}:bar" in out
 
-    def test_get_all_files_in_directory_errors(
-            self,
-            tmp_path,
-            monkeypatch,
-            capsys
-            ):
+    def test_get_all_files_in_directory_errors(self, tmp_path, monkeypatch, capsys):
         # Nonexistent
         not_there = tmp_path / "nope"
         files = get_all_files_in_directory(str(not_there))

@@ -30,19 +30,16 @@ def try_match(tokens, input_line, has_end_anchor, token_index, j, captures):
             for alt_tokens in alternatives:
                 temporary_captures = saved_captures.copy()
                 success, new_j = try_match_sequence(
-                    alt_tokens,
-                    input_line,
-                    j,
-                    temporary_captures
+                    alt_tokens, input_line, j, temporary_captures
                 )
                 if success:
                     test_captures = saved_captures.copy()
                     test_captures.update(temporary_captures)
                     group_number = token.get("number")
                     if group_number is not None:
-                        test_captures[group_number] = (
-                            input_line[group_start_position:new_j]
-                        )
+                        test_captures[group_number] = input_line[
+                            group_start_position:new_j
+                        ]
 
                     matched_once = True
                     if try_match(
@@ -51,7 +48,7 @@ def try_match(tokens, input_line, has_end_anchor, token_index, j, captures):
                         has_end_anchor,
                         token_index + 1,
                         new_j,
-                        test_captures
+                        test_captures,
                     ):
                         captures.clear()
                         captures.update(test_captures)
@@ -68,19 +65,16 @@ def try_match(tokens, input_line, has_end_anchor, token_index, j, captures):
             for alt_tokens in alternatives:
                 temporary_captures = saved_captures.copy()
                 success, new_j = try_match_sequence(
-                    alt_tokens,
-                    input_line,
-                    j,
-                    temporary_captures
+                    alt_tokens, input_line, j, temporary_captures
                 )
                 if success:
                     test_captures = saved_captures.copy()
                     test_captures.update(temporary_captures)
                     group_number = token.get("number")
                     if group_number is not None:
-                        test_captures[group_number] = (
-                            input_line[group_start_position:new_j]
-                        )
+                        test_captures[group_number] = input_line[
+                            group_start_position:new_j
+                        ]
 
                     if try_match(
                         tokens,
@@ -88,7 +82,7 @@ def try_match(tokens, input_line, has_end_anchor, token_index, j, captures):
                         has_end_anchor,
                         token_index + 1,
                         new_j,
-                        test_captures
+                        test_captures,
                     ):
                         captures.clear()
                         captures.update(test_captures)
@@ -98,12 +92,7 @@ def try_match(tokens, input_line, has_end_anchor, token_index, j, captures):
                     captures.update(saved_captures)
 
             if try_match(
-                tokens,
-                input_line,
-                has_end_anchor,
-                token_index + 1,
-                j,
-                captures
+                tokens, input_line, has_end_anchor, token_index + 1, j, captures
             ):
                 return True
 
@@ -116,11 +105,7 @@ def try_match(tokens, input_line, has_end_anchor, token_index, j, captures):
                     temporary_captures = saved_captures.copy()
 
                     success, end_pos = try_match_sequence_with_limit(
-                        alt_tokens,
-                        input_line,
-                        j,
-                        max_len,
-                        temporary_captures
+                        alt_tokens, input_line, j, max_len, temporary_captures
                     )
 
                     if success:
@@ -128,9 +113,9 @@ def try_match(tokens, input_line, has_end_anchor, token_index, j, captures):
                         test_captures.update(temporary_captures)
                         group_number = token.get("number")
                         if group_number is not None:
-                            test_captures[group_number] = (
-                                input_line[group_start_position:end_pos]
-                            )
+                            test_captures[group_number] = input_line[
+                                group_start_position:end_pos
+                            ]
 
                         if try_match(
                             tokens,
@@ -138,7 +123,7 @@ def try_match(tokens, input_line, has_end_anchor, token_index, j, captures):
                             has_end_anchor,
                             token_index + 1,
                             end_pos,
-                            test_captures
+                            test_captures,
                         ):
                             captures.clear()
                             captures.update(test_captures)
@@ -158,7 +143,7 @@ def try_match(tokens, input_line, has_end_anchor, token_index, j, captures):
         if j + captured_len > len(input_line):
             return False
 
-        if input_line[j:j+captured_len] != captured_text:
+        if input_line[j : j + captured_len] != captured_text:
             return False
 
         return try_match(
@@ -167,7 +152,7 @@ def try_match(tokens, input_line, has_end_anchor, token_index, j, captures):
             has_end_anchor,
             token_index + 1,
             j + captured_len,
-            captures
+            captures,
         )
 
     elif quantifier == "+":
@@ -176,12 +161,7 @@ def try_match(tokens, input_line, has_end_anchor, token_index, j, captures):
             return False
         for count in range(max_count, 0, -1):
             if try_match(
-                tokens,
-                input_line,
-                has_end_anchor,
-                token_index + 1,
-                j + count,
-                captures
+                tokens, input_line, has_end_anchor, token_index + 1, j + count, captures
             ):
                 return True
 
@@ -192,21 +172,11 @@ def try_match(tokens, input_line, has_end_anchor, token_index, j, captures):
             j < len(input_line)
             and character_matches_token(input_line[j], token)
             and try_match(
-                tokens,
-                input_line,
-                has_end_anchor,
-                token_index + 1,
-                j + 1,
-                captures
+                tokens, input_line, has_end_anchor, token_index + 1, j + 1, captures
             )
         )
         no_match = try_match(
-            tokens,
-            input_line,
-            has_end_anchor,
-            token_index + 1,
-            j,
-            captures
+            tokens, input_line, has_end_anchor, token_index + 1, j, captures
         )
         return single_match or no_match
 
@@ -217,22 +187,11 @@ def try_match(tokens, input_line, has_end_anchor, token_index, j, captures):
         if not character_matches_token(c, token):
             return False
         return try_match(
-            tokens,
-            input_line,
-            has_end_anchor,
-            token_index + 1,
-            j + 1,
-            captures
+            tokens, input_line, has_end_anchor, token_index + 1, j + 1, captures
         )
 
 
-def try_match_sequence_with_limit(
-        tokens,
-        input_line,
-        start_j,
-        max_len,
-        captures
-        ):
+def try_match_sequence_with_limit(tokens, input_line, start_j, max_len, captures):
     """
     Similar to try_match_sequence, but has a maximum length.
     """
@@ -260,19 +219,15 @@ def try_match_sequence_with_limit(
                 for alt_tokens in alternatives:
                     temporary_captures = saved_captures.copy()
                     success, new_j = try_match_sequence_with_limit(
-                        alt_tokens,
-                        input_line,
-                        j,
-                        remaining_len,
-                        temporary_captures
+                        alt_tokens, input_line, j, remaining_len, temporary_captures
                     )
                     if success:
                         captures.update(temporary_captures)
                         group_number = token.get("number")
                         if group_number is not None:
-                            captures[group_number] = (
-                                input_line[group_start_position:new_j]
-                            )
+                            captures[group_number] = input_line[
+                                group_start_position:new_j
+                            ]
                         j = new_j
                         matched = True
                         break
@@ -285,19 +240,15 @@ def try_match_sequence_with_limit(
                 for alt_tokens in alternatives:
                     temporary_captures = saved_captures.copy()
                     success, new_j = try_match_sequence_with_limit(
-                        alt_tokens,
-                        input_line,
-                        j,
-                        remaining_len,
-                        temporary_captures
+                        alt_tokens, input_line, j, remaining_len, temporary_captures
                     )
                     if success:
                         captures.update(temporary_captures)
                         group_number = token.get("number")
                         if group_number is not None:
-                            captures[group_number] = (
-                                input_line[group_start_position:new_j]
-                            )
+                            captures[group_number] = input_line[
+                                group_start_position:new_j
+                            ]
                         j = new_j
                         break
 
@@ -306,19 +257,15 @@ def try_match_sequence_with_limit(
                 for alt_tokens in alternatives:
                     temporary_captures = saved_captures.copy()
                     success, new_j = try_match_sequence_with_limit(
-                        alt_tokens,
-                        input_line,
-                        j,
-                        remaining_len,
-                        temporary_captures
+                        alt_tokens, input_line, j, remaining_len, temporary_captures
                     )
                     if success:
                         captures.update(temporary_captures)
                         group_number = token.get("number")
                         if group_number is not None:
-                            captures[group_number] = (
-                                input_line[group_start_position:new_j]
-                            )
+                            captures[group_number] = input_line[
+                                group_start_position:new_j
+                            ]
                         j = new_j
                         matched = True
                         break
@@ -336,10 +283,7 @@ def try_match_sequence_with_limit(
             j += max_count
 
         elif quantifier == "?":
-            if j < len(input_line) and character_matches_token(
-                input_line[j],
-                token
-            ):
+            if j < len(input_line) and character_matches_token(input_line[j], token):
                 j += 1
 
         elif token_type == "backreference":
@@ -350,7 +294,7 @@ def try_match_sequence_with_limit(
             captured_len = len(captured_text)
             if j + captured_len > len(input_line):
                 return (False, start_j)
-            if input_line[j:j+captured_len] != captured_text:
+            if input_line[j : j + captured_len] != captured_text:
                 return (False, start_j)
             j += captured_len
 
@@ -394,19 +338,16 @@ def try_match_sequence(tokens, input_line, start_j, captures):
                 for alt_tokens in alternatives:
                     temporary_captures = saved_captures.copy()
                     success, new_j = try_match_sequence(
-                        alt_tokens,
-                        input_line,
-                        j,
-                        temporary_captures
+                        alt_tokens, input_line, j, temporary_captures
                     )
                     if success:
                         captures.update(temporary_captures)
 
                         group_number = token.get("number")
                         if group_number is not None:
-                            captures[group_number] = (
-                                input_line[group_start_position:new_j]
-                            )
+                            captures[group_number] = input_line[
+                                group_start_position:new_j
+                            ]
 
                         j = new_j
                         matched = True
@@ -420,19 +361,16 @@ def try_match_sequence(tokens, input_line, start_j, captures):
                 for alt_tokens in alternatives:
                     temporary_captures = saved_captures.copy()
                     success, new_j = try_match_sequence(
-                        alt_tokens,
-                        input_line,
-                        j,
-                        temporary_captures
+                        alt_tokens, input_line, j, temporary_captures
                     )
                     if success:
                         captures.update(temporary_captures)
 
                         group_number = token.get("number")
                         if group_number is not None:
-                            captures[group_number] = (
-                                input_line[group_start_position:new_j]
-                            )
+                            captures[group_number] = input_line[
+                                group_start_position:new_j
+                            ]
                         j = new_j
                         break
 
@@ -441,19 +379,16 @@ def try_match_sequence(tokens, input_line, start_j, captures):
                 for alt_tokens in alternatives:
                     temporary_captures = saved_captures.copy()
                     success, new_j = try_match_sequence(
-                        alt_tokens,
-                        input_line,
-                        j,
-                        temporary_captures
+                        alt_tokens, input_line, j, temporary_captures
                     )
                     if success:
                         captures.update(temporary_captures)
 
                         group_number = token.get("number")
                         if group_number is not None:
-                            captures[group_number] = (
-                                input_line[group_start_position:new_j]
-                            )
+                            captures[group_number] = input_line[
+                                group_start_position:new_j
+                            ]
                         j = new_j
                         matched = True
                         break
@@ -469,10 +404,7 @@ def try_match_sequence(tokens, input_line, start_j, captures):
             j += max_count
 
         elif quantifier == "?":
-            if j < len(input_line) and character_matches_token(
-                input_line[j],
-                token
-            ):
+            if j < len(input_line) and character_matches_token(input_line[j], token):
                 j += 1
 
         elif token_type == "backreference":
@@ -487,7 +419,7 @@ def try_match_sequence(tokens, input_line, start_j, captures):
             if j + captured_len > len(input_line):
                 return (False, start_j)
 
-            if input_line[j:j+captured_len] != captured_text:
+            if input_line[j : j + captured_len] != captured_text:
                 return (False, start_j)
 
             j += captured_len
@@ -512,22 +444,12 @@ def match_pattern(input_line, pattern):
     tokens, has_start_anchor, has_end_anchor = parse_pattern(pattern)
     min_length = calculate_min_match_length(tokens)
     start_indices = calculate_start_indices(
-        len(input_line),
-        min_length,
-        has_start_anchor,
-        has_end_anchor
+        len(input_line), min_length, has_start_anchor, has_end_anchor
     )
 
     for start_index in start_indices:
         captures = {}
-        if try_match(
-            tokens,
-            input_line,
-            has_end_anchor,
-            0,
-            start_index,
-            captures
-        ):
+        if try_match(tokens, input_line, has_end_anchor, 0, start_index, captures):
             return True
 
     return False
@@ -579,10 +501,7 @@ def calculate_min_match_length(tokens):
 
         if token_type == "group":
             alternatives = token["alternatives"]
-            min_alt_lengths = [
-                calculate_min_match_length(alt)
-                for alt in alternatives
-            ]
+            min_alt_lengths = [calculate_min_match_length(alt) for alt in alternatives]
             group_min = min(min_alt_lengths)
 
             if quantifier == "?":
@@ -603,12 +522,7 @@ def calculate_min_match_length(tokens):
     return length
 
 
-def calculate_start_indices(
-        input_length,
-        min_length,
-        has_start_anchor,
-        has_end_anchor
-        ):
+def calculate_start_indices(input_length, min_length, has_start_anchor, has_end_anchor):
     """
     Calculates potential starting index for pattern matching.
 

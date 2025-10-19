@@ -42,11 +42,7 @@ def multi_file_search(filenames, pattern):
     match_found = False
 
     for filename in filenames:
-        file_with_match = file_search(
-            filename,
-            pattern,
-            print_filename=True
-        )
+        file_with_match = file_search(filename, pattern, print_filename=True)
 
         if file_with_match:
             match_found = True

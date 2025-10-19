@@ -87,15 +87,20 @@ python -m pytest --cov=src tests/
 
 ### Code Style
 
-This project follows PEP 8 style guidelines.
+This project uses Black for code formatting and Pylint for code quality checks.
 
 ```bash
-# Format code
-black src/
+# Format code with Black (run first)
+black src/ tests/
 
-# Lint code
+# Check code quality with Pylint
 pylint src/
+
+# Format and lint everything
+black src/ tests/ && pylint src/
 ```
+
+**Workflow**: Always run Black first to format, then Pylint to check quality. Black and Pylint are configured to work together via `pyproject.toml`.
 
 ### Version Management
 

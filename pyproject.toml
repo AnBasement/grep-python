@@ -1,0 +1,46 @@
+[tool.black]
+line-length = 88
+target-version = ['py312']
+include = '\.pyi?$'
+extend-exclude = '''
+/(
+  # directories
+  \.eggs
+  | \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | venv
+  | _build
+  | buck-out
+  | build
+  | dist
+)/
+'''
+
+[tool.pylint.format]
+max-line-length = 88
+
+[tool.pylint.messages_control]
+disable = [
+    "too-many-arguments",
+    "too-many-locals", 
+    "too-many-branches",
+    "too-many-statements",
+    "too-many-return-statements",
+    "too-many-nested-blocks",
+    "missing-module-docstring",
+    "no-else-return",
+]
+
+[tool.pylint.design]
+max-args = 8
+max-locals = 20
+max-returns = 10
+max-branches = 15
+max-statements = 80
+
+[build-system]
+requires = ["setuptools>=45", "wheel"]
+build-backend = "setuptools.build_meta"
