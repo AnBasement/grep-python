@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.2] - 2025-10-19
+
 ### Added
 
 - Unit tests for `parse_arguments()` function in `test_cli.py`
