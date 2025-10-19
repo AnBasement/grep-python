@@ -816,7 +816,10 @@ def file_search(filename, pattern, print_filename=False):
 
                         match_found = True
                 except Exception as e:
-                    print(f"Error matching pattern in file '{filename}': {e}", file=sys.stderr)
+                    print(
+                        f"Error matching pattern in file '{filename}': {e}",
+                        file=sys.stderr
+                    )
     except FileNotFoundError:
         print(f"File not found: {filename}", file=sys.stderr)
     except PermissionError:
@@ -918,7 +921,10 @@ def main():
                     if search_in_directories(path, pattern):
                         any_match_found = True
                 except Exception as e:
-                    print(f"Error searching in directory '{path}': {e}", file=sys.stderr)
+                    print(
+                        f"Error searching in directory '{path}': {e}",
+                        file=sys.stderr
+                    )
 
             if any_match_found:
                 exit(0)
