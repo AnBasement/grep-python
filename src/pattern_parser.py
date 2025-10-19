@@ -120,6 +120,10 @@ def find_matching_parentheses(pattern, start_index):
                 return i
         i += 1
 
+    raise ValueError(
+        f"Unmatched opening parenthesis at position {start_index}"
+    )
+
 
 def split_alternatives(pattern):
     """
