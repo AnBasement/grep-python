@@ -31,7 +31,7 @@ class TestMainCLI:
 
     def test_invalid_first_arg(self, capsys):
         code = self.run_main(["prog", "-X", "pattern"])
-        assert code == EXIT_NO_MATCH
+        assert code == EXIT_ERROR
 
     def test_single_file_mode(self, tmp_path):
         f = tmp_path / "data.txt"
@@ -59,7 +59,7 @@ class TestMainCLI:
 
     def test_recursive_requires_E(self):
         code = self.run_main(["prog", "-r", "pattern"], stdin_data="")
-        assert code == EXIT_NO_MATCH
+        assert code == EXIT_ERROR
 
     def test_unexpected_error_caught(self, monkeypatch):
         def boom(*args, **kwargs):

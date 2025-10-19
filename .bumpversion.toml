@@ -14,6 +14,11 @@ search = "__version__ = \"{current_version}\""
 replace = "__version__ = \"{new_version}\""
 
 [[tool.bumpversion.files]]
+filename = "tests/test_init.py"
+search = "__version__ == \"{current_version}\""
+replace = "__version__ = \"{new_version}\""
+
+[[tool.bumpversion.files]]
 filename = "CHANGELOG.md"
 search = "## [Unreleased]"
 replace = "## [Unreleased]\n\n## [{new_version}] - {now:%Y-%m-%d}"

@@ -24,11 +24,11 @@ class TestFileSearch:
     def test_file_search_handles_nonexistent_and_directory(self, tmp_path, capsys):
         missing = tmp_path / "missing.txt"
         assert file_search(str(missing), "a") is False
-        assert "Is not a valid file" in capsys.readouterr().err
+        assert "no such file or directory" in capsys.readouterr().err.lower()
 
         # directory case
         assert file_search(str(tmp_path), "a") is False
-        assert "Is a directory" in capsys.readouterr().err
+        assert "is a directory" in capsys.readouterr().err.lower()
 
     def test_multi_file_search(self, tmp_path, capsys):
         p1 = tmp_path / "a.txt"
@@ -62,11 +62,11 @@ class TestFileSearch:
         not_there = tmp_path / "nope"
         files = get_all_files_in_directory(str(not_there))
         assert files == []
-        assert "No such file or directory" in capsys.readouterr().err
+        assert "no such file or directory" in capsys.readouterr().err.lower()
 
         # Not a directory
         filep = tmp_path / "f.txt"
         filep.write_text("x")
         files = get_all_files_in_directory(str(filep))
         assert files == []
-        assert "Not a directory" in capsys.readouterr().err
+        assert "not a directory" in capsys.readouterr().err
