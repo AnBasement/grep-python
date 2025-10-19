@@ -808,7 +808,7 @@ def file_search(filename, pattern, print_filename=False):
         else:
             print(f"'{filename}' is not a valid file", file=sys.stderr)
         return False
-    
+
     match_found = False
     try:
         with open(filename, "r") as file:
@@ -860,11 +860,29 @@ def get_all_files_in_directory(directory):
     """
     Finds all files in a directory and the subdirectories.
     """
+    if not os.path.exists(directory):
+        print(f"{directory}: No such file or directory", file=sys.stderr)
+        return []
+
+    if not os.path.isdir(directory):
+        print(f"{directory}: Not a directory", file=sys.stderr)
+        return []
+
     all_files = []
-    for root, dirs, files in os.walk(directory):
-        for filename in files:
-            filepath = os.path.join(root, filename)
-            all_files.append(filepath)
+
+    try:
+        for root, dirs, files in os.walk(directory):
+            for filename in files:
+                filepath = os.path.join(root, filename)
+                all_files.append(filepath)
+
+    except PermissionError:
+        print(f"Permission denied: {directory}", file=sys.stderr)
+        return []
+
+    except Exception as e:
+        print(f"{directory}: {e}", file=sys.stderr)
+        return []
 
     return all_files
 
