@@ -56,6 +56,7 @@ cat file.txt | python app.py -E "pattern"
 
 - Only a subset of full regular expression syntax is supported.
 - Performance may not match native `grep` for large files or complex patterns.
+- Backreferences are currently limited to 9 groups.
 
 ## TODO
 
@@ -66,7 +67,33 @@ cat file.txt | python app.py -E "pattern"
 - [ ] Improve performance for large files
 - [ ] Add unit tests
 - [ ] Add support for colored output (maybe with Rich library?)
+- [ ] Create setup.py for pip install
+
+## Contributing
+
+Contributions are welcome! Please:
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Add tests for new features
+5. Submit a pull request
 
 ## License
 
-MIT License
+MIT License - see [LICENSE](LICENSE) file for details.
+
+## Acknowledgments
+
+Built as a learning project to understand:
+
+- Regular expression engines
+- Recursive backtracking algorithms
+- File system operations
+- Command-line tool design
+
+## Resources
+
+- [GNU grep documentation](https://www.gnu.org/software/grep/manual/)
+- [Regular expression theory](https://en.wikipedia.org/wiki/Regular_expression)
+- [Extended Regular Expressions (ERE)](https://en.wikipedia.org/wiki/Regular_expression#POSIX_extended)
