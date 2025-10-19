@@ -6,5 +6,6 @@
 # Get the directory where this script is located
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-# Run the Python script
-python3 "$SCRIPT_DIR/src/main.py" "$@"
+# Run the Python module from the project directory
+cd "$SCRIPT_DIR"
+python3 -m src.main "$@"
