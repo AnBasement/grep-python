@@ -73,7 +73,7 @@ def parse_pattern(pattern, group_number=None):
             group_number[0] += 1
             current_group_number = group_number[0]
 
-            end_index = find_matching_parantheses(pattern, i)
+            end_index = find_matching_parentheses(pattern, i)
             group_content = pattern[i+1:end_index]
             alt_patterns = split_alternatives(group_content)
 
@@ -103,10 +103,10 @@ def parse_pattern(pattern, group_number=None):
     return tokens, has_start_anchor, has_end_anchor
 
 
-def find_matching_parantheses(pattern, start_index):
+def find_matching_parentheses(pattern, start_index):
     """
-    Finds the index of the closing parantheses matching a given
-    opening paranthesis in the pattern string.
+    Finds the index of the closing parentheses matching a given
+    opening parenthesis in the pattern string.
     """
     depth = 1
     i = start_index + 1
