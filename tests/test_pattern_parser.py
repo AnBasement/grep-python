@@ -50,7 +50,6 @@ class TestPatternParser:
 
     def test_parses_backreference_tokens(self):
         tokens, _, _ = parse_pattern("(ab)\\1")
-        # Expect a group token followed by a backreference token
         assert tokens[0]["type"] == "group"
         assert tokens[0]["number"] == 1
         assert tokens[1]["type"] == "backreference"

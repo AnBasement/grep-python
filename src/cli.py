@@ -2,6 +2,7 @@ import sys
 from .constants import EXIT_ERROR, ERROR_USAGE, ERROR_EXPECTED_E_AFTER_R, ERROR_EXPECTED_E
 import importlib
 import argparse
+import textwrap
 
 def get_version():
     try:
@@ -13,9 +14,29 @@ def get_version():
 
 def parse_arguments():
     parser = argparse.ArgumentParser(
-        prog="pygrep",
-        description="Search for patterns in files using a custom regex engine",
-        epilog="Pattern syntax: literals, groups (), alternation |, quantifiers +?, character classes [], anchors ^$"
+        prog='pygrep',
+        description='Search for patterns in files using custom regex engine',
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog=textwrap.dedent('''
+        Pattern Syntax:
+          literals      Match exact characters
+          (group)       Capture group with alternation support
+          a|b           Alternation (match a or b)
+          +             One or more of previous token
+          ?             Zero or one of previous token
+          [abc]         Character class
+          [^abc]        Negated character class
+          ^             Start of line anchor
+          $             End of line anchor
+          \\1, \\2        Backreferences to captured groups
+          \\d, \\w        Digit and word character classes
+          .             Any character wildcard
+        
+        Examples:
+          ./pygrep.sh -E "error" log.txt
+          ./pygrep.sh -r -E "^import" src/
+          ./pygrep.sh -n -E "\\d+" data.txt
+        ''')
     )
 
     parser.add_argument(
@@ -50,62 +71,33 @@ def parse_arguments():
         help="Recursively search all files under each directory"
     )
 
+    parser.add_argument(
+        "-n", "--line-number",
+        action="store_true",
+        help="Prefix each line of output with the line number in the file"
+    )
+
+    parser.add_argument(
+        "-i", "--ignore-case",
+        action="store_true",
+        help="Ignore case distinctions"
+    )
+
+    parser.add_argument(
+        "-v", "--invert-match",
+        action="store_true",
+        help="Select lines that do not match"
+    )
+
+    parser.add_argument(
+        "-c", "--count",
+        action="store_true",
+        help="Only print a count of matching lines and suppress normal output"
+    )
+
     args = parser.parse_args()
 
-    recursive = args.recursive
-    pattern = args.pattern
-    search_paths = args.files
+    if args.recursive and not args.files:
+        parser.error("at least one FILE required for recursive search")
 
-    return recursive, pattern, search_paths
-
-def parse_arguments_old():
-    """
-    Parses command-line arguments.
-    
-    Returns:
-        tuple: (recursive: bool, pattern: str, search_paths: list[str])
-    
-    Raises:
-        SystemExit: If arguments are invalid
-    """
-    if len(sys.argv) > 1:
-        if sys.argv[1] == "--version":
-            print(f"grep-python version {get_version()}")
-            sys.exit(0)
-        if sys.argv[1] in ("--help", "-h"):
-            print("Usage: ./pygrep.sh [-r] -E PATTERN [FILE...]")
-            print("\nSearch for PATTERN in each FILE")
-            print("\nOptions:")
-            print("  -E PATTERN    Pattern to search for")
-            print("  -r            Recursively search directories")
-            print("  --version     Show version information")
-            print("  --help, -h    Show this help message")
-            sys.exit(0)
-
-    recursive = False
-
-    if len(sys.argv) < 2:
-        print(ERROR_USAGE, file=sys.stderr)
-        sys.exit(EXIT_ERROR)
-
-    if sys.argv[1] == "-r":
-        recursive = True
-        if len(sys.argv) < 3 or sys.argv[2] != "-E":
-            print(ERROR_EXPECTED_E_AFTER_R, file=sys.stderr)
-            sys.exit(EXIT_ERROR)
-        if len(sys.argv) < 4:
-            print(ERROR_USAGE, file=sys.stderr)
-            sys.exit(EXIT_ERROR)
-        pattern = sys.argv[3]
-        search_paths = sys.argv[4:]
-    else:
-        if sys.argv[1] != "-E":
-            print(ERROR_EXPECTED_E, file=sys.stderr)
-            sys.exit(EXIT_ERROR)
-        if len(sys.argv) < 3:
-            print(ERROR_USAGE, file=sys.stderr)
-            sys.exit(EXIT_ERROR)
-        pattern = sys.argv[2]
-        search_paths = sys.argv[3:]
-
-    return recursive, pattern, search_paths
+    return args

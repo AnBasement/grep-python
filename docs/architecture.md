@@ -73,20 +73,25 @@ src/
 
 **Key Functions**:
 
-- `match_pattern()` - Main entry point, returns boolean match result
+- `match_pattern()` - Main entry point with optional case-insensitive matching, returns boolean match result
 - `try_match()` - Core recursive matching function
 - `try_match_sequence()` - Matches token sequences (for groups)
 - `character_matches_token()` - Individual character-to-token matching
 - `count_greedy_matches()` - Implements greedy quantifier behavior
 
+**Case-Insensitive Matching**:
+
+When `ignore_case=True` is passed to `match_pattern()`, both the pattern and input text are converted to lowercase before matching. This enables case-insensitive searches with the `-i` flag.
+
 **Algorithm Flow**:
 
 1. Parse pattern into tokens
-2. Calculate minimum match length for optimization
-3. Try matching at each valid starting position
-4. Use recursive backtracking for complex patterns
-5. Handle quantifiers with greedy matching
-6. Capture groups for backreferences
+2. Apply case conversion if ignore_case is enabled
+3. Calculate minimum match length for optimization
+4. Try matching at each valid starting position
+5. Use recursive backtracking for complex patterns
+6. Handle quantifiers with greedy matching
+7. Capture groups for backreferences
 
 ### 3. File Search (`file_search.py`)
 
@@ -94,25 +99,48 @@ src/
 
 **Key Functions**:
 
-- `file_search()` - Searches single file line by line
-- `multiple_file_search()` - Handles multiple file operations
-- Recursive directory traversal (when `-r` flag used)
+- `file_search()` - Searches single file line by line with optional line numbers, case-insensitivity, match inversion, and counting
+- `multi_file_search()` - Handles multiple file operations with all output options
+- `search_in_directories()` - Recursive directory traversal (when `-r` flag used)
+- `get_all_files_in_directory()` - Recursively finds all files in a directory
+
+**Output Options**:
+
+- Line numbers (`print_line_number`) - Prefix matches with line number
+- Case-insensitive (`ignore_case`) - Pass-through to pattern matcher
+- Inverted match (`invert_match`) - Select non-matching lines
+- Count only (`count_only`) - Print count instead of matches
 
 **Error Handling**: Catches and reports file access errors gracefully.
 
 ### 4. Command Line Interface (`cli.py`)
 
-**Purpose**: Parses and validates command-line arguments.
+**Purpose**: Parses and validates command-line arguments using argparse.
 
-**Key Function**:
+**Key Functions**:
 
-- `parse_arguments()` - Returns `(recursive, pattern, search_paths)` tuple
+- `parse_arguments()` - Returns argparse namespace object with parsed arguments
+- `get_version()` - Retrieves version from package metadata
+
+**Supported Arguments**:
+
+- `pattern` - Required positional argument for regex pattern
+- `files` - Optional positional arguments for file paths
+- `-E`, `--extended-regexp` - Extended regex mode (always enabled, for compatibility)
+- `-r`, `-R`, `--recursive` - Search directories recursively
+- `-n`, `--line-number` - Display line numbers with matches
+- `-i`, `--ignore-case` - Case-insensitive matching
+- `-v`, `--invert-match` - Select non-matching lines
+- `-c`, `--count` - Print count of matching lines only
+- `--version` - Show version and exit
+- `--help` - Show help message and exit
 
 **Features**:
 
-- Validates command-line arguments (`-E`, `-r` flags)
-- Handles missing or invalid arguments with proper error messages
-- Returns structured data for main program orchestration
+- Automatic help and version display via argparse
+- Argument validation (recursive requires files)
+- Professional error messages with usage hints
+- Returns namespace object with all flags as attributes
 - Exits with appropriate error codes for invalid input
 
 ### 5. Main Program (`main.py`)
@@ -121,9 +149,10 @@ src/
 
 **Features**:
 
-- Calls `parse_arguments()` to get CLI configuration
-- Handles stdin input when no files specified
+- Calls `parse_arguments()` to get CLI configuration as namespace object
+- Handles stdin input when no files specified (supports all flags)
 - Coordinates pattern matching and file searching
+- Passes feature flags to search functions (line_number, ignore_case, invert_match, count_only)
 - Manages exit codes based on search results
 
 ## Design Patterns

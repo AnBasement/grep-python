@@ -72,25 +72,37 @@ Does the actual pattern matching using recursive backtracking.
 
 #### Functions
 
-##### `match_pattern(input_line: str, pattern: str) -> bool`
+##### `match_pattern(input_line: str, pattern: str, ignore_case: bool = False) -> bool`
 
-Main function for pattern matching.
+Main function for pattern matching with optional case-insensitivity.
 
 **Parameters:**
 
-- `input_line`: String to search in
-- `pattern`: Regex pattern
+- `input_line` (str): String to search in
+- `pattern` (str): Regex pattern
+- `ignore_case` (bool): Whether to ignore case distinctions (default: False)
 
 **Returns:**
 
 - `True` if pattern matches anywhere in input, `False` otherwise
+
+**Behavior:**
+
+- When `ignore_case=True`, converts both pattern and input to lowercase before matching
+- Uses recursive backtracking algorithm for matching
+- Supports anchors (`^`, `$`), groups, alternation, quantifiers, character classes
 
 **Example:**
 
 ```python
 from src.pattern_matcher import match_pattern
 
+# Basic matching
 result = match_pattern("hello world", "w\\w+")
+# result: True
+
+# Case-insensitive matching
+result = match_pattern("Hello World", "hello", ignore_case=True)
 # result: True
 ```
 
@@ -161,37 +173,69 @@ Counts max consecutive matches for greedy quantifiers.
 
 ### file_search.py
 
-Handles file operations and search across files.
+Handles file operations and search across files with output formatting.
 
 #### Functions
 
-##### `file_search(filename: str, pattern: str, print_filename: bool = False) -> bool`
+##### `file_search(filename, pattern, print_filename=False, print_line_number=False, ignore_case=False, invert_match=False, count_only=False) -> bool`
 
-Searches a file for pattern matches.
+Searches a file for pattern matches with configurable output options.
 
 **Parameters:**
 
-- `filename`: Path to file to search
-- `pattern`: Regex pattern
-- `print_filename`: Whether to print filename with matches
+- `filename` (str): Path to file to search
+- `pattern` (str): Regex pattern
+- `print_filename` (bool): Whether to print filename with matches (default: False)
+- `print_line_number` (bool): Whether to print line numbers with matches (default: False)
+- `ignore_case` (bool): Whether to ignore case in matching (default: False)
+- `invert_match` (bool): Whether to invert match (select non-matching lines) (default: False)
+- `count_only` (bool): Whether to print only count instead of matches (default: False)
 
 **Returns:**
 
-- `True` if any matches found in file
+- `True` if any matches found in file (or non-matches with `invert_match`)
+
+**Behavior:**
+
+- Line numbers start at 1 (not 0)
+- With `count_only`, prints format: `filename:count` or just `count`
+- With `invert_match`, matches logic is inverted
+- Output format with line numbers: `line_number:line_content`
+- All flags passed through to `match_pattern()`
 
 **Error Handling:**
 
 - Catches file access errors and prints to stderr
 - Returns `False` for files that can't be read
 
-##### `multiple_file_search(filenames: List[str], pattern: str) -> bool`
+**Example:**
+
+```python
+# Basic search
+found = file_search("data.txt", "error")
+
+# With line numbers
+found = file_search("log.txt", "error", print_line_number=True)
+
+# Case-insensitive with count
+found = file_search("file.txt", "TODO", ignore_case=True, count_only=True)
+
+# Inverted match
+found = file_search("config.txt", "^#", invert_match=True)
+```
+
+##### `multi_file_search(filenames, pattern, print_line_number=False, ignore_case=False, invert_match=False, count_only=False) -> bool`
 
 Searches multiple files for pattern matches.
 
 **Parameters:**
 
-- `filenames`: List of file paths
-- `pattern`: Regex pattern
+- `filenames` (list[str]): List of file paths
+- `pattern` (str): Regex pattern
+- `print_line_number` (bool): Whether to print line numbers (default: False)
+- `ignore_case` (bool): Whether to ignore case (default: False)
+- `invert_match` (bool): Whether to invert match (default: False)
+- `count_only` (bool): Whether to print only counts (default: False)
 
 **Returns:**
 
@@ -201,37 +245,109 @@ Searches multiple files for pattern matches.
 
 - Always prints filenames when searching multiple files
 - Continues searching remaining files after errors
+- Passes all flags to `file_search()`
 
-### cli.py
+##### `search_in_directories(directories, pattern, print_line_number=False, ignore_case=False, invert_match=False, count_only=False) -> bool`
 
-Command-line argument parsing.
+Recursively searches directories for pattern matches.
 
-#### Functions
+**Parameters:**
 
-##### `parse_arguments() -> tuple[bool, str, list[str]]`
-
-Parses and validates command-line arguments.
+- `directories` (list[str]): List of directory paths
+- `pattern` (str): Regex pattern
+- `print_line_number` (bool): Whether to print line numbers (default: False)
+- `ignore_case` (bool): Whether to ignore case (default: False)
+- `invert_match` (bool): Whether to invert match (default: False)
+- `count_only` (bool): Whether to print only counts (default: False)
 
 **Returns:**
 
-- `tuple`: `(recursive: bool, pattern: str, search_paths: list[str])`
+- `True` if any matches found in any file
+
+**Behavior:**
+
+- Recursively finds all files in directories
+- Searches each file with `file_search()`
+- Passes all flags through
+
+##### `get_all_files_in_directory(directory) -> list[str]`
+
+Recursively finds all files in a directory.
+
+**Parameters:**
+
+- `directory` (str): Directory path to search
+
+**Returns:**
+
+- List of file paths (strings)
+
+**Behavior:**
+
+- Uses `os.walk()` for recursive traversal
+- Returns only files, not directories
+- Absolute paths for all files
+
+### cli.py
+
+Command-line argument parsing using argparse.
+
+#### Functions
+
+##### `get_version() -> str`
+
+Retrieves the version string from `src/__init__.py`.
+
+**Returns:**
+
+- `str`: Version string (e.g., "0.2.3")
+
+**Implementation:**
+
+Uses `importlib.metadata.version('grep-python')` to dynamically retrieve version.
+
+##### `parse_arguments() -> argparse.Namespace`
+
+Parses and validates command-line arguments using argparse.
+
+**Returns:**
+
+- `argparse.Namespace`: Object with parsed arguments as attributes
+  - `pattern` (str): Regex pattern to search for
+  - `files` (list[str]): Files or directories to search
+  - `recursive` (bool): Enable recursive directory search
+  - `line_number` (bool): Print line numbers with matches
+  - `ignore_case` (bool): Ignore case distinctions
+  - `invert_match` (bool): Select non-matching lines
+  - `count_only` (bool): Print count of matches instead of lines
+
+**Available Arguments:**
+
+- `pattern`: Required positional argument for regex pattern
+- `files`: Optional positional arguments for file paths (reads stdin if none)
+- `-E`, `--extended-regexp`: Extended regex mode (always enabled, for compatibility)
+- `-r`, `-R`, `--recursive`: Search directories recursively
+- `-n`, `--line-number`: Display line numbers with output
+- `-i`, `--ignore-case`: Case-insensitive matching
+- `-v`, `--invert-match`: Select lines that do NOT match
+- `-c`, `--count`: Print only count of matching lines
+- `--version`: Show version and exit
+- `--help`: Show help message and exit
 
 **Exit Codes:**
 
-- `EXIT_ERROR (2)`: Invalid arguments or missing required flags
+- `EXIT_ERROR (2)`: Invalid arguments or validation failure
 
 **Validation:**
 
-- Ensures `-E` flag is present
-- Validates `-r` flag is followed by `-E`
-- Checks for required pattern argument
-- Returns empty list for search_paths when reading from stdin
+- Recursive mode requires at least one file path
+- Pattern is always required (positional argument)
 
 **Error Handling:**
 
-- Prints usage message for insufficient arguments
-- Shows specific error for missing `-E` flag
-- Exits immediately on validation failure
+- Argparse automatically handles invalid arguments
+- Custom validation for recursive mode without files
+- Professional error messages with usage hints
 
 **Example:**
 
@@ -239,9 +355,19 @@ Parses and validates command-line arguments.
 from src.cli import parse_arguments
 
 # Call from within main()
-recursive, pattern, search_paths = parse_arguments()
+args = parse_arguments()
 
-if not search_paths:
+# Access arguments as attributes
+pattern = args.pattern
+files = args.files
+recursive = args.recursive
+line_number = args.line_number
+ignore_case = args.ignore_case
+invert_match = args.invert_match
+count_only = args.count_only
+
+# Use in logic
+if not files:
     # Read from stdin
     ...
 elif recursive:
@@ -265,9 +391,10 @@ Main entry point - orchestrates pattern matching and file searching.
 **Workflow:**
 
 1. Calls `parse_arguments()` to get CLI configuration
-2. Handles stdin input if no files specified
+2. Handles stdin input if no files specified (with all flag support)
 3. Delegates to appropriate search function (recursive/single/multi-file)
-4. Exits with appropriate code based on results
+4. Passes flags to search functions for feature enablement
+5. Exits with appropriate code based on results
 
 **Exit Codes:**
 

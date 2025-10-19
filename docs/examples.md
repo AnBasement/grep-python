@@ -25,6 +25,90 @@ echo "hello world" | ./pygrep.sh -E "hello"
 cat file.txt | ./pygrep.sh -E "pattern"
 ```
 
+## Command-Line Options
+
+### Line Numbers (`-n`, `--line-number`)
+
+Display line numbers with matching lines:
+
+```bash
+# Show line numbers for matches
+./pygrep.sh -n -E "error" log.txt
+
+# Useful for identifying specific locations
+./pygrep.sh --line-number -E "TODO" src/main.py
+```
+
+Output format:
+
+```text
+15:First matching line
+42:Second matching line
+```
+
+### Case-Insensitive Search (`-i`, `--ignore-case`)
+
+Ignore case distinctions in pattern and input:
+
+```bash
+# Match "error", "Error", "ERROR", etc.
+./pygrep.sh -i -E "error" log.txt
+
+# Find function names regardless of case
+./pygrep.sh --ignore-case -E "getuser" code.py
+```
+
+### Inverted Match (`-v`, `--invert-match`)
+
+Select lines that do NOT match the pattern:
+
+```bash
+# Show all lines except comments
+./pygrep.sh -v -E "^#" config.txt
+
+# Exclude empty lines
+./pygrep.sh -v -E "^$" data.txt
+
+# Find non-error lines
+./pygrep.sh --invert-match -E "error" log.txt
+```
+
+### Count Matches (`-c`, `--count`)
+
+Print only the count of matching lines:
+
+```bash
+# Count error occurrences
+./pygrep.sh -c -E "error" log.txt
+
+# Count TODO items
+./pygrep.sh --count -E "TODO" src/*.py
+```
+
+Output format:
+
+```text
+log.txt:42
+```
+
+### Combining Options
+
+Options can be combined for powerful searches:
+
+```bash
+# Case-insensitive search with line numbers
+./pygrep.sh -i -n -E "error" log.txt
+
+# Count non-matching lines (inverted count)
+./pygrep.sh -v -c -E "^#" config.txt
+
+# Recursive case-insensitive search with line numbers
+./pygrep.sh -r -i -n -E "TODO" src/
+
+# Find and count empty lines recursively
+./pygrep.sh -r -c -E "^$" .
+```
+
 ## Pattern Examples
 
 ### Literal Text Matching

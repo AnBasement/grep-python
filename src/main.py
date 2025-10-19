@@ -13,25 +13,45 @@ from .cli import parse_arguments
 
 def main():
     try:
-        recursive, pattern, search_paths = parse_arguments()
+        args = parse_arguments()
 
-        if len(search_paths) == 0:
-            input_line = sys.stdin.read()
-            try:
-                if match_pattern(input_line, pattern):
-                    sys.exit(EXIT_MATCH_FOUND)
-                else:
-                    sys.exit(EXIT_NO_MATCH)
-            except Exception:
-                print(f"grep: {ERROR_INVALID_PATTERN}", file=sys.stderr)
-                sys.exit(EXIT_ERROR)
+        if len(args.files) == 0:
+            match_count = 0
+            match_found = False
+            for line in sys.stdin:
+                line = line.rstrip("\n")
+                try:
+                    matches = match_pattern(line, args.pattern, ignore_case=args.ignore_case)
 
-        if recursive:
+                    if args.invert_match:
+                        matches = not matches
+
+                    if matches:
+                        match_found = True
+                        if args.count:
+                            match_count += 1
+                        else:
+                            print(line)
+                except Exception:
+                    print(f"grep: {ERROR_INVALID_PATTERN}", file=sys.stderr)
+                    sys.exit(EXIT_ERROR)
+
+            if args.count:
+                print(match_count)
+                sys.exit(EXIT_MATCH_FOUND if match_count > 0 else EXIT_NO_MATCH)
+            else:
+                sys.exit(EXIT_MATCH_FOUND if match_found else EXIT_NO_MATCH)
+
+        if args.recursive:
             any_match_found = False
 
-            for path in search_paths:
+            for path in args.files:
                 try:
-                    if search_in_directories(path, pattern):
+                    if search_in_directories(
+                        path, args.pattern, print_line_number=args.line_number, 
+                        ignore_case=args.ignore_case, invert_match=args.invert_match,
+                        count_only=args.count
+                    ):
                         any_match_found = True
                 except Exception:
                     print(f"{path}: {ERROR_SEARCH_FAILED}", file=sys.stderr)
@@ -42,19 +62,29 @@ def main():
                 sys.exit(EXIT_NO_MATCH)
 
         else:
-            filenames = search_paths
-            num_files = len(filenames)
+            num_files = len(args.files)
 
             try:
                 if num_files == 1:
-                    filename = filenames[0]
-                    if file_search(filename, pattern, print_filename=False):
+                    if file_search(
+                        args.files[0],
+                        args.pattern,
+                        print_filename=False,
+                        print_line_number=args.line_number,
+                        ignore_case=args.ignore_case,
+                        invert_match=args.invert_match,
+                        count_only=args.count,
+                    ):
                         sys.exit(EXIT_MATCH_FOUND)
                     else:
                         sys.exit(EXIT_NO_MATCH)
 
                 else:
-                    if multi_file_search(filenames, pattern):
+                    if multi_file_search(
+                        args.files, args.pattern, print_line_number=args.line_number,
+                        ignore_case=args.ignore_case, invert_match=args.invert_match,
+                        count_only=args.count
+                    ):
                         sys.exit(EXIT_MATCH_FOUND)
                     else:
                         sys.exit(EXIT_NO_MATCH)

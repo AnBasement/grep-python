@@ -96,8 +96,11 @@ Reference previously captured groups.
 # Exact match
 ./pygrep.sh -E "hello" file.txt
 
-# Case-sensitive matching
+# Case-sensitive matching (default)
 ./pygrep.sh -E "Hello" file.txt  # Different from "hello"
+
+# Case-insensitive matching
+./pygrep.sh -i -E "hello" file.txt  # Matches "hello", "Hello", "HELLO", etc.
 ```
 
 ### Anchored Patterns

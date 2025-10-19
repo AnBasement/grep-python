@@ -5,9 +5,13 @@ A grep tool written in Python while following the [Codecrafters.io guide](https:
 ## Features
 
 - **Custom regex engine**: Supports literals, groups `()`, alternation `|`, quantifiers `+` and `?`, character classes `[]`, start `^` and end `$` anchors, and backreferences (`\1`, `\2`, etc.).
-- **Recursive search**: Optionally search directories recursively.
+- **Recursive search**: Search directories recursively with `-r` flag.
 - **Multiple file support**: Search one or more files at once.
 - **Standard input support**: Reads from stdin if no files are specified.
+- **Line numbers**: Display line numbers with `-n` flag.
+- **Case-insensitive**: Ignore case distinctions with `-i` flag.
+- **Inverted match**: Select non-matching lines with `-v` flag.
+- **Count matches**: Print count of matching lines with `-c` flag.
 
 ## Installation
 
@@ -33,6 +37,18 @@ echo "hello world" | ./pygrep.sh -E "hello"
 
 # Recursive search
 ./pygrep.sh -r -E "pattern" directory/
+
+# Show line numbers
+./pygrep.sh -n -E "error" log.txt
+
+# Case-insensitive search
+./pygrep.sh -i -E "error" log.txt
+
+# Show non-matching lines
+./pygrep.sh -v -E "^#" config.txt
+
+# Count matches
+./pygrep.sh -c -E "TODO" src/*.py
 ```
 
 ## Documentation

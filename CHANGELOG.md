@@ -8,6 +8,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Line number display with `-n` or `--line-number` flag
+- Case-insensitive matching with `-i` or `--ignore-case` flag
+- Inverted matching with `-v` or `--invert-match` flag
+- Match counting with `-c` or `--count` flag
+
+### Changed
+
+- Migrated CLI from manual argument parsing to argparse
+- Improved help text with automatic `--help` generation
+- Changed CLI return format from tuple to namespace object
+- Enhanced error messages for invalid arguments
+
+### Removed
+
+- Manual `sys.argv` parsing logic from `cli.py`
+
 ## [0.2.3] - 2025-10-19
 
 ### Changed

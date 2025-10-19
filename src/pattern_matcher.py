@@ -434,13 +434,17 @@ def try_match_sequence(tokens, input_line, start_j, captures):
     return (True, j)
 
 
-def match_pattern(input_line, pattern):
+def match_pattern(input_line, pattern, ignore_case=False):
     """
     Main function for pattern matching.
 
     Parses the pattern and calculates minimum match length and indices.
     Calls try_match for each start index.
     """
+    if ignore_case:
+        input_line = input_line.lower()
+        pattern = pattern.lower()
+
     tokens, has_start_anchor, has_end_anchor = parse_pattern(pattern)
     min_length = calculate_min_match_length(tokens)
     start_indices = calculate_start_indices(

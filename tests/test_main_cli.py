@@ -57,10 +57,13 @@ class TestMainCLI:
         code = self.run_main(["prog", "-r", "-E", "ba", str(tmp_path)])
         assert code == EXIT_MATCH_FOUND
 
-    def test_recursive_without_E_works(self):
-        """Test that -E is now optional with argparse"""
-        code = self.run_main(["prog", "-r", "pattern"], stdin_data="")
-        # Pattern not found in stdin, but parsing succeeds
+    def test_recursive_without_E_works(self, tmp_path):
+        test_dir = tmp_path / "test_dir"
+        test_dir.mkdir()
+        test_file = test_dir / "test.txt"
+        test_file.write_text("no match here\n")
+        
+        code = self.run_main(["prog", "-r", "pattern", str(test_dir)], stdin_data="")
         assert code == EXIT_NO_MATCH
 
     def test_unexpected_error_caught(self, monkeypatch):

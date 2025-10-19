@@ -2,8 +2,7 @@ import os
 import sys
 from .pattern_matcher import match_pattern
 
-
-def file_search(filename, pattern, print_filename=False):
+def file_search(filename, pattern, print_filename=False, print_line_number=False, ignore_case=False, invert_match=False, count_only=False):
     """
     Searches a file for lines matching a given pattern.
     """
@@ -14,41 +13,61 @@ def file_search(filename, pattern, print_filename=False):
             print(f"{filename}: no such file or directory", file=sys.stderr)
         return False
 
+    match_count = 0
     match_found = False
     try:
         with open(filename, "r") as file:
-            for line in file:
+            for idx, line in enumerate(file, start=1):
                 line = line.rstrip("\n")
-                if match_pattern(line, pattern):
-                    if print_filename:
-                        print(f"{filename}:{line}")
-                    else:
-                        print(line)
+                matches = match_pattern(line, pattern, ignore_case=ignore_case)
 
+                if invert_match:
+                    matches = not matches
+
+                if matches:
                     match_found = True
+                    if count_only:
+                        match_count += 1
+                    else:
+                        output = ""
+                        if print_filename:
+                            output += f"{filename}:"
+                        if print_line_number:
+                            output += f"{idx}:"
+                        output += line
+                        print(output)
 
     except PermissionError:
         print(f"{filename}: permission denied", file=sys.stderr)
+        return False
     except Exception:
         print(f"{filename}: permission denied", file=sys.stderr)
+        return False
+
+    if count_only:
+        if print_filename:
+            print(f"{filename}:{match_count}")
+        else:
+            print(match_count)
+        return match_count > 0
+
     return match_found
 
-
-def multi_file_search(filenames, pattern):
+def multi_file_search(filenames, pattern, print_line_number=False, ignore_case=False, invert_match=False, count_only=False):
     """
     Searches through multiple files for lines matching the pattern.
     """
-
     match_found = False
 
     for filename in filenames:
-        file_with_match = file_search(filename, pattern, print_filename=True)
-
+        file_with_match = file_search(
+            filename, pattern, print_filename=True, print_line_number=print_line_number, 
+            ignore_case=ignore_case, invert_match=invert_match, count_only=count_only
+        )
         if file_with_match:
             match_found = True
 
     return match_found
-
 
 def get_all_files_in_directory(directory):
     """
@@ -80,8 +99,7 @@ def get_all_files_in_directory(directory):
 
     return all_files
 
-
-def search_in_directories(directory, pattern):
+def search_in_directories(directory, pattern, print_line_number=False, ignore_case=False, invert_match=False, count_only=False):
     """
     Recursively search files in a directory for lines matching
     the given pattern.
@@ -90,8 +108,10 @@ def search_in_directories(directory, pattern):
     any_match_found = False
 
     for filepath in files:
-        file_had_match = file_search(filepath, pattern, print_filename=True)
-
+        file_had_match = file_search(
+            filepath, pattern, print_filename=True, print_line_number=print_line_number,
+            ignore_case=ignore_case, invert_match=invert_match, count_only=count_only
+        )
         if file_had_match:
             any_match_found = True
 

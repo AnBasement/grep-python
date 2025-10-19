@@ -26,7 +26,6 @@ class TestFileSearch:
         assert file_search(str(missing), "a") is False
         assert "no such file or directory" in capsys.readouterr().err.lower()
 
-        # directory case
         assert file_search(str(tmp_path), "a") is False
         assert "is a directory" in capsys.readouterr().err.lower()
 
@@ -58,13 +57,11 @@ class TestFileSearch:
         assert f"{f2}:bar" in out
 
     def test_get_all_files_in_directory_errors(self, tmp_path, monkeypatch, capsys):
-        # Nonexistent
         not_there = tmp_path / "nope"
         files = get_all_files_in_directory(str(not_there))
         assert files == []
         assert "no such file or directory" in capsys.readouterr().err.lower()
 
-        # Not a directory
         filep = tmp_path / "f.txt"
         filep.write_text("x")
         files = get_all_files_in_directory(str(filep))
