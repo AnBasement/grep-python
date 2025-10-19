@@ -4,6 +4,13 @@ import textwrap
 
 
 def get_version() -> str:
+    """
+    Return the current version of the package as a string.
+
+    Attempts to import the 'src' module and read its __version__ attribute.
+    If the module or attribute is unavailable, returns 'unknown' to avoid
+    breaking the program.
+    """
     try:
         version_str = importlib.import_module("src").__version__
     except Exception:
@@ -12,6 +19,25 @@ def get_version() -> str:
 
 
 def parse_arguments() -> argparse.Namespace:
+    """
+    Parse and return command-line arguments for the pygrep tool.
+
+    Uses argparse to define available options and positional arguments,
+    including pattern, files, and flags for extended regex, recursion, line 
+    numbers, case sensitivity, inverted matches, and count mode. Validates 
+    that at least one file is provided for recursive searches.
+
+    Returns:
+        argparse.Namespace: Parsed command-line arguments as attributes.
+
+    Example:
+        $ ./pygrep.sh -r -n -i "\\d+" data.txt
+        args.pattern       -> "\\d+"
+        args.files         -> ["data.txt"]
+        args.recursive     -> True
+        args.line_number   -> True
+        args.ignore_case   -> True
+    """
     parser = argparse.ArgumentParser(
         prog="pygrep",
         description="Search for patterns in files using custom regex engine",
