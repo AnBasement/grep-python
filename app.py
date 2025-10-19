@@ -803,19 +803,26 @@ def file_search(filename, pattern, print_filename=False):
     Searches a file for lines matching a given pattern.
     """
     match_found = False
+    try:
+        with open(filename, "r") as file:
+            for line in file:
+                line = line.rstrip("\n")
+                try:
+                    if match_pattern(line, pattern):
+                        if print_filename:
+                            print(f"{filename}:{line}")
+                        else:
+                            print(line)
 
-    with open(filename, "r") as file:
-        for line in file:
-            line = line.rstrip("\n")
-
-            if match_pattern(line, pattern):
-                if print_filename:
-                    print(f"{filename}:{line}")
-                else:
-                    print(line)
-
-                match_found = True
-
+                        match_found = True
+                except Exception as e:
+                    print(f"Error matching pattern in file '{filename}': {e}", file=sys.stderr)
+    except FileNotFoundError:
+        print(f"File not found: {filename}", file=sys.stderr)
+    except PermissionError:
+        print(f"Permission denied: {filename}", file=sys.stderr)
+    except Exception as e:
+        print(f"Error reading file '{filename}': {e}", file=sys.stderr)
     return match_found
 
 
@@ -870,64 +877,77 @@ def search_in_directories(directory, pattern):
 
 
 def main():
+    try:
+        recursive = False
 
-    recursive = False
+        if len(sys.argv) >= 2 and sys.argv[1] == "-r":
+            recursive = True
 
-    if len(sys.argv) >= 2 and sys.argv[1] == "-r":
-        recursive = True
+            if len(sys.argv) < 3 or sys.argv[2] != "-E":
+                print("Expected '-E' after '-r'", file=sys.stderr)
+                exit(1)
 
-        if len(sys.argv) < 3 or sys.argv[2] != "-E":
-            print("Expected '-E' after '-r'", file=sys.stderr)
-            exit(1)
-
-        pattern = sys.argv[3]
-        search_paths = sys.argv[4:]
-    else:
-        if sys.argv[1] != "-E":
-            print("Expected first argument to be '-E'")
-            exit(1)
-
-        pattern = sys.argv[2]
-        search_paths = sys.argv[3:]
-
-    print("Logs from your program will appear here!", file=sys.stderr)
-
-    if len(search_paths) == 0:
-        input_line = sys.stdin.read()
-
-        if match_pattern(input_line, pattern):
-            exit(0)
+            pattern = sys.argv[3]
+            search_paths = sys.argv[4:]
         else:
-            exit(1)
+            if sys.argv[1] != "-E":
+                print("Expected first argument to be '-E'")
+                exit(1)
 
-    if recursive:
-        any_match_found = False
+            pattern = sys.argv[2]
+            search_paths = sys.argv[3:]
 
-        for path in search_paths:
-            if search_in_directories(path, pattern):
-                any_match_found = True
+        print("Logs will appear here.", file=sys.stderr)
 
-        if any_match_found:
-            exit(0)
-        else:
-            exit(1)
+        if len(search_paths) == 0:
+            input_line = sys.stdin.read()
+            try:
+                if match_pattern(input_line, pattern):
+                    exit(0)
+                else:
+                    exit(1)
+            except Exception as e:
+                print(f"Error matching pattern in input: {e}", file=sys.stderr)
+                exit(2)
 
-    else:
-        filenames = search_paths
-        num_files = len(filenames)
+        if recursive:
+            any_match_found = False
 
-        if num_files == 1:
-            filename = filenames[0]
-            if file_search(filename, pattern, print_filename=False):
+            for path in search_paths:
+                try:
+                    if search_in_directories(path, pattern):
+                        any_match_found = True
+                except Exception as e:
+                    print(f"Error searching in directory '{path}': {e}", file=sys.stderr)
+
+            if any_match_found:
                 exit(0)
             else:
                 exit(1)
 
         else:
-            if multi_file_search(filenames, pattern):
-                exit(0)
-            else:
-                exit(1)
+            filenames = search_paths
+            num_files = len(filenames)
+
+            try:
+                if num_files == 1:
+                    filename = filenames[0]
+                    if file_search(filename, pattern, print_filename=False):
+                        exit(0)
+                    else:
+                        exit(1)
+
+                else:
+                    if multi_file_search(filenames, pattern):
+                        exit(0)
+                    else:
+                        exit(1)
+            except Exception as e:
+                print(f"Error during file search: {e}", file=sys.stderr)
+                exit(2)
+    except Exception as e:
+        print(f"Unexpected error: {e}", file=sys.stderr)
+        exit(2)
 
     if len(sys.argv) >= 4:
         filenames = sys.argv[3:]

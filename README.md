@@ -60,6 +60,7 @@ cat file.txt | python app.py -E "pattern"
 ## TODO
 
 - [ ] Add error handling
+- [ ] Improve docstrings and add type hints
 - [ ] Print matching lines to stdout (like standard grep)
 - [ ] Add support for more regex features
 - [ ] Improve performance for large files
