@@ -7,9 +7,6 @@ from .constants import (
     EXIT_ERROR,
     ERROR_INVALID_PATTERN,
     ERROR_SEARCH_FAILED,
-    ERROR_EXPECTED_E,
-    ERROR_EXPECTED_E_AFTER_R,
-    ERROR_USAGE,
 )
 from .cli import parse_arguments
 
@@ -17,36 +14,6 @@ from .cli import parse_arguments
 def main():
     try:
         recursive, pattern, search_paths = parse_arguments()
-        if len(sys.argv) < 2:
-            print(ERROR_USAGE, file=sys.stderr)
-            sys.exit(EXIT_ERROR)
-
-        recursive = False
-
-        if len(sys.argv) >= 2 and sys.argv[1] == "-r":
-            recursive = True
-
-            if len(sys.argv) < 3 or sys.argv[2] != "-E":
-                print(ERROR_EXPECTED_E_AFTER_R, file=sys.stderr)
-                sys.exit(EXIT_NO_MATCH)
-
-            pattern = sys.argv[3]
-            search_paths = sys.argv[4:]
-        else:
-            if sys.argv[1] != "-E":
-                print(ERROR_EXPECTED_E, file=sys.stderr)
-                sys.exit(EXIT_NO_MATCH)
-
-            if sys.argv[1] != "-E":
-                print(ERROR_EXPECTED_E, file=sys.stderr)
-                sys.exit(EXIT_NO_MATCH)
-
-            if len(sys.argv) < 3:
-                print(ERROR_USAGE, file=sys.stderr)
-                sys.exit(EXIT_ERROR)
-
-            pattern = sys.argv[2]
-            search_paths = sys.argv[3:]
 
         if len(search_paths) == 0:
             input_line = sys.stdin.read()

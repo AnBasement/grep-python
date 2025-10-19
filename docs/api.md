@@ -202,33 +202,84 @@ Searches multiple files for pattern matches.
 - Always prints filenames when searching multiple files
 - Continues searching remaining files after errors
 
+### cli.py
+
+Command-line argument parsing.
+
+#### Functions
+
+##### `parse_arguments() -> tuple[bool, str, list[str]]`
+
+Parses and validates command-line arguments.
+
+**Returns:**
+
+- `tuple`: `(recursive: bool, pattern: str, search_paths: list[str])`
+
+**Exit Codes:**
+
+- `EXIT_ERROR (2)`: Invalid arguments or missing required flags
+
+**Validation:**
+
+- Ensures `-E` flag is present
+- Validates `-r` flag is followed by `-E`
+- Checks for required pattern argument
+- Returns empty list for search_paths when reading from stdin
+
+**Error Handling:**
+
+- Prints usage message for insufficient arguments
+- Shows specific error for missing `-E` flag
+- Exits immediately on validation failure
+
+**Example:**
+
+```python
+from src.cli import parse_arguments
+
+# Call from within main()
+recursive, pattern, search_paths = parse_arguments()
+
+if not search_paths:
+    # Read from stdin
+    ...
+elif recursive:
+    # Recursive directory search
+    ...
+else:
+    # File search
+    ...
+```
+
 ### main.py
 
-Command-line interface and program entry point.
+Program entry point and execution orchestration.
 
 #### Functions
 
 ##### `main() -> None`
 
-Main entry point for command-line usage.
+Main entry point - orchestrates pattern matching and file searching.
 
-**Command Line Arguments:**
+**Workflow:**
 
-- `-E`: Required flag for extended regex mode
-- `-r`: Optional flag for recursive directory search
-- `pattern`: Regex pattern (required)
-- `files...`: Files to search (optional, reads stdin if none)
+1. Calls `parse_arguments()` to get CLI configuration
+2. Handles stdin input if no files specified
+3. Delegates to appropriate search function (recursive/single/multi-file)
+4. Exits with appropriate code based on results
 
 **Exit Codes:**
 
 - `0`: Pattern found in at least one file
-- `1`: Pattern not found or error occurred
+- `1`: Pattern not found
+- `2`: Error occurred
 
 **Error Handling:**
 
-- Validates argument count and format
-- Shows usage info for invalid arguments
-- Reports file access errors
+- Catches exceptions during pattern matching
+- Reports search failures with context
+- Ensures proper cleanup and exit
 
 ### constants.py
 
@@ -474,6 +525,24 @@ def test_cli_integration():
     
     assert result.returncode == 0
     # Verify output format
+```
+
+### Unit Testing CLI
+
+Test argument parsing directly:
+
+```python
+import sys
+from src.cli import parse_arguments
+
+def test_parse_arguments(monkeypatch):
+    """Test argument parsing logic."""
+    monkeypatch.setattr(sys, "argv", ["pygrep", "-E", "test", "file.txt"])
+    recursive, pattern, search_paths = parse_arguments()
+    
+    assert recursive is False
+    assert pattern == "test"
+    assert search_paths == ["file.txt"]
 ```
 
 This API reference provides the foundation for understanding and extending grep-python's functionality.

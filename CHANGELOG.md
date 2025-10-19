@@ -8,6 +8,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Removed duplicate argument parsing code from `main.py`
+- Simplified `main.py` to focus on orchestration only
+- Updated `docs/architecture.md` to reflect `cli.py` and `main.py` separation
+- Updated `docs/api.md` with complete `cli.py` API documentation and examples
+
 ## [0.2.2] - 2025-10-19
 
 ### Added

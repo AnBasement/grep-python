@@ -11,8 +11,8 @@ grep-python uses a custom regex engine with recursive backtracking. The code is 
 ```text
 src/
 ├── __init__.py          # Package initialization
-├── main.py              # CLI entry point and argument parsing
-├── cli.py               # Command-line interface logic
+├── main.py              # Program entry point and orchestration
+├── cli.py               # Command-line argument parsing
 ├── constants.py         # Error messages and exit codes
 ├── file_search.py       # File operations and search coordination
 ├── pattern_parser.py    # Regex pattern parsing
@@ -100,16 +100,31 @@ src/
 
 **Error Handling**: Catches and reports file access errors gracefully.
 
-### 4. Command Line Interface (`main.py`)
+### 4. Command Line Interface (`cli.py`)
 
-**Purpose**: Argument parsing and program orchestration.
+**Purpose**: Parses and validates command-line arguments.
+
+**Key Function**:
+
+- `parse_arguments()` - Returns `(recursive, pattern, search_paths)` tuple
 
 **Features**:
 
-- Validates command-line arguments
+- Validates command-line arguments (`-E`, `-r` flags)
+- Handles missing or invalid arguments with proper error messages
+- Returns structured data for main program orchestration
+- Exits with appropriate error codes for invalid input
+
+### 5. Main Program (`main.py`)
+
+**Purpose**: Program orchestration and execution flow.
+
+**Features**:
+
+- Calls `parse_arguments()` to get CLI configuration
 - Handles stdin input when no files specified
-- Coordinates pattern parsing and file searching
-- Manages exit codes and error reporting
+- Coordinates pattern matching and file searching
+- Manages exit codes based on search results
 
 ## Design Patterns
 
@@ -187,7 +202,8 @@ Start (`^`) and end (`$`) anchors enable significant optimization:
 
 ### Integration Tests
 
-- End-to-end CLI testing
+- End-to-end CLI testing with `test_main_cli.py`
+- Unit tests for argument parsing in `test_cli.py`
 - Multi-file search scenarios
 - Error condition handling
 
