@@ -46,19 +46,21 @@ class TestParseArguments:
             parse_arguments()
         assert exc_info.value.code == EXIT_ERROR
 
-    def test_missing_E_flag_exits(self, monkeypatch):
-        """Test missing -E flag"""
+    def test_missing_E_flag_still_works(self, monkeypatch):
+        """Test that -E flag is optional with argparse"""
         monkeypatch.setattr(sys, "argv", ["pygrep", "test", "file.txt"])
-        with pytest.raises(SystemExit) as exc_info:
-            parse_arguments()
-        assert exc_info.value.code == EXIT_ERROR
+        recursive, pattern, search_paths = parse_arguments()
+        assert recursive is False
+        assert pattern == "test"
+        assert search_paths == ["file.txt"]
 
-    def test_recursive_without_E_exits(self, monkeypatch):
-        """Test -r flag without -E"""
+    def test_recursive_without_E_still_works(self, monkeypatch):
+        """Test -r flag without -E (argparse makes -E optional)"""
         monkeypatch.setattr(sys, "argv", ["pygrep", "-r", "test", "dir/"])
-        with pytest.raises(SystemExit) as exc_info:
-            parse_arguments()
-        assert exc_info.value.code == EXIT_ERROR
+        recursive, pattern, search_paths = parse_arguments()
+        assert recursive is True
+        assert pattern == "test"
+        assert search_paths == ["dir/"]
 
     def test_recursive_missing_pattern_exits(self, monkeypatch):
         """Test -r -E without pattern"""
