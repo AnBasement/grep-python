@@ -171,13 +171,13 @@ Counts max consecutive matches for greedy quantifiers.
 
 - Maximum number of consecutive matches
 
-### file_search.py
+### search_file.py
 
 Handles file operations and search across files with output formatting.
 
 #### Functions
 
-##### `file_search(filename, pattern, print_filename=False, print_line_number=False, ignore_case=False, invert_match=False, count_only=False) -> bool`
+##### `search_file(filename, pattern, print_filename=False, print_line_number=False, ignore_case=False, invert_match=False, count_only=False) -> bool`
 
 Searches a file for pattern matches with configurable output options.
 
@@ -212,19 +212,19 @@ Searches a file for pattern matches with configurable output options.
 
 ```python
 # Basic search
-found = file_search("data.txt", "error")
+found = search_file("data.txt", "error")
 
 # With line numbers
-found = file_search("log.txt", "error", print_line_number=True)
+found = search_file("log.txt", "error", print_line_number=True)
 
 # Case-insensitive with count
-found = file_search("file.txt", "TODO", ignore_case=True, count_only=True)
+found = search_file("file.txt", "TODO", ignore_case=True, count_only=True)
 
 # Inverted match
-found = file_search("config.txt", "^#", invert_match=True)
+found = search_file("config.txt", "^#", invert_match=True)
 ```
 
-##### `multi_file_search(filenames, pattern, print_line_number=False, ignore_case=False, invert_match=False, count_only=False) -> bool`
+##### `search_multiple_files(filenames, pattern, print_line_number=False, ignore_case=False, invert_match=False, count_only=False) -> bool`
 
 Searches multiple files for pattern matches.
 
@@ -245,9 +245,9 @@ Searches multiple files for pattern matches.
 
 - Always prints filenames when searching multiple files
 - Continues searching remaining files after errors
-- Passes all flags to `file_search()`
+- Passes all flags to `search_file()`
 
-##### `search_in_directories(directories, pattern, print_line_number=False, ignore_case=False, invert_match=False, count_only=False) -> bool`
+##### `search_directory_recursively(directories, pattern, print_line_number=False, ignore_case=False, invert_match=False, count_only=False) -> bool`
 
 Recursively searches directories for pattern matches.
 
@@ -267,10 +267,10 @@ Recursively searches directories for pattern matches.
 **Behavior:**
 
 - Recursively finds all files in directories
-- Searches each file with `file_search()`
+- Searches each file with `search_file()`
 - Passes all flags through
 
-##### `get_all_files_in_directory(directory) -> list[str]`
+##### `get_files_recursively(directory) -> list[str]`
 
 Recursively finds all files in a directory.
 
@@ -627,12 +627,12 @@ def test_pattern_cases(pattern, test_cases):
         assert result == expected
 
 # File testing with temporary files
-def test_file_search_with_temp_file():
+def test_search_file_with_temp_file():
     """Test file search with temporary test data."""
     with tempfile.NamedTemporaryFile(mode='w', delete=False) as f:
         f.write("test content")
         f.flush()
-        result = file_search(f.name, "test")
+        result = search_file(f.name, "test")
         assert result is True
 ```
 

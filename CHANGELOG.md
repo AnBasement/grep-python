@@ -8,6 +8,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Standardized function naming in `file_search.py`:
+
+  - `file_search` → `search_file`
+  - `multi_file_search` → `search_multiple_files`
+  - `get_all_files_in_directory` → `get_files_recursively`
+  - `search_in_directories` → `search_directory_recursively`
+
+- Updated all imports and references in `src/` and `tests/` to use new function names
+- Improved code readability and consistency across the codebase
+
 ## [0.3.0] - 2025-10-19
 
 ### Added

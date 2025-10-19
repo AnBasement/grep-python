@@ -14,7 +14,7 @@ src/
 ├── main.py              # Program entry point and orchestration
 ├── cli.py               # Command-line argument parsing
 ├── constants.py         # Error messages and exit codes
-├── file_search.py       # File operations and search coordination
+├── search_file.py       # File operations and search coordination
 ├── pattern_parser.py    # Regex pattern parsing
 └── pattern_matcher.py   # Pattern matching engine
 ```
@@ -93,16 +93,16 @@ When `ignore_case=True` is passed to `match_pattern()`, both the pattern and inp
 6. Handle quantifiers with greedy matching
 7. Capture groups for backreferences
 
-### 3. File Search (`file_search.py`)
+### 3. File Search (`search_file.py`)
 
 **Purpose**: Coordinates file system operations and search execution.
 
 **Key Functions**:
 
-- `file_search()` - Searches single file line by line with optional line numbers, case-insensitivity, match inversion, and counting
-- `multi_file_search()` - Handles multiple file operations with all output options
-- `search_in_directories()` - Recursive directory traversal (when `-r` flag used)
-- `get_all_files_in_directory()` - Recursively finds all files in a directory
+- `search_file()` - Searches single file line by line with optional line numbers, case-insensitivity, match inversion, and counting
+- `search_multiple_files()` - Handles multiple file operations with all output options
+- `search_directory_recursively()` - Recursive directory traversal (when `-r` flag used)
+- `get_files_recursively()` - Recursively finds all files in a directory
 
 **Output Options**:
 

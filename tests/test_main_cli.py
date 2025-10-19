@@ -62,7 +62,7 @@ class TestMainCLI:
         test_dir.mkdir()
         test_file = test_dir / "test.txt"
         test_file.write_text("no match here\n")
-        
+
         code = self.run_main(["prog", "-r", "pattern", str(test_dir)], stdin_data="")
         assert code == EXIT_NO_MATCH
 

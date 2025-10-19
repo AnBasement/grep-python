@@ -2,7 +2,16 @@ import os
 import sys
 from .pattern_matcher import match_pattern
 
-def file_search(filename, pattern, print_filename=False, print_line_number=False, ignore_case=False, invert_match=False, count_only=False):
+
+def search_file(
+    filename,
+    pattern,
+    print_filename=False,
+    print_line_number=False,
+    ignore_case=False,
+    invert_match=False,
+    count_only=False,
+):
     """
     Searches a file for lines matching a given pattern.
     """
@@ -53,23 +62,37 @@ def file_search(filename, pattern, print_filename=False, print_line_number=False
 
     return match_found
 
-def multi_file_search(filenames, pattern, print_line_number=False, ignore_case=False, invert_match=False, count_only=False):
+
+def search_multiple_files(
+    filenames,
+    pattern,
+    print_line_number=False,
+    ignore_case=False,
+    invert_match=False,
+    count_only=False,
+):
     """
     Searches through multiple files for lines matching the pattern.
     """
     match_found = False
 
     for filename in filenames:
-        file_with_match = file_search(
-            filename, pattern, print_filename=True, print_line_number=print_line_number, 
-            ignore_case=ignore_case, invert_match=invert_match, count_only=count_only
+        file_with_match = search_file(
+            filename,
+            pattern,
+            print_filename=True,
+            print_line_number=print_line_number,
+            ignore_case=ignore_case,
+            invert_match=invert_match,
+            count_only=count_only,
         )
         if file_with_match:
             match_found = True
 
     return match_found
 
-def get_all_files_in_directory(directory):
+
+def get_files_recursively(directory):
     """
     Finds all files in a directory and the subdirectories.
     """
@@ -99,18 +122,31 @@ def get_all_files_in_directory(directory):
 
     return all_files
 
-def search_in_directories(directory, pattern, print_line_number=False, ignore_case=False, invert_match=False, count_only=False):
+
+def search_directory_recursively(
+    directory,
+    pattern,
+    print_line_number=False,
+    ignore_case=False,
+    invert_match=False,
+    count_only=False,
+):
     """
     Recursively search files in a directory for lines matching
     the given pattern.
     """
-    files = get_all_files_in_directory(directory)
+    files = get_files_recursively(directory)
     any_match_found = False
 
     for filepath in files:
-        file_had_match = file_search(
-            filepath, pattern, print_filename=True, print_line_number=print_line_number,
-            ignore_case=ignore_case, invert_match=invert_match, count_only=count_only
+        file_had_match = search_file(
+            filepath,
+            pattern,
+            print_filename=True,
+            print_line_number=print_line_number,
+            ignore_case=ignore_case,
+            invert_match=invert_match,
+            count_only=count_only,
         )
         if file_had_match:
             any_match_found = True

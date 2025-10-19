@@ -1,6 +1,10 @@
 import sys
 from .pattern_matcher import match_pattern
-from .file_search import file_search, multi_file_search, search_in_directories
+from .file_search import (
+    search_file,
+    search_multiple_files,
+    search_directory_recursively,
+)
 from .constants import (
     EXIT_MATCH_FOUND,
     EXIT_NO_MATCH,
@@ -21,7 +25,9 @@ def main():
             for line in sys.stdin:
                 line = line.rstrip("\n")
                 try:
-                    matches = match_pattern(line, args.pattern, ignore_case=args.ignore_case)
+                    matches = match_pattern(
+                        line, args.pattern, ignore_case=args.ignore_case
+                    )
 
                     if args.invert_match:
                         matches = not matches
@@ -47,10 +53,13 @@ def main():
 
             for path in args.files:
                 try:
-                    if search_in_directories(
-                        path, args.pattern, print_line_number=args.line_number, 
-                        ignore_case=args.ignore_case, invert_match=args.invert_match,
-                        count_only=args.count
+                    if search_directory_recursively(
+                        path,
+                        args.pattern,
+                        print_line_number=args.line_number,
+                        ignore_case=args.ignore_case,
+                        invert_match=args.invert_match,
+                        count_only=args.count,
                     ):
                         any_match_found = True
                 except Exception:
@@ -66,7 +75,7 @@ def main():
 
             try:
                 if num_files == 1:
-                    if file_search(
+                    if search_file(
                         args.files[0],
                         args.pattern,
                         print_filename=False,
@@ -80,10 +89,13 @@ def main():
                         sys.exit(EXIT_NO_MATCH)
 
                 else:
-                    if multi_file_search(
-                        args.files, args.pattern, print_line_number=args.line_number,
-                        ignore_case=args.ignore_case, invert_match=args.invert_match,
-                        count_only=args.count
+                    if search_multiple_files(
+                        args.files,
+                        args.pattern,
+                        print_line_number=args.line_number,
+                        ignore_case=args.ignore_case,
+                        invert_match=args.invert_match,
+                        count_only=args.count,
                     ):
                         sys.exit(EXIT_MATCH_FOUND)
                     else:
