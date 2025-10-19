@@ -1,6 +1,6 @@
 # grep-python
 
-A grep tool written in Python while following the [Codecrafters.io guide](https://app.codecrafters.io/courses/grep/overview) with some added functionality.
+A grep tool written in Python while following the [Codecrafters.io guide](https://app.codecrafters.io/courses/grep/overview) before being expanded upon with added functionality.
 
 ## Features
 
@@ -9,42 +9,92 @@ A grep tool written in Python while following the [Codecrafters.io guide](https:
 - **Multiple file support**: Search one or more files at once.
 - **Standard input support**: Reads from stdin if no files are specified.
 
-## Usage
+## Installation
 
-```sh
-python app.py -E PATTERN [FILE...]
+### From Source
+
+```bash
+git clone https://github.com/anbasement/grep-python.git
+cd grep-python
+chmod +x your_program.sh
 ```
 
-- `-E`: Indicates that the next argument is the regex pattern.
-- `PATTERN`: The regex pattern to search for.
-- `[FILE...]`: One or more files to search. If omitted, reads from stdin.
+## Usage
+
+### Basic Search
+
+```bash
+# Search for pattern in a file
+./your_program.sh -E "pattern" file.txt
+
+# Search multiple files
+./your_program.sh -E "pattern" file1.txt file2.txt
+
+# Search from stdin
+echo "hello world" | ./your_program.sh -E "hello"
+```
 
 ### Recursive Search
 
-To search recursively through directories, use the `-r` flag:
-
-```sh
-python app.py -r -E PATTERN DIRECTORY...
+```bash
+# Search all files in a directory recursively
+./your_program.sh -r -E "pattern" directory/
 ```
 
-### Examples
+### Pattern Examples
 
-Search for lines containing "hello" in `file.txt`:
+```bash
+# Anchors
+./your_program.sh -E "^start" file.txt    # Lines starting with "start"
+./your_program.sh -E "end$" file.txt      # Lines ending with "end"
 
-```sh
-python app.py -E hello file.txt
+# Character classes
+./your_program.sh -E "[aeiou]" file.txt   # Lines with vowels
+./your_program.sh -E "[^0-9]" file.txt    # Lines with non-digits
+
+# Quantifiers
+./your_program.sh -E "a+" file.txt        # One or more 'a'
+./your_program.sh -E "a?" file.txt        # Zero or one 'a'
+
+# Wildcards
+./your_program.sh -E "c.t" file.txt       # cat, cot, cut, etc.
+
+# Escape sequences
+./your_program.sh -E "\d+" file.txt       # One or more digits
+./your_program.sh -E "\w+" file.txt       # One or more word characters
+
+# Groups and alternation
+./your_program.sh -E "(cat|dog)" file.txt # cat or dog
+
+# Backreferences
+./your_program.sh -E "(cat) and \1" file.txt  # "cat and cat"
 ```
 
-Search recursively for lines matching a pattern in all files under `src/`:
+## Development
 
-```sh
-python app.py -r -E "^def " src/
+### Running Tests
+
+```bash
+# Run all tests
+python -m pytest tests/
+
+# Run specific test file
+python -m pytest tests/test_pattern_matcher.py
+
+# Run with coverage
+python -m pytest --cov=src tests/
 ```
 
-Pipe input from another command:
+### Code Style
 
-```sh
-cat file.txt | python app.py -E "pattern"
+This project follows PEP 8 style guidelines.
+
+```bash
+# Format code
+black src/
+
+# Lint code
+pylint src/
 ```
 
 ## Exit Codes
