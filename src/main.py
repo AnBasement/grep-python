@@ -1,26 +1,48 @@
 import sys
 from .pattern_matcher import match_pattern
 from .file_search import file_search, multi_file_search, search_in_directories
-from .constants import EXIT_MATCH_FOUND, EXIT_NO_MATCH, EXIT_ERROR
+from .constants import (
+    EXIT_MATCH_FOUND,
+    EXIT_NO_MATCH,
+    EXIT_ERROR,
+    ERROR_INVALID_PATTERN,
+    ERROR_SEARCH_FAILED,
+    ERROR_EXPECTED_E,
+    ERROR_EXPECTED_E_AFTER_R,
+    ERROR_USAGE
+)
 
 
 def main():
     try:
+
+        if len(sys.argv) < 2:
+            print(ERROR_USAGE, file=sys.stderr)
+            sys.exit(EXIT_ERROR)
+
         recursive = False
 
         if len(sys.argv) >= 2 and sys.argv[1] == "-r":
             recursive = True
 
             if len(sys.argv) < 3 or sys.argv[2] != "-E":
-                print("Expected '-E' after '-r'", file=sys.stderr)
+                print(ERROR_EXPECTED_E_AFTER_R, file=sys.stderr)
                 sys.exit(EXIT_NO_MATCH)
 
             pattern = sys.argv[3]
             search_paths = sys.argv[4:]
         else:
             if sys.argv[1] != "-E":
-                print("Expected first argument to be '-E'")
+                print(ERROR_EXPECTED_E, file=sys.stderr)
                 sys.exit(EXIT_NO_MATCH)
+
+            if sys.argv[1] != "-E":
+                print(ERROR_EXPECTED_E, file=sys.stderr)
+                sys.exit(EXIT_NO_MATCH)
+
+            if len(sys.argv) < 3:
+                print(ERROR_USAGE, file=sys.stderr)
+                sys.exit(EXIT_ERROR)
 
             pattern = sys.argv[2]
             search_paths = sys.argv[3:]
@@ -32,8 +54,8 @@ def main():
                     sys.exit(EXIT_MATCH_FOUND)
                 else:
                     sys.exit(EXIT_NO_MATCH)
-            except Exception as e:
-                print(f"Error matching pattern in input: {e}", file=sys.stderr)
+            except Exception:
+                print(f"grep: {ERROR_INVALID_PATTERN}", file=sys.stderr)
                 sys.exit(EXIT_ERROR)
 
         if recursive:
@@ -43,11 +65,8 @@ def main():
                 try:
                     if search_in_directories(path, pattern):
                         any_match_found = True
-                except Exception as e:
-                    print(
-                        f"Error searching in directory '{path}': {e}",
-                        file=sys.stderr
-                    )
+                except Exception:
+                    print(f"{path}: {ERROR_SEARCH_FAILED}", file=sys.stderr)
 
             if any_match_found:
                 sys.exit(EXIT_MATCH_FOUND)
@@ -71,11 +90,11 @@ def main():
                         sys.exit(EXIT_MATCH_FOUND)
                     else:
                         sys.exit(EXIT_NO_MATCH)
-            except Exception as e:
-                print(f"Error during file search: {e}", file=sys.stderr)
+            except Exception:
+                print(f"grep: {ERROR_SEARCH_FAILED}", file=sys.stderr)
                 sys.exit(EXIT_ERROR)
-    except Exception as e:
-        print(f"Unexpected error: {e}", file=sys.stderr)
+    except Exception:
+        print(f"grep: {ERROR_SEARCH_FAILED}", file=sys.stderr)
         sys.exit(EXIT_ERROR)
 
 

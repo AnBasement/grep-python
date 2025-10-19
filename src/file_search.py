@@ -9,9 +9,9 @@ def file_search(filename, pattern, print_filename=False):
     """
     if not os.path.isfile(filename):
         if os.path.isdir(filename):
-            print(f"{filename}: Is a directory", file=sys.stderr)
+            print(f"{filename}: is a directory", file=sys.stderr)
         else:
-            print(f"{filename}: Is not a valid file", file=sys.stderr)
+            print(f"{filename}: no such file or directory", file=sys.stderr)
         return False
 
     match_found = False
@@ -27,12 +27,10 @@ def file_search(filename, pattern, print_filename=False):
 
                     match_found = True
 
-    except FileNotFoundError:
-        print(f"{filename}: File not found", file=sys.stderr)
     except PermissionError:
-        print(f"{filename}: Permission denied", file=sys.stderr)
-    except Exception as e:
-        print(f"{filename}: Error reading file: {e}", file=sys.stderr)
+        print(f"{filename}: permission denied", file=sys.stderr)
+    except Exception:
+        print(f"{filename}: permission denied", file=sys.stderr)
     return match_found
 
 
@@ -61,11 +59,11 @@ def get_all_files_in_directory(directory):
     Finds all files in a directory and the subdirectories.
     """
     if not os.path.exists(directory):
-        print(f"{directory}: No such file or directory", file=sys.stderr)
+        print(f"{directory}: no such file or directory", file=sys.stderr)
         return []
 
     if not os.path.isdir(directory):
-        print(f"{directory}: Not a directory", file=sys.stderr)
+        print(f"{directory}: not a directory", file=sys.stderr)
         return []
 
     all_files = []
@@ -77,11 +75,11 @@ def get_all_files_in_directory(directory):
                 all_files.append(filepath)
 
     except PermissionError:
-        print(f"Permission denied: {directory}", file=sys.stderr)
+        print(f"{directory}: permission denied", file=sys.stderr)
         return []
 
-    except Exception as e:
-        print(f"{directory}: {e}", file=sys.stderr)
+    except Exception:
+        print(f"{directory}: permission denied", file=sys.stderr)
         return []
 
     return all_files
