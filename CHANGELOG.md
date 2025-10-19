@@ -8,6 +8,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Created `/docs` directory with comprehensive project documentation
+- `docs/pattern_syntax.md` - Regex syntax reference with examples
+- `docs/examples.md` - Usage examples and scenarios
+- `docs/architecture.md` - Internal design and code structure
+- `docs/api.md` - Developer API reference with function specifications
+- `docs/performance.md` - Performance optimization guide and benchmarking
+- `docs/contributing.md` - Development guidelines and contribution process
+- `docs/README.md` - Documentation navigation guide
+
+### Changed
+
+- Streamlined README.md, moved detailes to dedicated files in the docs/ folder
+- README now focuses on quick start and navigation
+- Removed redundant examples and syntax details from README
+- Updated all script references from `./your_program.sh` to `./pygrep.sh` across all documentation
+
 ## [0.1.2] - 2025-10-19
 
 ### Added

@@ -16,59 +16,35 @@ A grep tool written in Python while following the [Codecrafters.io guide](https:
 ```bash
 git clone https://github.com/anbasement/grep-python.git
 cd grep-python
-chmod +x your_program.sh
+chmod +x pygrep.sh
 ```
 
-## Usage
-
-### Basic Search
+## Quick Start
 
 ```bash
 # Search for pattern in a file
-./your_program.sh -E "pattern" file.txt
+./pygrep.sh -E "pattern" file.txt
 
 # Search multiple files
-./your_program.sh -E "pattern" file1.txt file2.txt
+./pygrep.sh -E "pattern" file1.txt file2.txt
 
 # Search from stdin
-echo "hello world" | ./your_program.sh -E "hello"
+echo "hello world" | ./pygrep.sh -E "hello"
+
+# Recursive search
+./pygrep.sh -r -E "pattern" directory/
 ```
 
-### Recursive Search
+## Documentation
 
-```bash
-# Search all files in a directory recursively
-./your_program.sh -r -E "pattern" directory/
-```
+Comprehensive documentation is available in the `/docs` folder:
 
-### Pattern Examples
-
-```bash
-# Anchors
-./your_program.sh -E "^start" file.txt    # Lines starting with "start"
-./your_program.sh -E "end$" file.txt      # Lines ending with "end"
-
-# Character classes
-./your_program.sh -E "[aeiou]" file.txt   # Lines with vowels
-./your_program.sh -E "[^0-9]" file.txt    # Lines with non-digits
-
-# Quantifiers
-./your_program.sh -E "a+" file.txt        # One or more 'a'
-./your_program.sh -E "a?" file.txt        # Zero or one 'a'
-
-# Wildcards
-./your_program.sh -E "c.t" file.txt       # cat, cot, cut, etc.
-
-# Escape sequences
-./your_program.sh -E "\d+" file.txt       # One or more digits
-./your_program.sh -E "\w+" file.txt       # One or more word characters
-
-# Groups and alternation
-./your_program.sh -E "(cat|dog)" file.txt # cat or dog
-
-# Backreferences
-./your_program.sh -E "(cat) and \1" file.txt  # "cat and cat"
-```
+- **[Pattern Syntax](docs/pattern_syntax.md)** - Complete regex syntax reference
+- **[Examples](docs/examples.md)** - Real-world usage examples
+- **[Architecture](docs/architecture.md)** - Internal design and code structure
+- **[API Reference](docs/api.md)** - Developer API documentation
+- **[Performance Guide](docs/performance.md)** - Optimization tips and benchmarking
+- **[Contributing](docs/contributing.md)** - Development guidelines
 
 ## Development
 
@@ -77,9 +53,6 @@ echo "hello world" | ./your_program.sh -E "hello"
 ```bash
 # Run all tests
 python -m pytest tests/
-
-# Run specific test file
-python -m pytest tests/test_pattern_matcher.py
 
 # Run with coverage
 python -m pytest --cov=src tests/
@@ -133,26 +106,7 @@ See [CHANGELOG.md](CHANGELOG.md) for version history.
 - Performance may not match native `grep` for large files or complex patterns.
 - Backreferences are currently limited to 9 groups.
 
-## TODO
-
-- [ ] Add error handling
-- [ ] Improve docstrings and add type hints
-- [ ] Print matching lines to stdout (like standard grep)
-- [ ] Add support for more regex features
-- [ ] Improve performance for large files
-- [ ] Add unit tests
-- [ ] Add support for colored output (maybe with Rich library?)
-- [ ] Create setup.py for pip install
-
-## Contributing
-
-Contributions are welcome! Please:
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests for new features
-5. Submit a pull request
+See the [Performance Guide](docs/performance.md) for optimization tips.
 
 ## License
 

@@ -79,7 +79,8 @@ Thumbs.db
 
 # Project specific
 test.txt
-docs/
+private_docs/
+.github/copilot-instructions.md
 
 # Version bumping
 .bumpversion-*.tmp
