@@ -19,19 +19,14 @@ def file_search(filename, pattern, print_filename=False):
         with open(filename, "r") as file:
             for line in file:
                 line = line.rstrip("\n")
-                try:
-                    if match_pattern(line, pattern):
-                        if print_filename:
-                            print(f"{filename}:{line}")
-                        else:
-                            print(line)
+                if match_pattern(line, pattern):
+                    if print_filename:
+                        print(f"{filename}:{line}")
+                    else:
+                        print(line)
 
-                        match_found = True
-                except Exception as e:
-                    print(
-                        f"{filename}: {e}",
-                        file=sys.stderr
-                    )
+                    match_found = True
+
     except FileNotFoundError:
         print(f"{filename}: File not found", file=sys.stderr)
     except PermissionError:
