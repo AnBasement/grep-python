@@ -24,8 +24,6 @@ def main():
             pattern = sys.argv[2]
             search_paths = sys.argv[3:]
 
-        print("Logs will appear here.", file=sys.stderr)
-
         if len(search_paths) == 0:
             input_line = sys.stdin.read()
             try:
