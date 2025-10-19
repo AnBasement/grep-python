@@ -9,9 +9,9 @@ def file_search(filename, pattern, print_filename=False):
     """
     if not os.path.isfile(filename):
         if os.path.isdir(filename):
-            print(f"'{filename}' is a directory", file=sys.stderr)
+            print(f"{filename}: Is a directory", file=sys.stderr)
         else:
-            print(f"'{filename}' is not a valid file", file=sys.stderr)
+            print(f"{filename}: Is not a valid file", file=sys.stderr)
         return False
 
     match_found = False
@@ -29,15 +29,15 @@ def file_search(filename, pattern, print_filename=False):
                         match_found = True
                 except Exception as e:
                     print(
-                        f"Error matching pattern in file '{filename}': {e}",
+                        f"{filename}: {e}",
                         file=sys.stderr
                     )
     except FileNotFoundError:
-        print(f"File not found: {filename}", file=sys.stderr)
+        print(f"{filename}: File not found", file=sys.stderr)
     except PermissionError:
-        print(f"Permission denied: {filename}", file=sys.stderr)
+        print(f"{filename}: Permission denied", file=sys.stderr)
     except Exception as e:
-        print(f"Error reading file '{filename}': {e}", file=sys.stderr)
+        print(f"{filename}: Error reading file: {e}", file=sys.stderr)
     return match_found
 
 
