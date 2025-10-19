@@ -1,4 +1,9 @@
-def parse_pattern(pattern, group_number=None):
+from typing import Optional
+
+
+def parse_pattern(
+    pattern: str, group_number: Optional[int] = None
+) -> tuple[list[dict], bool, bool]:
     """
     Parses the input pattern into tokens and detects start and
     end anchors.
@@ -90,7 +95,7 @@ def parse_pattern(pattern, group_number=None):
     return tokens, has_start_anchor, has_end_anchor
 
 
-def find_matching_parentheses(pattern, start_index):
+def find_matching_parentheses(pattern: str, start_index: int) -> int:
     """
     Finds the index of the closing parentheses matching a given
     opening parenthesis in the pattern string.
@@ -110,7 +115,7 @@ def find_matching_parentheses(pattern, start_index):
     raise ValueError(f"Unmatched opening parenthesis at position {start_index}")
 
 
-def split_alternatives(pattern):
+def split_alternatives(pattern: str) -> list[str]:
     """
     Divides the input pattern into separate branches based on
     the alternation operator (|) on the top level.

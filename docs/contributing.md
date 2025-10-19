@@ -190,13 +190,14 @@ def test_pattern_matching_with_quantifiers():
 Example docstring:
 
 ```python
-def match_pattern(input_line: str, pattern: str) -> bool:
+def match_pattern(input_line: str, pattern: str, ignore_case: bool = False) -> bool:
     """
     Check if a pattern matches anywhere in the input line.
     
     Args:
         input_line: The string to search within
         pattern: Regular expression pattern to match
+        ignore_case: Whether to ignore case distinctions
         
     Returns:
         True if pattern matches, False otherwise

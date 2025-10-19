@@ -15,7 +15,7 @@ from .constants import (
 from .cli import parse_arguments
 
 
-def main():
+def main() -> None:
     try:
         args = parse_arguments()
 

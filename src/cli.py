@@ -1,16 +1,9 @@
-import sys
-from .constants import (
-    EXIT_ERROR,
-    ERROR_USAGE,
-    ERROR_EXPECTED_E_AFTER_R,
-    ERROR_EXPECTED_E,
-)
 import importlib
 import argparse
 import textwrap
 
 
-def get_version():
+def get_version() -> str:
     try:
         version_str = importlib.import_module("src").__version__
     except Exception:
@@ -18,7 +11,7 @@ def get_version():
     return version_str
 
 
-def parse_arguments():
+def parse_arguments() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         prog="pygrep",
         description="Search for patterns in files using custom regex engine",

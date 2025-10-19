@@ -1,7 +1,15 @@
+from typing import Tuple, List, Dict
 from .pattern_parser import parse_pattern
 
 
-def try_match(tokens, input_line, has_end_anchor, token_index, j, captures):
+def try_match(
+    tokens: List[Dict],
+    input_line: str,
+    has_end_anchor: bool,
+    token_index: int,
+    j: int,
+    captures: Dict[int, str],
+) -> bool:
     """
     Goes back and attempts to match a token sequence to the input line.
 
@@ -191,7 +199,13 @@ def try_match(tokens, input_line, has_end_anchor, token_index, j, captures):
         )
 
 
-def try_match_sequence_with_limit(tokens, input_line, start_j, max_len, captures):
+def try_match_sequence_with_limit(
+    tokens: List[Dict],
+    input_line: str,
+    start_j: int,
+    max_len: int,
+    captures: Dict[int, str],
+) -> Tuple[bool, int]:
     """
     Similar to try_match_sequence, but has a maximum length.
     """
@@ -308,7 +322,9 @@ def try_match_sequence_with_limit(tokens, input_line, start_j, max_len, captures
     return (True, j)
 
 
-def try_match_sequence(tokens, input_line, start_j, captures):
+def try_match_sequence(
+    tokens: List[Dict], input_line: str, start_j: int, captures: Dict[int, str]
+) -> Tuple[bool, int]:
     """
     Matches a sequence of tokens against the input line at
     position start_j. Similar to the try_match() function, but
@@ -434,7 +450,7 @@ def try_match_sequence(tokens, input_line, start_j, captures):
     return (True, j)
 
 
-def match_pattern(input_line, pattern, ignore_case=False):
+def match_pattern(input_line: str, pattern: str, ignore_case: bool = False) -> bool:
     """
     Main function for pattern matching.
 
@@ -459,7 +475,7 @@ def match_pattern(input_line, pattern, ignore_case=False):
     return False
 
 
-def character_matches_token(char, token):
+def character_matches_token(char: str, token: Dict) -> bool | None:
     """
     Checks if a character matches a token. Handles literal characters,
     escaped tokens like \\d and \\w, character classes like [abc] and
@@ -492,7 +508,7 @@ def character_matches_token(char, token):
         return True
 
 
-def calculate_min_match_length(tokens):
+def calculate_min_match_length(tokens: List[Dict]) -> int:
     """
     Counts every token and treat quantifiers (like +) as requiring the
     correct amount of matches to determine the valid starting indices for
@@ -526,7 +542,9 @@ def calculate_min_match_length(tokens):
     return length
 
 
-def calculate_start_indices(input_length, min_length, has_start_anchor, has_end_anchor):
+def calculate_start_indices(
+    input_length: int, min_length: int, has_start_anchor: bool, has_end_anchor: bool
+) -> list | range:
     """
     Calculates potential starting index for pattern matching.
 
@@ -542,7 +560,7 @@ def calculate_start_indices(input_length, min_length, has_start_anchor, has_end_
         return range(input_length - min_length + 1)
 
 
-def count_greedy_matches(input_line, j, token):
+def count_greedy_matches(input_line: str, j: int, token: Dict) -> int:
     """
     Iterates from position j and counts the max number of consecutive
     matches for a token. Used in the logic for pattern matching for

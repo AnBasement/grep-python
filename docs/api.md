@@ -11,7 +11,7 @@ Converts regex strings into token lists that the matcher can use.
 
 #### Functions
 
-##### `parse_pattern(pattern: str) -> Tuple[List[Dict], bool, bool]`
+##### `parse_pattern(pattern: str, group_number: Optional[int] = None) -> tuple[list[dict], bool, bool]`
 
 Main function for parsing patterns.
 
@@ -54,7 +54,7 @@ Finds the closing parenthesis for a group.
 
 - `ValueError`: If no matching parenthesis found
 
-##### `split_alternatives(pattern: str) -> List[str]`
+##### `split_alternatives(pattern: str) -> list[str]`
 
 Splits pattern on pipe characters for alternation.
 
@@ -106,7 +106,7 @@ result = match_pattern("Hello World", "hello", ignore_case=True)
 # result: True
 ```
 
-##### `try_match(tokens, input_line, has_end_anchor, token_index, j, captures) -> bool`
+##### `try_match(tokens: List[Dict], input_line: str, has_end_anchor: bool, token_index: int, j: int, captures: Dict[int, str]) -> bool`
 
 Internal recursive matching function.
 
@@ -123,7 +123,7 @@ Internal recursive matching function.
 
 - `True` if remaining pattern matches from current position
 
-##### `character_matches_token(char: str, token: Dict) -> bool`
+##### `character_matches_token(char: str, token: Dict) -> bool | None`
 
 Tests if a character matches a token.
 
@@ -177,7 +177,7 @@ Handles file operations and search across files with output formatting.
 
 #### Functions
 
-##### `search_file(filename, pattern, print_filename=False, print_line_number=False, ignore_case=False, invert_match=False, count_only=False) -> bool`
+##### `search_file(filename: str, pattern: str, print_filename: bool = False, print_line_number: bool = False, ignore_case: bool = False, invert_match: bool = False, count_only: bool = False) -> bool`
 
 Searches a file for pattern matches with configurable output options.
 
@@ -224,7 +224,7 @@ found = search_file("file.txt", "TODO", ignore_case=True, count_only=True)
 found = search_file("config.txt", "^#", invert_match=True)
 ```
 
-##### `search_multiple_files(filenames, pattern, print_line_number=False, ignore_case=False, invert_match=False, count_only=False) -> bool`
+##### `search_multiple_files(filenames: List[str], pattern: str, print_line_number: bool = False, ignore_case: bool = False, invert_match: bool = False, count_only: bool = False) -> bool`
 
 Searches multiple files for pattern matches.
 
@@ -247,7 +247,7 @@ Searches multiple files for pattern matches.
 - Continues searching remaining files after errors
 - Passes all flags to `search_file()`
 
-##### `search_directory_recursively(directories, pattern, print_line_number=False, ignore_case=False, invert_match=False, count_only=False) -> bool`
+##### `search_directory_recursively(directory: str, pattern: str, print_line_number: bool = False, ignore_case: bool = False, invert_match: bool = False, count_only: bool = False) -> bool`
 
 Recursively searches directories for pattern matches.
 
@@ -270,7 +270,7 @@ Recursively searches directories for pattern matches.
 - Searches each file with `search_file()`
 - Passes all flags through
 
-##### `get_files_recursively(directory) -> list[str]`
+##### `get_files_recursively(directory: str) -> List[str]`
 
 Recursively finds all files in a directory.
 

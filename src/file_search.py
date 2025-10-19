@@ -1,17 +1,18 @@
+from typing import List
 import os
 import sys
 from .pattern_matcher import match_pattern
 
 
 def search_file(
-    filename,
-    pattern,
-    print_filename=False,
-    print_line_number=False,
-    ignore_case=False,
-    invert_match=False,
-    count_only=False,
-):
+    filename: str,
+    pattern: str,
+    print_filename: bool = False,
+    print_line_number: bool = False,
+    ignore_case: bool = False,
+    invert_match: bool = False,
+    count_only: bool = False,
+) -> bool:
     """
     Searches a file for lines matching a given pattern.
     """
@@ -64,13 +65,13 @@ def search_file(
 
 
 def search_multiple_files(
-    filenames,
-    pattern,
-    print_line_number=False,
-    ignore_case=False,
-    invert_match=False,
-    count_only=False,
-):
+    filenames: List[str],
+    pattern: str,
+    print_line_number: bool = False,
+    ignore_case: bool = False,
+    invert_match: bool = False,
+    count_only: bool = False,
+) -> bool:
     """
     Searches through multiple files for lines matching the pattern.
     """
@@ -92,9 +93,9 @@ def search_multiple_files(
     return match_found
 
 
-def get_files_recursively(directory):
+def get_files_recursively(directory: str) -> List[str]:
     """
-    Finds all files in a directory and the subdirectories.
+    Recursively finds all files in a directory and subdirectories.
     """
     if not os.path.exists(directory):
         print(f"{directory}: no such file or directory", file=sys.stderr)
@@ -124,13 +125,13 @@ def get_files_recursively(directory):
 
 
 def search_directory_recursively(
-    directory,
-    pattern,
-    print_line_number=False,
-    ignore_case=False,
-    invert_match=False,
-    count_only=False,
-):
+    directory: str,
+    pattern: str,
+    print_line_number: bool = False,
+    ignore_case: bool = False,
+    invert_match: bool = False,
+    count_only: bool = False,
+) -> bool:
     """
     Recursively search files in a directory for lines matching
     the given pattern.
