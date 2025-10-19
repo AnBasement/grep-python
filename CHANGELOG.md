@@ -8,7 +8,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Unit tests for `parse_arguments()` function in `test_cli.py`
+
+### Changed
+
+- Extracted argument parsing logic from `main.py` to dedicated `parse_arguments()` function in `cli.py`
+- Improved code organization and testability of CLI argument handling
+
+### Fixed
+
+- Fixed `.bumpversion.toml` missing a `=` and incorrectly updating `__init__.py`
+- IndexError in `cli.py` when pattern argument is missing after `-E` flag
+
 ## [0.2.1] - 2025-10-19
+
+### Fixed
+
+- Test failures in `test_file_search.py` due to error message format changes
+- Test failures in `test_main_cli.py` due to exit code changes
+- Version mismatch in `test_init.py` (updated to 0.2.0)
+- Updated `.bumpversion.toml` to update `__init__.py` on version bump
 
 ## [0.2.0] - 2025-10-19
 

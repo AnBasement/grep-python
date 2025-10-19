@@ -16,7 +16,7 @@ replace = "__version__ = \"{new_version}\""
 [[tool.bumpversion.files]]
 filename = "tests/test_init.py"
 search = "__version__ == \"{current_version}\""
-replace = "__version__ = \"{new_version}\""
+replace = "__version__ == \"{new_version}\""
 
 [[tool.bumpversion.files]]
 filename = "CHANGELOG.md"

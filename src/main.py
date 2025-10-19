@@ -11,11 +11,12 @@ from .constants import (
     ERROR_EXPECTED_E_AFTER_R,
     ERROR_USAGE,
 )
+from .cli import parse_arguments
 
 
 def main():
     try:
-
+        recursive, pattern, search_paths = parse_arguments()
         if len(sys.argv) < 2:
             print(ERROR_USAGE, file=sys.stderr)
             sys.exit(EXIT_ERROR)
