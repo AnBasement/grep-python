@@ -980,32 +980,6 @@ def main():
         print(f"Unexpected error: {e}", file=sys.stderr)
         exit(2)
 
-    if len(sys.argv) >= 4:
-        filenames = sys.argv[3:]
-
-        number_of_files = len(filenames)
-
-        if number_of_files == 1:
-            filename = filenames[0]
-            if file_search(filename, pattern, print_filename=False):
-                exit(0)
-            else:
-                exit(1)
-
-        else:
-            if multi_file_search(filenames, pattern):
-                exit(0)
-            else:
-                exit(1)
-
-    else:
-        input_line = sys.stdin.read()
-
-        if match_pattern(input_line, pattern):
-            exit(0)
-        else:
-            exit(1)
-
 
 if __name__ == "__main__":
     main()
