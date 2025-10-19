@@ -802,6 +802,13 @@ def file_search(filename, pattern, print_filename=False):
     """
     Searches a file for lines matching a given pattern.
     """
+    if not os.path.isfile(filename):
+        if os.path.isdir(filename):
+            print(f"'{filename}' is a directory", file=sys.stderr)
+        else:
+            print(f"'{filename}' is not a valid file", file=sys.stderr)
+        return False
+    
     match_found = False
     try:
         with open(filename, "r") as file:
