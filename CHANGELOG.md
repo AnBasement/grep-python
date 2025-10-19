@@ -1,0 +1,44 @@
+# Changelog
+
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [0.1.0] - 2025-10-19
+
+### Added
+
+- Initial implementation of grep-python with custom regex engine
+- Pattern parsing with support for:
+  - Literal characters and escape sequences (`\d`, `\w`)
+  - Character classes (`[abc]`, `[^xyz]`)
+  - Wildcards (`.`)
+  - Anchors (`^` start, `$` end)
+  - Groups with alternation `(ab|cd)`
+  - Quantifiers (`+` one or more, `?` zero or one)
+  - Backreferences (`\1`, `\2`, etc.)
+- File search capabilities:
+  - Single file search
+  - Multiple file search
+  - Recursive directory search (`-r` flag)
+  - Standard input support
+- Command-line interface with `-E` flag for extended regex
+- Comprehensive test suite with excellent coverage:
+  - Unit tests for all modules
+  - Integration tests for CLI functionality
+  - Error condition and edge case testing
+- Proper error handling for file operations and pattern matching
+- Exit codes compatible with standard grep (0=match, 1=no match, 2=error)
+- Shell script wrapper (`pygrep.sh`) for easy execution
+- Modular code organization split into logical components:
+  - `src/pattern_parser.py` - Pattern tokenization and parsing
+  - `src/pattern_matcher.py` - Matching algorithms and logic
+  - `src/file_search.py` - File operations and directory traversal
+  - `src/main.py` - Main entry point and CLI logic
+  - `src/constants.py` - Constants and exit codes
+- pytest test framework with coverage reporting
+- Code formatting with black
+- Linting with pylint
+- Virtual environment support
+- MIT License

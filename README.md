@@ -97,6 +97,26 @@ black src/
 pylint src/
 ```
 
+### Version Management
+
+This project uses [bump-my-version](https://github.com/callowayproject/bump-my-version) for version management.
+
+```bash
+# Show current version and bump options
+bump-my-version show-bump
+
+# Bump patch version (0.1.0 -> 0.1.1)
+bump-my-version bump patch
+
+# Bump minor version (0.1.0 -> 0.2.0) 
+bump-my-version bump minor
+
+# Bump major version (0.1.0 -> 1.0.0)
+bump-my-version bump major
+```
+
+See [CHANGELOG.md](CHANGELOG.md) for version history.
+
 ## Exit Codes
 
 - `0`: At least one match found.
