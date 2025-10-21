@@ -8,6 +8,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Added comprehensive docstrings to all 18 functions across `src/` modules
+- Documented all function parameters, return values, and usage examples
+- Standardized docstring format following Google/NumPy style guide
+
+### Changed
+
+- Enhanced code documentation for better maintainability and developer experience
+- All functions now have clear descriptions of behavior, inputs, and outputs
+
 ## [0.3.2] - 2025-10-19
 
 ### Added
