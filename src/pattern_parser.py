@@ -5,17 +5,23 @@ def parse_pattern(
     pattern: str, group_number: Optional[list[int]] = None
 ) -> tuple[list[dict], bool, bool]:
     """
-    Parses the input pattern into tokens and detects start and
-    end anchors.
+    Converts a pattern string into a list of tokens.
 
-    Does this by scanning the pattern string and extracting
-    escaped characters, character classes and quantifiers
-    that are then placed in a token list.
-    Also detects start of string anchor (^) and end of string
-    anchor ($).
+    Scans each character of the pattern to identify literals, escaped
+    sequences (e.g., `\\d`, `\\w`), character classes, wildcards, groups with
+    alternatives and backreferences. Detects anchors for start-of-line (^) and
+    end-of-line ($) separately.
 
-    Tokenizing the pattern simplifies the following matching logic
-    and separates handling of anchors from the main matching algorithm.
+    Args:
+        pattern (str): The pattern to tokenize.
+        group_number (Optional[list[int]]): A list used to assign unique numbers
+            to capturing groups during recursion. Defaults to None.
+
+    Returns:
+        tuple[list[dict], bool, bool]:
+            - A list of token dictionaries representing the parsed pattern.
+            - A boolean indicating if pattern has a start-of-line anchor (^).
+            - A boolean indicating if pattern has an end-of-line anchor ($).
     """
     if group_number is None:
         group_number = [0]
@@ -97,8 +103,18 @@ def parse_pattern(
 
 def find_matching_parentheses(pattern: str, start_index: int) -> int:
     """
-    Finds the index of the closing parentheses matching a given
-    opening parenthesis in the pattern string.
+    Finds the index of a closing parenthesis to match an opening parenthesis.
+
+    Scans the pattern starting after `start_index` and tracks nested parentheses
+    with a depth counter, which ensures correct matching with nested groups.
+    An error is raised if no closing parenthesis is found.
+
+    Args:
+        pattern (str): The pattern containing parentheses.
+        start_index (int): The index of the opening parenthesis to match against.
+
+    Returns:
+        int: The index of the corresponding closing parenthesis in the pattern.
     """
     depth = 1
     i = start_index + 1
@@ -117,13 +133,17 @@ def find_matching_parentheses(pattern: str, start_index: int) -> int:
 
 def split_alternatives(pattern: str) -> list[str]:
     """
-    Divides the input pattern into separate branches based on
-    the alternation operator (|) on the top level.
+    Splits a pattern into alternatives using the `|` operator.
 
-    In case of a pattern like stricter|(gun|laws), this will split
-    it into ["stricter", "(gun|laws)"] instead of
-    ["stricter", "(gun", "laws)"] as the inner | belongs in the
-    nested group.
+    Searches through the pattern and keeps track of nested parentheses depth
+    to make sure that only the top-level `|` characters are used for splitting.
+    This is done to prevent splitting inside grouped subpatterns.
+
+    Args:
+        pattern (str): The pattern to split at top-level alternations.
+
+    Returns:
+        list[str]: A list of strings representing the separate alternatives.
     """
     alternatives = []
     current_alternative = ""
