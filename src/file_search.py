@@ -14,7 +14,25 @@ def search_file(
     count_only: bool = False,
 ) -> bool:
     """
-    Searches a file for lines matching a given pattern.
+    Search a file for lines matching a pattern.
+
+    Opens and reads file one line at a time, calling `match_pattern()` 
+    with optional flags for case-insensitive and inverted matching.
+    Then prints matched lines either with filename and line numbers (optional)
+    or a total count of matches. Missing files, directories and permissions
+    are handled to prevent interruption.
+
+    Args:
+        filename (str): Path to the file being searched.
+        pattern (str): Regex pattern to match.
+        print_filename (bool): Prefix output with filename if True.
+        print_line_number (bool): Prefix output with line number if True.
+        ignore_case (bool): Ignore case sensitivity if True.
+        invert_match (bool): Print lines that don't match if True.
+        count_only (bool): Print only the number of matching lines.
+
+    Returns:
+        bool: True if at least one matching line is found, otherwise False.
     """
     if not os.path.isfile(filename):
         if os.path.isdir(filename):
@@ -73,7 +91,22 @@ def search_multiple_files(
     count_only: bool = False,
 ) -> bool:
     """
-    Searches through multiple files for lines matching the pattern.
+    Searches through multiple files for lines matching a given pattern.
+
+    Calls `search_file()` for the actual searching logic after iterating
+    over all provided filenames. Collects results and returns True if any
+    file contains a line matching the pattern.
+
+    Args:
+        filenames (List[str]): Paths of files to search.
+        pattern (str): Regex pattern to match.
+        print_line_number (bool): Include line numbers in output if True.
+        ignore_case (bool): Ignore case sensitivity if True.
+        invert_match (bool): Print lines that don't match if True.
+        count_only (bool): Print only the number of matching lines.
+
+    Returns:
+        bool: True if at least one matching line is found, else False.
     """
     match_found = False
 
@@ -95,7 +128,18 @@ def search_multiple_files(
 
 def get_files_recursively(directory: str) -> List[str]:
     """
-    Recursively finds all files in a directory and subdirectories.
+    Recursively collect all file paths under a given directory.
+
+    Uses the os module with `os.walk()` to scan the directory tree and
+    collects full file paths. Handles missing paths or permission errors.
+
+    Args:
+        directory (str): Path to the root directory to scan.
+
+    Returns:
+        List[str]: A list of absolute file paths found in the directory
+        and subdirectories. Returns an empty list if no files are found
+        or an error is encountered.
     """
     if not os.path.exists(directory):
         print(f"{directory}: no such file or directory", file=sys.stderr)
@@ -133,8 +177,22 @@ def search_directory_recursively(
     count_only: bool = False,
 ) -> bool:
     """
-    Recursively search files in a directory for lines matching
-    the given pattern.
+    Recursively search all files in a directory for lines matching a pattern.
+
+    Calls `get_files_recursively()` to collect file paths in a given directory,
+    then calls `search_file()` to find matching lines in each file.
+    Returns True if a match is found in any of the files.
+
+    Args:
+        filenames (List[str]): Paths of files to search.
+        pattern (str): Regex pattern to match.
+        print_line_number (bool): Include line numbers in output if True.
+        ignore_case (bool): Ignore case sensitivity if True.
+        invert_match (bool): Print lines that don't match if True.
+        count_only (bool): Print only the number of matching lines.
+
+    Returns:
+        bool: True if at least one matching line is found, else False.
     """
     files = get_files_recursively(directory)
     any_match_found = False
