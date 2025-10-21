@@ -8,6 +8,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Removed unused argument `has_end_anchor` from function `calculate_start_indices()`.
+- Improved error handling in `get_version()` by catching only `ModuleNotFoundError` and `AttributeError` instead of all exceptions.
+- Updated file reading in `search_file()` to specify `encoding="utf-8"` and handle `UnicodeDecodeError` gracefully, ensuring consistent behavior across platforms.
+- Improved error handing in `search_file()` and `get_files_recursively()` by catching `PermissionError` and `OSError` instead of all exceptions.
+- Resolved pylint warning about unused `dirs` variable in `get_files_recursively()` by prefixing with underscore.
+- Specifying `encoding="utf-8"` in `search_file()` and handling encoding mismatch with `UnicodeDecodeError`.
+- Replaced broad `except Exception:` blocks in `main.py` with specific exception handling (`ValueError`, `IndexError`, `KeyError` for pattern errors; `PermissionError`, `OSError`, `FileNotFoundError` for file system errors) for more precise error reporting.
+- Resolved pylint warnings in `main.py` by removing unused exception variable captures and eliminating redundant exception re-raise handler.
+
 ## [0.3.3] - 2025-10-21
 
 ### Added

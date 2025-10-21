@@ -44,7 +44,7 @@ def search_file(
     match_count = 0
     match_found = False
     try:
-        with open(filename, "r") as file:
+        with open(filename, "r", encoding="utf-8") as file:
             for idx, line in enumerate(file, start=1):
                 line = line.rstrip("\n")
                 matches = match_pattern(line, pattern, ignore_case=ignore_case)
@@ -65,11 +65,11 @@ def search_file(
                         output += line
                         print(output)
 
-    except PermissionError:
+    except (PermissionError, OSError):
         print(f"{filename}: permission denied", file=sys.stderr)
         return False
-    except Exception:
-        print(f"{filename}: permission denied", file=sys.stderr)
+    except UnicodeDecodeError:
+        print(f"{filename}: could not decode file with UTF-8 encoding", file=sys.stderr)
         return False
 
     if count_only:
@@ -152,16 +152,12 @@ def get_files_recursively(directory: str) -> List[str]:
     all_files = []
 
     try:
-        for root, dirs, files in os.walk(directory):
+        for root, _dirs, files in os.walk(directory):
             for filename in files:
                 filepath = os.path.join(root, filename)
                 all_files.append(filepath)
 
-    except PermissionError:
-        print(f"{directory}: permission denied", file=sys.stderr)
-        return []
-
-    except Exception:
+    except (PermissionError, OSError):
         print(f"{directory}: permission denied", file=sys.stderr)
         return []
 

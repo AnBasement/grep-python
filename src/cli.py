@@ -13,7 +13,7 @@ def get_version() -> str:
     """
     try:
         version_str = importlib.import_module("src").__version__
-    except Exception:
+    except (ModuleNotFoundError, AttributeError):
         version_str = "unknown"
     return version_str
 

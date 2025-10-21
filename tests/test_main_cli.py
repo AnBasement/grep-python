@@ -68,7 +68,7 @@ class TestMainCLI:
 
     def test_unexpected_error_caught(self, monkeypatch):
         def boom(*args, **kwargs):
-            raise RuntimeError("boom")
+            raise ValueError("boom")
 
         from src import main as mainmod
 

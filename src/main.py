@@ -48,7 +48,7 @@ def main() -> None:
                             match_count += 1
                         else:
                             print(line)
-                except Exception:
+                except (ValueError, IndexError, KeyError):
                     print(f"grep: {ERROR_INVALID_PATTERN}", file=sys.stderr)
                     sys.exit(EXIT_ERROR)
 
@@ -72,7 +72,7 @@ def main() -> None:
                         count_only=args.count,
                     ):
                         any_match_found = True
-                except Exception:
+                except (PermissionError, OSError, FileNotFoundError):
                     print(f"{path}: {ERROR_SEARCH_FAILED}", file=sys.stderr)
 
             if any_match_found:
@@ -110,10 +110,10 @@ def main() -> None:
                         sys.exit(EXIT_MATCH_FOUND)
                     else:
                         sys.exit(EXIT_NO_MATCH)
-            except Exception:
+            except (PermissionError, OSError, FileNotFoundError):
                 print(f"grep: {ERROR_SEARCH_FAILED}", file=sys.stderr)
                 sys.exit(EXIT_ERROR)
-    except Exception:
+    except (PermissionError, OSError, FileNotFoundError):
         print(f"grep: {ERROR_SEARCH_FAILED}", file=sys.stderr)
         sys.exit(EXIT_ERROR)
 

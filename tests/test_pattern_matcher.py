@@ -68,12 +68,12 @@ class TestHelperFunctions:
     def test_start_indices_with_and_without_anchor(self):
         tokens, start, end = parse_pattern("^abc")
         min_len = calculate_min_match_length(tokens)
-        indices = list(calculate_start_indices(5, min_len, start, end))
+        indices = list(calculate_start_indices(5, min_len, start))
         assert indices == [0]
 
         tokens, start, end = parse_pattern("abc")
         min_len = calculate_min_match_length(tokens)
-        indices = list(calculate_start_indices(5, min_len, start, end))
+        indices = list(calculate_start_indices(5, min_len, start))
         assert indices == list(range(5 - min_len + 1))
 
     def test_count_greedy_matches(self):
