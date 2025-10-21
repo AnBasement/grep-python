@@ -514,7 +514,7 @@ def match_pattern(input_line: str, pattern: str, ignore_case: bool = False) -> b
     tokens, has_start_anchor, has_end_anchor = parse_pattern(pattern)
     min_length = calculate_min_match_length(tokens)
     start_indices = calculate_start_indices(
-        len(input_line), min_length, has_start_anchor, has_end_anchor
+        len(input_line), min_length, has_start_anchor
     )
 
     for start_index in start_indices:
@@ -565,6 +565,7 @@ def character_matches_token(char: str, token: Dict) -> bool | None:
 
     elif token_type == "wildcard":
         return True
+    return None
 
 
 def calculate_min_match_length(tokens: List[Dict]) -> int:
@@ -611,7 +612,7 @@ def calculate_min_match_length(tokens: List[Dict]) -> int:
 
 
 def calculate_start_indices(
-    input_length: int, min_length: int, has_start_anchor: bool, has_end_anchor: bool
+    input_length: int, min_length: int, has_start_anchor: bool
 ) -> list | range:
     """
     Calculates valid starting positions for pattern matching in a string.
@@ -625,7 +626,6 @@ def calculate_start_indices(
         input_length (int): Length of the input string to match against.
         min_length (int): Minimum number of characters required for a match.
         has_start_anchor (bool): Whether the pattern starts with '^'.
-        has_end_anchor (bool): Whether the pattern ends with '$'.
 
     Returns:
         list[int] | range: Valid starting indices for attempting a match.
