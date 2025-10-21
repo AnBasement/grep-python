@@ -11,11 +11,27 @@ def try_match(
     captures: Dict[int, str],
 ) -> bool:
     """
-    Goes back and attempts to match a token sequence to the input line.
+    Matches a tokenized regex pattern against an input line.
 
-    Checks for quantifiers and matches on every token.
-    count_greedy_matches for '+' quantifiers, and character_matches for
-    the rest.
+    Processes single tokens one at a time and handles grouping, quantifiers
+    and backreferences. Calls helper functions to test subpatterns and track
+    captured groups. True is only returned if the full token sequence is a
+    match and respects start/end anchors if specified.
+
+    This function is the backbone of this regex engine. It models how it
+    backtracks and evaluates nested patterns.
+
+    Args:
+        tokens (List[Dict]): Parsed regex tokens to evaluate.
+        input_line (str): The string to test against the pattern.
+        has_end_anchor (bool): Whether the pattern has a line-end match.
+        token_index (int): Current index in the token list.
+        j (int): Current character position in the input string.
+        captures (Dict[int, str]): Active capture groups and their matched text.
+
+    Returns:
+        bool: True if the remaining tokens successfully match the input,
+        else False.
     """
     if token_index == len(tokens):
         if has_end_anchor:
@@ -207,7 +223,22 @@ def try_match_sequence_with_limit(
     captures: Dict[int, str],
 ) -> Tuple[bool, int]:
     """
-    Similar to try_match_sequence, but has a maximum length.
+    Works similar to `try_match_sequence()`, but has a hard limit (`max_len`)
+    that prevents over-matching. Matches a sequence of regex tokens against a
+    substring of the input and stops when max_len is reached. Utilizes recursive
+    descent for evaluation of groups, backreferences and quantifiers.
+
+    Args:
+        tokens (List[Dict]): Parsed regex tokens to evaluate.
+        input_line (str): The string to test against the pattern.
+        start_j (int): The starting index for matching.
+        max_len (int): The maximum allowed span to match within.
+        captures (Dict[int, str]): Active capture groups and their matched text.
+
+    Returns:
+        A tuple `(success, new_index)` where:
+            - `success`: True if token sequence matched within limits.
+            - `new_index`: Position in `input_line` after match.
     """
     j = start_j
     first_captures = captures.copy()
@@ -326,16 +357,25 @@ def try_match_sequence(
     tokens: List[Dict], input_line: str, start_j: int, captures: Dict[int, str]
 ) -> Tuple[bool, int]:
     """
-    Matches a sequence of tokens against the input line at
-    position start_j. Similar to the try_match() function, but
-    returns the specific ending position instead of a boolean.
+    Matches a sequence of regex tokens against an input line
+    starting from a given index (`start_j`). Similar to `try_match()`,
+    but tracks how far the match extends and keeps captured groups for later
+    reference.
 
-    Used for matching groups to find the position we end up
-    at after a match.
+    Iterates through tokens recursively and evaluates grousp, quantifiers and
+    backreferences in sequence. Upon a failed match it restores previous capture
+    states to ensure backtracking.
 
-    For instance, with input_line "catdog" and "cat" as tokens
-    and start_j as 0 we return "True, j=3" as three characters
-    were matched.
+    Args:
+        tokens (List[Dict]): Parsed regex tokens to evaluate.
+        input_line (str): The string to test against the pattern.
+        start_j (int): The starting index for matching.
+        captures (Dict[int, str]): Active capture groups and their matched text.
+
+    Returns:
+        A tuple `(success, new_index)` where:
+            - `success`: True if token sequence matched within limits.
+            - `new_index`: Position in `input_line` after match.
     """
     j = start_j
     first_captures = captures.copy()
@@ -452,10 +492,20 @@ def try_match_sequence(
 
 def match_pattern(input_line: str, pattern: str, ignore_case: bool = False) -> bool:
     """
-    Main function for pattern matching.
+    The main function for pattern matching. Determines if an input string (`input_line`)
+    matches a given regex pattern.
 
-    Parses the pattern and calculates minimum match length and indices.
-    Calls try_match for each start index.
+    Pattern is parsed into tokens and evaluated against the input at every possible
+    starting position while respecting anchors. Calls `try_match()` for the actual
+    matching. Can optionally ignore case.
+
+    Args:
+        input_line (str): The string to test against the pattern.
+        pattern (str): The regex pattern to match against.
+        ignore_case (bool, optional): If True, ignores case. Defaults to False.
+
+    Returns:
+        bool: True if pattern matches anywhere in the input line; else False.
     """
     if ignore_case:
         input_line = input_line.lower()
@@ -477,11 +527,20 @@ def match_pattern(input_line: str, pattern: str, ignore_case: bool = False) -> b
 
 def character_matches_token(char: str, token: Dict) -> bool | None:
     """
-    Checks if a character matches a token. Handles literal characters,
-    escaped tokens like \\d and \\w, character classes like [abc] and
-    [^xyz], negated classes and wildcards
+    Checks if a single character matches a regex token.
 
-    This collects all character-to-token logic in one place.
+    Handles literals, escaped sequences (e.g., `\\d`, `\\w`), character classes
+    (incl. negated) and wildcards. Gathers all character-level matching logic
+    for the engine.
+
+    Args:
+        char (str): The character from the input string.
+        token (Dict): A parsed token dictionary specifying the type of match
+            (literal, escape, char_class, wildcard) and associated value.
+
+    Returns:
+        bool | None: True if the character matches the token, False if it
+        doesn't match, or None if token type is unrecognized.
     """
     token_type = token["type"]
 
@@ -510,9 +569,18 @@ def character_matches_token(char: str, token: Dict) -> bool | None:
 
 def calculate_min_match_length(tokens: List[Dict]) -> int:
     """
-    Counts every token and treat quantifiers (like +) as requiring the
-    correct amount of matches to determine the valid starting indices for
-    matching.
+    Count minimum number of characters required to match a sequence of tokens.
+
+    Recursively evaluates the tokens and accounts for quantifiers ('+', '?') and
+    grouped alternatives. The minimum length is utilized to determine valid starting
+    positions when scanning input, thereby skipping positions where a match is
+    impossible.
+
+    Args:
+        tokens (List[Dict]): A list of parsed regex tokens representing the pattern.
+
+    Returns:
+        int: The minimum number of characters required to match the token sequence.
     """
     length = 0
     for token in tokens:
@@ -546,13 +614,21 @@ def calculate_start_indices(
     input_length: int, min_length: int, has_start_anchor: bool, has_end_anchor: bool
 ) -> list | range:
     """
-    Calculates potential starting index for pattern matching.
+    Calculates valid starting positions for pattern matching in a string.
 
-    Uses the anchors and minimum match length to determine valid
-    starting positions in the input string.
+    Considers the pattern’s minimum match length and any anchors to avoid
+    unnecessary attempts. Matching begins at index 0 if the pattern has a
+    start-of-line anchor (`^`), otherwise, returns all indices where the
+    pattern could fit.
 
-    Ensures that matching starts at positions requested by anchors and
-    permitted by pattern length.
+    Args:
+        input_length (int): Length of the input string to match against.
+        min_length (int): Minimum number of characters required for a match.
+        has_start_anchor (bool): Whether the pattern starts with '^'.
+        has_end_anchor (bool): Whether the pattern ends with '$'.
+
+    Returns:
+        list[int] | range: Valid starting indices for attempting a match.
     """
     if has_start_anchor:
         return [0]
@@ -562,9 +638,19 @@ def calculate_start_indices(
 
 def count_greedy_matches(input_line: str, j: int, token: Dict) -> int:
     """
-    Iterates from position j and counts the max number of consecutive
-    matches for a token. Used in the logic for pattern matching for
-    the greedy quantifier ('+').
+    Counts maximum number of consecutive matches for a token from a given position.
+
+    Iterates through the input string starting at index `j` and increments a
+    counter for characters that match the given token. Used for the greedy
+    behavior of the '+' quantifier in the pattern matching.
+
+    Args:
+        input_line (str): The string to test against the pattern.
+        j (int): Current character position in the input string.
+        token (Dict): A parsed token dictionary specifying the type of match.
+
+    Returns:
+        int: The number of consecutive characters matching the token.
     """
     max_count = 0
     temp_j = j
