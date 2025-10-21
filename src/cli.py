@@ -23,8 +23,8 @@ def parse_arguments() -> argparse.Namespace:
     Parse and return command-line arguments for the pygrep tool.
 
     Uses argparse to define available options and positional arguments,
-    including pattern, files, and flags for extended regex, recursion, line 
-    numbers, case sensitivity, inverted matches, and count mode. Validates 
+    including pattern, files, and flags for extended regex, recursion, line
+    numbers, case sensitivity, inverted matches, and count mode. Validates
     that at least one file is provided for recursive searches.
 
     Returns:

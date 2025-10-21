@@ -16,7 +16,7 @@ def search_file(
     """
     Search a file for lines matching a pattern.
 
-    Opens and reads file one line at a time, calling `match_pattern()` 
+    Opens and reads file one line at a time, calling `match_pattern()`
     with optional flags for case-insensitive and inverted matching.
     Then prints matched lines either with filename and line numbers (optional)
     or a total count of matches. Missing files, directories and permissions

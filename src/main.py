@@ -16,6 +16,16 @@ from .cli import parse_arguments
 
 
 def main() -> None:
+    """
+    Entry point for the pygrep CLI.
+
+    This function dictates the flow of the program. It parses arguments,
+    determines input source and coordinates pattern matching. Calls helper
+    functions: reads from stdin for input, searches file(s) by calling
+    `search_file()` / `search_multiple_files()`, or scans directories with
+    `search_directory_recursively()`. Utilizes standard grep status codes
+    for exit based on results of matching.
+    """
     try:
         args = parse_arguments()
 
