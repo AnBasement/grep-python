@@ -9,7 +9,10 @@ from src.constants import EXIT_MATCH_FOUND, EXIT_NO_MATCH, EXIT_ERROR
 
 
 class TestMainCLI:
-    """Test CLI entry point for argument parsing, file and stdin modes, error handling, and exit codes."""
+    """
+    Test CLI entry point for argument parsing, file and stdin modes,
+    error handling, and exit codes.
+    """
 
     def run_main(self, argv, stdin_data=None):
         """
@@ -63,7 +66,9 @@ class TestMainCLI:
         assert code == EXIT_MATCH_FOUND
 
     def test_recursive_mode(self, tmp_path):
-        """Test recursive directory search returns match exit code for matching files."""
+        """
+        Test recursive directory search returns match exit code for matching files.
+        """
         d1 = tmp_path / "dir1"
         d1.mkdir()
         (d1 / "x.txt").write_text("foo\nbar\n")
@@ -81,7 +86,10 @@ class TestMainCLI:
         assert code == EXIT_NO_MATCH
 
     def test_unexpected_error_caught(self, monkeypatch):
-        """Check that unexpected errors in match_pattern are caught and return error exit code."""
+        """
+        Check that unexpected errors in match_pattern are caught
+        and return error exit code.
+        """
         def boom(*args, **kwargs):
             raise ValueError("boom")
 

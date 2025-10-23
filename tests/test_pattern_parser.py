@@ -2,10 +2,15 @@ from src.pattern_parser import parse_pattern
 
 
 class TestPatternParser:
-    """Test pattern parsing for anchors, escapes, character classes, groups, quantifiers, and backreferences."""
+    """
+    Test pattern parsing for anchors, escapes, character classes,
+    groups, quantifiers, and backreferences.
+    """
 
     def test_detects_start_and_end_anchors(self):
-        """Check that parse_pattern detects ^ and $ anchors and removes them from tokens."""
+        """
+        Check that parse_pattern detects ^ and $ anchors and removes them from tokens.
+        """
         tokens, has_start, has_end = parse_pattern("^abc$")
         assert has_start is True
         assert has_end is True
@@ -13,7 +18,9 @@ class TestPatternParser:
         assert [t.get("value") for t in tokens] == ["a", "b", "c"]
 
     def test_parses_escape_sequences(self):
-        """Verify escape sequences like \\d, \\w, and \\+ are parsed as escape tokens."""
+        """
+        Verify escape sequences like \\d, \\w, and \\+ are parsed as escape tokens.
+        """
         pattern = "\\d\\w\\+"
         tokens, _, _ = parse_pattern(pattern)
         assert [t["type"] for t in tokens] == ["escape", "escape", "escape"]
