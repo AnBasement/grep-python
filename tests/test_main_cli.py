@@ -90,6 +90,7 @@ class TestMainCLI:
         Check that unexpected errors in match_pattern are caught
         and return error exit code.
         """
+
         def boom(*args, **kwargs):
             raise ValueError("boom")
 

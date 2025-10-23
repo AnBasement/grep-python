@@ -10,6 +10,7 @@ class TestParseArguments:
     Covers basic pattern/file parsing, recursive flag, multiple files,
     stdin mode, error handling for insufficient arguments, and optional flags.
     """
+
     def test_parse_basic_pattern_and_file(self, monkeypatch):
         """Test basic pattern and file parsing"""
         monkeypatch.setattr(sys, "argv", ["pygrep", "-E", "test", "file.txt"])
