@@ -30,11 +30,15 @@ jobs:
           black --check src/ tests/
 
       - name: Run Pylint
+        env:
+          PYTHONPATH: .
         run: |
           source .venv/bin/activate
           pylint src/ tests/
 
-      - name: Run tests with pytest
+      - name: Run Pytest
+        env:
+          PYTHONPATH: .
         run: |
           source .venv/bin/activate
           python -m pytest tests/
