@@ -1,5 +1,6 @@
 # grep-python
 
+![Coverage](./coverage.svg)
 A grep tool written in Python while following the [Codecrafters.io guide](https://app.codecrafters.io/courses/grep/overview) before being expanded upon with added functionality.
 
 ## Features
@@ -110,6 +111,18 @@ bump-my-version bump major
 ```
 
 See [CHANGELOG.md](CHANGELOG.md) for version history.
+
+## Test Coverage
+
+Current coverage: ~80%
+
+The pattern matching engine uses recursive backtracking, which makes 100%
+coverage impractical without artificial test cases. As a result, `pattern_matcher.py`
+has low coverage hovering around 55%. Coverage focuses on:
+
+- All user-facing features and CLI flags
+- Common regex patterns and edge cases
+- Error handling paths
 
 ## Exit Codes
 
