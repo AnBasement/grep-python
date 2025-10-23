@@ -8,6 +8,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Added docstrings to all test files.
+
+### Fixed
+
+- Resolved a series of pylint issues in the test files.
+
 ## [0.3.4] - 2025-10-21
 
 ### Fixed
