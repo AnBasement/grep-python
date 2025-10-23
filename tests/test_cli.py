@@ -1,10 +1,15 @@
-import pytest
 import sys
+import pytest
 from src.cli import parse_arguments
 from src.constants import EXIT_ERROR
 
 
 class TestParseArguments:
+    """Test CLI argument parsing for pattern, file, and flag handling.
+
+    Covers basic pattern/file parsing, recursive flag, multiple files,
+    stdin mode, error handling for insufficient arguments, and optional flags.
+    """
     def test_parse_basic_pattern_and_file(self, monkeypatch):
         """Test basic pattern and file parsing"""
         monkeypatch.setattr(sys, "argv", ["pygrep", "-E", "test", "file.txt"])
@@ -46,7 +51,7 @@ class TestParseArguments:
             parse_arguments()
         assert exc_info.value.code == EXIT_ERROR
 
-    def test_missing_E_flag_still_works(self, monkeypatch):
+    def test_missing_e_flag_still_works(self, monkeypatch):
         """Test that -E flag is optional with argparse"""
         monkeypatch.setattr(sys, "argv", ["pygrep", "test", "file.txt"])
         args = parse_arguments()
@@ -54,7 +59,7 @@ class TestParseArguments:
         assert args.pattern == "test"
         assert args.files == ["file.txt"]
 
-    def test_recursive_without_E_still_works(self, monkeypatch):
+    def test_recursive_without_e_still_works(self, monkeypatch):
         """Test -r flag without -E (argparse makes -E optional)"""
         monkeypatch.setattr(sys, "argv", ["pygrep", "-r", "test", "dir/"])
         args = parse_arguments()
