@@ -114,7 +114,7 @@ See [CHANGELOG.md](CHANGELOG.md) for version history.
 
 ## Test Coverage
 
-Current coverage: ~80%
+Current coverage: ~75%
 
 The pattern matching engine uses recursive backtracking, which makes 100%
 coverage impractical without artificial test cases. As a result, `pattern_matcher.py`
