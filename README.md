@@ -1,6 +1,6 @@
 # grep-python
 
-![Coverage](./coverage.svg)
+![Coverage](.github/coverage/coverage.svg)
 A grep tool written in Python while following the [Codecrafters.io guide](https://app.codecrafters.io/courses/grep/overview) before being expanded upon with added functionality.
 
 ## Features
