@@ -7,7 +7,10 @@ from src.file_search import (
 
 
 class TestFileSearch:
+    """Tests file search functions for matching, output, and error handling."""
+
     def test_search_file_single_file_matches_and_prints_line(self, tmp_path, capsys):
+        """Verify search_file finds a match and prints the matching line."""
         p = tmp_path / "sample.txt"
         p.write_text("hello\nworld\nfoo")
         assert search_file(str(p), "wo.+") is True
@@ -15,6 +18,7 @@ class TestFileSearch:
         assert "world" in captured.out
 
     def test_search_file_prints_filename_when_flag_true(self, tmp_path, capsys):
+        """Check that search_file includes filename in output when requested."""
         p = tmp_path / "sample.txt"
         p.write_text("alpha\nbeta\n")
         assert search_file(str(p), "^a.+", print_filename=True) is True
@@ -22,6 +26,7 @@ class TestFileSearch:
         assert f"{p}:alpha" in out
 
     def test_search_file_handles_nonexistent_and_directory(self, tmp_path, capsys):
+        """Confirm search_file handles missing files and directories with errors."""
         missing = tmp_path / "missing.txt"
         assert search_file(str(missing), "a") is False
         assert "no such file or directory" in capsys.readouterr().err.lower()
@@ -30,6 +35,7 @@ class TestFileSearch:
         assert "is a directory" in capsys.readouterr().err.lower()
 
     def test_search_multiple_files(self, tmp_path, capsys):
+        """Test searching across multiple files and correct output formatting."""
         p1 = tmp_path / "a.txt"
         p2 = tmp_path / "b.txt"
         p1.write_text("xxx\nyyy")
@@ -41,6 +47,7 @@ class TestFileSearch:
     def test_get_files_recursively_and_search_directory_recursively(
         self, tmp_path, capsys
     ):
+        """Check recursive file discovery and directory search for matches."""
         sub = tmp_path / "sub"
         sub.mkdir()
         f1 = tmp_path / "root.txt"
@@ -56,14 +63,15 @@ class TestFileSearch:
         out = capsys.readouterr().out
         assert f"{f2}:bar" in out
 
-    def test_get_files_recursively_errors(self, tmp_path, monkeypatch, capsys):
+    def test_get_files_recursively_errors(self, tmp_path, capsys):
+        """Verify error handling for invalid paths in get_files_recursively."""
         not_there = tmp_path / "nope"
         files = get_files_recursively(str(not_there))
-        assert files == []
+        assert not files
         assert "no such file or directory" in capsys.readouterr().err.lower()
 
         filep = tmp_path / "f.txt"
         filep.write_text("x")
         files = get_files_recursively(str(filep))
-        assert files == []
+        assert not files
         assert "not a directory" in capsys.readouterr().err
