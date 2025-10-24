@@ -82,6 +82,7 @@ def search_file(
     match_count = 0
     match_found = False
     after_context_counter = 0
+    printed_lines = set()
     if before_context > 0:
         before_context_buffer = deque(maxlen=before_context)
     else:
@@ -101,19 +102,35 @@ def search_file(
                     match_found = True
                     if before_context_buffer:
                         for buf_idx, buf_line in before_context_buffer:
+                            if buf_idx not in printed_lines:
+                                print(
+                                    _format_line_output(
+                                        line_text=buf_line,
+                                        line_number=buf_idx,
+                                        filename=filename,
+                                        show_filename=print_filename,
+                                        show_line_number=print_line_number,
+                                    )
+                                )
+                                printed_lines.add(buf_idx)
+
+                    if count_only:
+                        match_count += 1
+                    else:
+                        if idx not in printed_lines:
                             print(
                                 _format_line_output(
-                                    line_text=buf_line,
-                                    line_number=buf_idx,
+                                    line_text=line,
+                                    line_number=idx,
                                     filename=filename,
                                     show_filename=print_filename,
                                     show_line_number=print_line_number,
                                 )
                             )
-
-                    if count_only:
-                        match_count += 1
-                    else:
+                            printed_lines.add(idx)
+                        after_context_counter = after_context
+                elif after_context_counter > 0:
+                    if idx not in printed_lines:
                         print(
                             _format_line_output(
                                 line_text=line,
@@ -123,17 +140,7 @@ def search_file(
                                 show_line_number=print_line_number,
                             )
                         )
-                        after_context_counter = after_context
-                elif after_context_counter > 0:
-                    print(
-                        _format_line_output(
-                            line_text=line,
-                            line_number=idx,
-                            filename=filename,
-                            show_filename=print_filename,
-                            show_line_number=print_line_number,
-                        )
-                    )
+                        printed_lines.add(idx)
                     after_context_counter -= 1
 
     except (PermissionError, OSError):
