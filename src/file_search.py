@@ -101,8 +101,8 @@ def search_file(
                 if matches:
                     match_found = True
                     if before_context_buffer:
-                        if idx not in printed_lines:
-                            for buf_idx, buf_line in before_context_buffer:
+                        for buf_idx, buf_line in before_context_buffer:
+                            if buf_idx not in printed_lines:
                                 print(
                                     _format_line_output(
                                         line_text=buf_line,
