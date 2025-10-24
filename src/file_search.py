@@ -45,6 +45,7 @@ def search_file(
     ignore_case: bool = False,
     invert_match: bool = False,
     count_only: bool = False,
+    after_context: int = 0,
 ) -> bool:
     """
     Search a file for lines matching a pattern.
@@ -63,6 +64,7 @@ def search_file(
         ignore_case (bool): Ignore case sensitivity if True.
         invert_match (bool): Print lines that don't match if True.
         count_only (bool): Print only the number of matching lines.
+        after_context (int): Number of lines to print after a matching line.
 
     Returns:
         bool: True if at least one matching line is found, otherwise False.
@@ -76,6 +78,7 @@ def search_file(
 
     match_count = 0
     match_found = False
+    after_context_counter = 0
     try:
         with open(filename, "r", encoding="utf-8") as file:
             for idx, line in enumerate(file, start=1):
@@ -99,6 +102,18 @@ def search_file(
                                 show_line_number=print_line_number,
                             )
                         )
+                        after_context_counter = after_context
+                elif after_context_counter > 0:
+                    print(
+                        _format_line_output(
+                            line_text=line,
+                            line_number=idx,
+                            filename=filename,
+                            show_filename=print_filename,
+                            show_line_number=print_line_number,
+                        )
+                    )
+                    after_context_counter -= 1
 
     except (PermissionError, OSError):
         print(f"{filename}: permission denied", file=sys.stderr)
