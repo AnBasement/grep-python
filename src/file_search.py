@@ -1,6 +1,7 @@
 from typing import Optional
 import os
 import sys
+from collections import deque
 from .pattern_matcher import match_pattern
 
 
@@ -46,6 +47,7 @@ def search_file(
     invert_match: bool = False,
     count_only: bool = False,
     after_context: int = 0,
+    before_context: int = 0,
 ) -> bool:
     """
     Search a file for lines matching a pattern.
@@ -65,6 +67,7 @@ def search_file(
         invert_match (bool): Print lines that don't match if True.
         count_only (bool): Print only the number of matching lines.
         after_context (int): Number of lines to print after a matching line.
+        before_context (int): Number of lines to print before a matching line.
 
     Returns:
         bool: True if at least one matching line is found, otherwise False.
@@ -79,17 +82,35 @@ def search_file(
     match_count = 0
     match_found = False
     after_context_counter = 0
+    if before_context > 0:
+        before_context_buffer = deque(maxlen=before_context)
+    else:
+        before_context_buffer = None
     try:
         with open(filename, "r", encoding="utf-8") as file:
             for idx, line in enumerate(file, start=1):
                 line = line.rstrip("\n")
                 matches = match_pattern(line, pattern, ignore_case=ignore_case)
+                if before_context_buffer is not None:
+                    before_context_buffer.append((idx, line))
 
                 if invert_match:
                     matches = not matches
 
                 if matches:
                     match_found = True
+                    if before_context_buffer:
+                        for buf_idx, buf_line in before_context_buffer:
+                            print(
+                                _format_line_output(
+                                    line_text=buf_line,
+                                    line_number=buf_idx,
+                                    filename=filename,
+                                    show_filename=print_filename,
+                                    show_line_number=print_line_number,
+                                )
+                            )
+
                     if count_only:
                         match_count += 1
                     else:
