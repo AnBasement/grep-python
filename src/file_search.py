@@ -18,8 +18,12 @@ def _format_line_output(
         line_text (str): The content of the line.
         line_number (int): The line number in the file.
         filename (str, optional): The name of the file. Defaults to None.
-        show_filename (bool, optional): Whether to include the filename in output. Defaults to False.
-        show_line_number (bool, optional): Whether to include the line number in output. Defaults to False.
+        show_filename (bool, optional):
+            Whether to include filename in output.
+            Default is False.
+        show_line_number (bool, optional):
+            Whether to include the line number in output.
+            Default is False.
 
     Returns:
         str: Formatted output line, like "file.txt:42:content" or just "content".
