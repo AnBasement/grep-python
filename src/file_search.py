@@ -5,11 +5,11 @@ from .pattern_matcher import match_pattern
 
 
 def _format_line_output(
-        line_text: str,
-        line_number: int,
-        filename: Optional[str] = None,
-        show_filename: bool = False,
-        show_line_number: bool = False,
+    line_text: str,
+    line_number: int,
+    filename: Optional[str] = None,
+    show_filename: bool = False,
+    show_line_number: bool = False,
 ) -> str:
     """
     Helper function to format the output line with optional prefixes.
@@ -31,6 +31,7 @@ def _format_line_output(
         output += f"{line_number}:"
     output += line_text
     return output
+
 
 def search_file(
     filename: str,
