@@ -67,10 +67,15 @@ def parse_arguments() -> argparse.Namespace:
     )
 
     parser.add_argument(
-        "--version", action="version", version=f"%(prog)s {get_version()}"
+        "--version",
+        action="version",
+        version=f"%(prog)s {get_version()}",
     )
 
-    parser.add_argument("pattern", help="Regular expression pattern to search for")
+    parser.add_argument(
+        "pattern",
+        help="Regular expression pattern to search for",
+    )
 
     parser.add_argument(
         "files",
@@ -103,7 +108,10 @@ def parse_arguments() -> argparse.Namespace:
     )
 
     parser.add_argument(
-        "-i", "--ignore-case", action="store_true", help="Ignore case distinctions"
+        "-i",
+        "--ignore-case",
+        action="store_true",
+        help="Ignore case distinctions",
     )
 
     parser.add_argument(
@@ -118,6 +126,15 @@ def parse_arguments() -> argparse.Namespace:
         "--count",
         action="store_true",
         help="Only print a count of matching lines and suppress normal output",
+    )
+
+    parser.add_argument(
+        "-A",
+        "--after-context",
+        help="Print NUM lines of trailing context after each match",
+        type=int,
+        default=0,
+        metavar="NUM",
     )
 
     args = parser.parse_args()
