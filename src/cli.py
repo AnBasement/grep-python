@@ -130,8 +130,8 @@ def parse_arguments() -> argparse.Namespace:
 
     parser.add_argument(
         "-A",
-        "--after-contextpy",
-        help="Only print a count of matching lines and suppress normal output",
+        "--after-context",
+        help="Print NUM lines of trailing context after each match",
         type=int,
         default=0,
         metavar="NUM",
