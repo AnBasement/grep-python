@@ -15,6 +15,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added docstrings to all test files.
 - Added helper function `_format_line_output()` in `file_search.py` for consistent output of match and context lines.
 
+### Changed
+
+- Project specifies Python 3.12+ required.
+- Replaced `Dict`, `List` and `Tuple` in type hints with `dict`, `list` and `tuple` for consistency.
+
 ### Fixed
 
 - Resolved a series of pylint issues in the test files.
