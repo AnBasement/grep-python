@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.5] - 2025-10-24
+
 ### Added
 
 - Added `-B` / `--before-context` and `-C` / `--context` CLI flags to argument parser to show context before and after matches. `-C` overrides `-A` and `-B`.
