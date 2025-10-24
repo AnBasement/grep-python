@@ -1,14 +1,13 @@
-from typing import Tuple, List, Dict
 from .pattern_parser import parse_pattern
 
 
 def try_match(
-    tokens: List[Dict],
+    tokens: list[dict],
     input_line: str,
     has_end_anchor: bool,
     token_index: int,
     j: int,
-    captures: Dict[int, str],
+    captures: dict[int, str],
 ) -> bool:
     """
     Matches a tokenized regex pattern against an input line.
@@ -22,12 +21,12 @@ def try_match(
     backtracks and evaluates nested patterns.
 
     Args:
-        tokens (List[Dict]): Parsed regex tokens to evaluate.
+        tokens (list[dict]): Parsed regex tokens to evaluate.
         input_line (str): The string to test against the pattern.
         has_end_anchor (bool): Whether the pattern has a line-end match.
         token_index (int): Current index in the token list.
         j (int): Current character position in the input string.
-        captures (Dict[int, str]): Active capture groups and their matched text.
+        captures (dict[int, str]): Active capture groups and their matched text.
 
     Returns:
         bool: True if the remaining tokens successfully match the input,
@@ -216,12 +215,12 @@ def try_match(
 
 
 def try_match_sequence_with_limit(
-    tokens: List[Dict],
+    tokens: list[dict],
     input_line: str,
     start_j: int,
     max_len: int,
-    captures: Dict[int, str],
-) -> Tuple[bool, int]:
+    captures: dict[int, str],
+) -> tuple[bool, int]:
     """
     Works similar to `try_match_sequence()`, but has a hard limit (`max_len`)
     that prevents over-matching. Matches a sequence of regex tokens against a
@@ -229,11 +228,11 @@ def try_match_sequence_with_limit(
     descent for evaluation of groups, backreferences and quantifiers.
 
     Args:
-        tokens (List[Dict]): Parsed regex tokens to evaluate.
+        tokens (list[dict]): Parsed regex tokens to evaluate.
         input_line (str): The string to test against the pattern.
         start_j (int): The starting index for matching.
         max_len (int): The maximum allowed span to match within.
-        captures (Dict[int, str]): Active capture groups and their matched text.
+        captures (dict[int, str]): Active capture groups and their matched text.
 
     Returns:
         A tuple `(success, new_index)` where:
@@ -354,8 +353,8 @@ def try_match_sequence_with_limit(
 
 
 def try_match_sequence(
-    tokens: List[Dict], input_line: str, start_j: int, captures: Dict[int, str]
-) -> Tuple[bool, int]:
+    tokens: list[dict], input_line: str, start_j: int, captures: dict[int, str]
+) -> tuple[bool, int]:
     """
     Matches a sequence of regex tokens against an input line
     starting from a given index (`start_j`). Similar to `try_match()`,
@@ -367,10 +366,10 @@ def try_match_sequence(
     states to ensure backtracking.
 
     Args:
-        tokens (List[Dict]): Parsed regex tokens to evaluate.
+        tokens (list[dict]): Parsed regex tokens to evaluate.
         input_line (str): The string to test against the pattern.
         start_j (int): The starting index for matching.
-        captures (Dict[int, str]): Active capture groups and their matched text.
+        captures (dict[int, str]): Active capture groups and their matched text.
 
     Returns:
         A tuple `(success, new_index)` where:
@@ -525,7 +524,7 @@ def match_pattern(input_line: str, pattern: str, ignore_case: bool = False) -> b
     return False
 
 
-def character_matches_token(char: str, token: Dict) -> bool | None:
+def character_matches_token(char: str, token: dict) -> bool | None:
     """
     Checks if a single character matches a regex token.
 
@@ -535,7 +534,7 @@ def character_matches_token(char: str, token: Dict) -> bool | None:
 
     Args:
         char (str): The character from the input string.
-        token (Dict): A parsed token dictionary specifying the type of match
+        token (dict): A parsed token dictionary specifying the type of match
             (literal, escape, char_class, wildcard) and associated value.
 
     Returns:
@@ -568,7 +567,7 @@ def character_matches_token(char: str, token: Dict) -> bool | None:
     return None
 
 
-def calculate_min_match_length(tokens: List[Dict]) -> int:
+def calculate_min_match_length(tokens: list[dict]) -> int:
     """
     Count minimum number of characters required to match a sequence of tokens.
 
@@ -578,7 +577,7 @@ def calculate_min_match_length(tokens: List[Dict]) -> int:
     impossible.
 
     Args:
-        tokens (List[Dict]): A list of parsed regex tokens representing the pattern.
+        tokens (list[dict]): A list of parsed regex tokens representing the pattern.
 
     Returns:
         int: The minimum number of characters required to match the token sequence.
@@ -636,7 +635,7 @@ def calculate_start_indices(
         return range(input_length - min_length + 1)
 
 
-def count_greedy_matches(input_line: str, j: int, token: Dict) -> int:
+def count_greedy_matches(input_line: str, j: int, token: dict) -> int:
     """
     Counts maximum number of consecutive matches for a token from a given position.
 
@@ -647,7 +646,7 @@ def count_greedy_matches(input_line: str, j: int, token: Dict) -> int:
     Args:
         input_line (str): The string to test against the pattern.
         j (int): Current character position in the input string.
-        token (Dict): A parsed token dictionary specifying the type of match.
+        token (dict): A parsed token dictionary specifying the type of match.
 
     Returns:
         int: The number of consecutive characters matching the token.

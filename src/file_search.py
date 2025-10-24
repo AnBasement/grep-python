@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import Optional
 import os
 import sys
 from .pattern_matcher import match_pattern
@@ -118,7 +118,7 @@ def search_file(
 
 
 def search_multiple_files(
-    filenames: List[str],
+    filenames: list[str],
     pattern: str,
     print_line_number: bool = False,
     ignore_case: bool = False,
@@ -133,7 +133,7 @@ def search_multiple_files(
     file contains a line matching the pattern.
 
     Args:
-        filenames (List[str]): Paths of files to search.
+        filenames (list[str]): Paths of files to search.
         pattern (str): Regex pattern to match.
         print_line_number (bool): Include line numbers in output if True.
         ignore_case (bool): Ignore case sensitivity if True.
@@ -161,7 +161,7 @@ def search_multiple_files(
     return match_found
 
 
-def get_files_recursively(directory: str) -> List[str]:
+def get_files_recursively(directory: str) -> list[str]:
     """
     Recursively collect all file paths under a given directory.
 
@@ -172,7 +172,7 @@ def get_files_recursively(directory: str) -> List[str]:
         directory (str): Path to the root directory to scan.
 
     Returns:
-        List[str]: A list of absolute file paths found in the directory
+        list[str]: A list of absolute file paths found in the directory
         and subdirectories. Returns an empty list if no files are found
         or an error is encountered.
     """
@@ -215,7 +215,7 @@ def search_directory_recursively(
     Returns True if a match is found in any of the files.
 
     Args:
-        filenames (List[str]): Paths of files to search.
+        directory (str): Path to the directory to search.
         pattern (str): Regex pattern to match.
         print_line_number (bool): Include line numbers in output if True.
         ignore_case (bool): Ignore case sensitivity if True.
