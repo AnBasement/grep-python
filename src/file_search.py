@@ -1,8 +1,8 @@
 from typing import Optional
 import os
 import sys
-from .pattern_matcher import match_pattern
 from collections import deque
+from .pattern_matcher import match_pattern
 
 
 def _format_line_output(
