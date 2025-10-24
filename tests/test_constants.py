@@ -14,6 +14,12 @@ from src.constants import (
 
 
 def test_constants_values():
+    """
+    Verify core constants from src.constants have expected values.
+
+    Checks exit codes, token types, and quantifier symbols to ensure
+    project-wide consistency for pattern parsing and matching logic.
+    """
     assert EXIT_MATCH_FOUND == 0
     assert EXIT_NO_MATCH == 1
     assert EXIT_ERROR == 2
