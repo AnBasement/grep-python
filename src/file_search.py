@@ -82,6 +82,7 @@ def search_file(
     match_count = 0
     match_found = False
     after_context_counter = 0
+    printed_lines = set()
     if before_context > 0:
         before_context_buffer = deque(maxlen=before_context)
     else:
@@ -100,16 +101,18 @@ def search_file(
                 if matches:
                     match_found = True
                     if before_context_buffer:
-                        for buf_idx, buf_line in before_context_buffer:
-                            print(
-                                _format_line_output(
-                                    line_text=buf_line,
-                                    line_number=buf_idx,
-                                    filename=filename,
-                                    show_filename=print_filename,
-                                    show_line_number=print_line_number,
+                        if idx not in printed_lines:
+                            for buf_idx, buf_line in before_context_buffer:
+                                print(
+                                    _format_line_output(
+                                        line_text=buf_line,
+                                        line_number=buf_idx,
+                                        filename=filename,
+                                        show_filename=print_filename,
+                                        show_line_number=print_line_number,
+                                    )
                                 )
-                            )
+                                printed_lines.add(buf_idx)
 
                     if count_only:
                         match_count += 1
