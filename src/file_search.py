@@ -117,15 +117,17 @@ def search_file(
                     if count_only:
                         match_count += 1
                     else:
-                        print(
-                            _format_line_output(
-                                line_text=line,
-                                line_number=idx,
-                                filename=filename,
-                                show_filename=print_filename,
-                                show_line_number=print_line_number,
+                        if idx not in printed_lines:
+                            print(
+                                _format_line_output(
+                                    line_text=line,
+                                    line_number=idx,
+                                    filename=filename,
+                                    show_filename=print_filename,
+                                    show_line_number=print_line_number,
+                                )
                             )
-                        )
+                            printed_lines.add(idx)
                         after_context_counter = after_context
                 elif after_context_counter > 0:
                     if idx not in printed_lines:
