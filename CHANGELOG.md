@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.7] - 2025-10-25
+
 ### Fixed
 
 - Fixed overlapping context lines for before-context (`-B`), after-context (`-A`), and combined context (`-C`) flags. Lines that appear in multiple context windows are now only printed once.
