@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Added `-A` / `--after-context` CLI flag to argument parser for specifying number of lines to show after each match.
+
 ## [0.3.4] - 2025-10-21
 
 ### Fixed
