@@ -90,7 +90,7 @@ def search_file(
                             _format_line_output(
                                 line_text=line,
                                 line_number=idx,
-                                filename=filename if print_filename else None,
+                                filename=filename,
                                 show_filename=print_filename,
                                 show_line_number=print_line_number,
                             )
