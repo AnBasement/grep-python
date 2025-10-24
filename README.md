@@ -1,6 +1,6 @@
 # grep-python
 
-![Coverage](.github/coverage/coverage.svg)
+![Coverage](.github/coverage/coverage.svg)![Python3.12](https://img.shields.io/badge/python-3.12%2B-blue)
 
 A grep tool written in Python while following the [Codecrafters.io guide](https://app.codecrafters.io/courses/grep/overview) before being expanded upon with added functionality.
 
