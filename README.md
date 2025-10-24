@@ -66,6 +66,8 @@ Comprehensive documentation is available in the `/docs` folder:
 
 ## Development
 
+PRs are reviewed with [Coderabbit](https://coderabbit.ai/) for automated feedback and suggestions.
+
 ### Running Tests
 
 ```bash
