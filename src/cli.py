@@ -131,7 +131,6 @@ def parse_arguments() -> argparse.Namespace:
     parser.add_argument(
         "-A",
         "--after-contextpy",
-        action="store_true",
         help="Only print a count of matching lines and suppress normal output",
         type=int,
         default=0,
