@@ -1,8 +1,36 @@
-from typing import List
+from typing import List, Optional
 import os
 import sys
 from .pattern_matcher import match_pattern
 
+
+def _format_line_output(
+        line_text: str,
+        line_number: int,
+        filename: Optional[str] = None,
+        show_filename: bool = False,
+        show_line_number: bool = False,
+) -> str:
+    """
+    Helper function to format the output line with optional prefixes.
+
+    Args:
+        line_text (str): The content of the line.
+        line_number (int): The line number in the file.
+        filename (str, optional): The name of the file. Defaults to None.
+        show_filename (bool, optional): Whether to include the filename in output. Defaults to False.
+        show_line_number (bool, optional): Whether to include the line number in output. Defaults to False.
+
+    Returns:
+        str: Formatted output line, like "file.txt:42:content" or just "content".
+    """
+    output = ""
+    if show_filename and filename is not None:
+        output += f"{filename}:"
+    if show_line_number:
+        output += f"{line_number}:"
+    output += line_text
+    return output
 
 def search_file(
     filename: str,
@@ -57,13 +85,15 @@ def search_file(
                     if count_only:
                         match_count += 1
                     else:
-                        output = ""
-                        if print_filename:
-                            output += f"{filename}:"
-                        if print_line_number:
-                            output += f"{idx}:"
-                        output += line
-                        print(output)
+                        print(
+                            _format_line_output(
+                                line_text=line,
+                                line_number=idx,
+                                filename=filename if print_filename else None,
+                                show_filename=print_filename,
+                                show_line_number=print_line_number,
+                            )
+                        )
 
     except (PermissionError, OSError):
         print(f"{filename}: permission denied", file=sys.stderr)
