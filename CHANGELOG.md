@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Added `-B` / `--before-context` and `-C` / `--context` CLI flags to argument parser to show context before and after matches. `-C` overrides `-A` and `-B`.
 - Added `-A` / `--after-context` CLI flag to argument parser for specifying number of lines to show after each match.
 - Added docstrings to all test files.
 

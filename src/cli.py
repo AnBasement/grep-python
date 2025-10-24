@@ -137,9 +137,31 @@ def parse_arguments() -> argparse.Namespace:
         metavar="NUM",
     )
 
+    parser.add_argument(
+        "-B",
+        "--before-context",
+        help="Print NUM lines of leading context before each match",
+        type=int,
+        default=0,
+        metavar="NUM",
+    )
+
+    parser.add_argument(
+        "-C",
+        "--context",
+        help="Print NUM lines of context before and after each match",
+        type=int,
+        default=0,
+        metavar="NUM",
+    )
+
     args = parser.parse_args()
 
     if args.recursive and not args.files:
         parser.error("at least one FILE required for recursive search")
+
+    if args.context > 0:
+        args.before_context = args.context
+        args.after_context = args.context
 
     return args
