@@ -8,6 +8,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `-B` / `--before-context` CLI flag for showing lines before each match.
+- Added `before_context` parameter to `search_file()` and related functions.
+- Integrated circular buffer using `collections.deque` to store and print before-context lines.
+- Implemented before-context logic: prints up to N lines before each match, matching grep's behavior.
+- Wired `-B` flag through CLI and `main.py` so before-context works end-to-end.
+
 ## [0.3.5] - 2025-10-24
 
 ### Added
