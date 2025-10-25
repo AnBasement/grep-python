@@ -164,6 +164,15 @@ def parse_arguments() -> argparse.Namespace:
         help="Pattern to search for (can be used multiple times)"
     )
 
+    parser.add_argument(
+        "-f",
+        "--file",
+        dest="pattern_file",
+        metavar="FILE",
+        type=str,
+        help="Read patterns from FILE, one per line",
+    )
+
     args = parser.parse_args()
 
     if args.recursive and not args.files:
