@@ -8,25 +8,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Added
-
-- Automated tests for the `-e` flag: verified single and multiple `-e` patterns match lines with OR logic, and that `-e` patterns combine correctly with positional patterns.
-- Automated tests for the `-f` flag: confirmed patterns are loaded from file, empty lines are skipped, and missing pattern files trigger error handling.
-
 ## [0.3.11] - 2025-10-25
 
 ### Added
 
-- Implements multi-pattern matching to `search_file()`. Loops through patterns and considers a line a match if ANY pattern matches before breaking after first match.
-- Added `patterns` parameter to `search_file()`, `search_multiple_files()`, and `search_directory_recursively()` to support multi-pattern matching.
-- Wired CLI pattern sources (`-e`, `-f`, positional) through `main.py` and all search functions, enabling matching against multiple patterns in a single search.
-- Lines now match if any provided pattern matches.
+- Support for multiple pattern matching via `-e` flag (can be used multiple times to specify additional patterns).
+- Support for reading patterns from a file with the `-f` flag (one pattern per line, empty lines ignored, UTF-8 encoding).
+- Pattern validation requiring at least one pattern from any source (positional, `-e`, or `-f`).
+- OR logic for multiple patterns: a line matches if it matches ANY of the provided patterns.
+- Added `patterns` parameter to `search_file()`, `search_multiple_files()`, and `search_directory_recursively()` functions.
+- Comprehensive tests for `-e` flag parsing and matching behavior.
+- Comprehensive tests for `-f` flag pattern loading and error handling.
 
 ### Changed
 
-- Removed an unnecessary `"r"` in `open()` as it is the default mode.
-- Function signatures for search functions now accept an optional `patterns` parameter for multi-pattern support.
-- CLI argument parsing and main orchestration updated to pass combined pattern list to search functions.
+- Made positional pattern argument optional (`nargs="?"`), allowing patterns to be specified via `-e` or `-f` instead.
+- All search functions now accept and combine patterns from multiple sources.
+- CLI argument parsing builds combined pattern list from all sources (positional, `-e` flags, `-f` file).
+
+### Fixed
+
+- Removed unnecessary explicit `"r"` mode in `open()` calls (default mode).
+- Moved before-context buffer append to after match processing to prevent matched lines appearing in their own context.
 
 ## [0.3.10] - 2025-10-25
 

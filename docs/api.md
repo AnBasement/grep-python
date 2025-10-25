@@ -177,14 +177,14 @@ Handles file operations and search across files with output formatting.
 
 #### Functions
 
-##### `search_file(filename: str, pattern: str, print_filename: bool = False, print_line_number: bool = False, ignore_case: bool = False, invert_match: bool = False, count_only: bool = False, after_context: int = 0, before_context: int = 0) -> bool`
+##### `search_file(filename: str, pattern: str, print_filename: bool = False, print_line_number: bool = False, ignore_case: bool = False, invert_match: bool = False, count_only: bool = False, after_context: int = 0, before_context: int = 0, patterns: Optional[list[str]] = None) -> bool`
 
 Searches a file for pattern matches with configurable output options.
 
 **Parameters:**
 
 - `filename` (str): Path to file to search
-- `pattern` (str): Regex pattern
+- `pattern` (str): Regex pattern (positional pattern, can be None if patterns list provided)
 - `print_filename` (bool): Whether to print filename with matches (default: False)
 - `print_line_number` (bool): Whether to print line numbers with matches (default: False)
 - `ignore_case` (bool): Whether to ignore case in matching (default: False)
@@ -192,6 +192,7 @@ Searches a file for pattern matches with configurable output options.
 - `count_only` (bool): Whether to print only count instead of matches (default: False)
 - `after_context` (int): Number of lines to print after each match (default: 0)
 - `before_context` (int): Number of lines to print before each match (default: 0)
+- `patterns` (Optional[list[str]]): Additional patterns to match (default: None)
 
 **Returns:**
 
@@ -199,6 +200,8 @@ Searches a file for pattern matches with configurable output options.
 
 **Behavior:**
 
+- **Multiple patterns**: If `patterns` list is provided, combines it with the positional `pattern` parameter
+- **OR logic**: A line matches if it matches ANY of the patterns (from both sources)
 - Line numbers start at 1 (not 0)
 - Context lines are automatically deduplicated when regions overlap
 - Each line is printed at most once, even if it appears in multiple context windows
@@ -223,6 +226,9 @@ found = search_file("data.txt", "error")
 # With line numbers
 found = search_file("log.txt", "error", print_line_number=True)
 
+# Multiple patterns
+found = search_file("log.txt", "error", patterns=["warning", "exception"])
+
 # Case-insensitive with count
 found = search_file("file.txt", "TODO", ignore_case=True, count_only=True)
 
@@ -230,20 +236,21 @@ found = search_file("file.txt", "TODO", ignore_case=True, count_only=True)
 found = search_file("config.txt", "^#", invert_match=True)
 ```
 
-##### `search_multiple_files(filenames: List[str], pattern: str, print_line_number: bool = False, ignore_case: bool = False, invert_match: bool = False, count_only: bool = False, after_context: int = 0, before_context: int = 0) -> bool`
+##### `search_multiple_files(filenames: List[str], pattern: str, print_line_number: bool = False, ignore_case: bool = False, invert_match: bool = False, count_only: bool = False, after_context: int = 0, before_context: int = 0, patterns: Optional[list[str]] = None) -> bool`
 
 Searches multiple files for pattern matches.
 
 **Parameters:**
 
 - `filenames` (list[str]): List of file paths
-- `pattern` (str): Regex pattern
+- `pattern` (str): Regex pattern (positional pattern, can be None if patterns list provided)
 - `print_line_number` (bool): Whether to print line numbers (default: False)
 - `ignore_case` (bool): Whether to ignore case (default: False)
 - `invert_match` (bool): Whether to invert match (default: False)
 - `count_only` (bool): Whether to print only counts (default: False)
 - `after_context` (int): Number of lines to print after each match (default: 0)
 - `before_context` (int): Number of lines to print before each match (default: 0)
+- `patterns` (Optional[list[str]]): Additional patterns to match (default: None)
 
 **Returns:**
 
@@ -252,23 +259,26 @@ Searches multiple files for pattern matches.
 **Behavior:**
 
 - Always prints filenames when searching multiple files
+- **Multiple patterns**: Passes `patterns` parameter to `search_file()` for each file
+- **OR logic**: Lines match if they match ANY pattern from either source
 - Continues searching remaining files after errors
 - Passes all flags to `search_file()`, including context parameters
 
-##### `search_directory_recursively(directory: str, pattern: str, print_line_number: bool = False, ignore_case: bool = False, invert_match: bool = False, count_only: bool = False, after_context: int = 0, before_context: int = 0) -> bool`
+##### `search_directory_recursively(directory: str, pattern: str, print_line_number: bool = False, ignore_case: bool = False, invert_match: bool = False, count_only: bool = False, after_context: int = 0, before_context: int = 0, patterns: Optional[list[str]] = None) -> bool`
 
 Recursively searches directories for pattern matches.
 
 **Parameters:**
 
 - `directory` (str): Directory path to search
-- `pattern` (str): Regex pattern
+- `pattern` (str): Regex pattern (positional pattern, can be None if patterns list provided)
 - `print_line_number` (bool): Whether to print line numbers (default: False)
 - `ignore_case` (bool): Whether to ignore case (default: False)
 - `invert_match` (bool): Whether to invert match (default: False)
 - `count_only` (bool): Whether to print only counts (default: False)
 - `after_context` (int): Number of lines to print after each match (default: 0)
 - `before_context` (int): Number of lines to print before each match (default: 0)
+- `patterns` (Optional[list[str]]): Additional patterns to match (default: None)
 
 **Returns:**
 
@@ -277,6 +287,8 @@ Recursively searches directories for pattern matches.
 **Behavior:**
 
 - Recursively finds all files in directories
+- **Multiple patterns**: Passes `patterns` parameter through to file search functions
+- **OR logic**: Lines match if they match ANY pattern from either source
 - Searches each file with `search_file()`
 - Passes all flags through, including context parameters
 
@@ -336,9 +348,11 @@ Parses and validates command-line arguments using argparse.
 
 **Available Arguments:**
 
-- `pattern`: Required positional argument for regex pattern
+- `pattern`: Positional argument for regex pattern (optional if `-e` or `-f` is used)
 - `files`: Optional positional arguments for file paths (reads stdin if none)
 - `-E`, `--extended-regexp`: Extended regex mode (always enabled, for compatibility)
+- `-e PATTERNS`, `--regexp PATTERNS`: Specify pattern(s) (can be used multiple times)
+- `-f FILE`, `--file FILE`: Read patterns from file (one per line, empty lines ignored)
 - `-r`, `-R`, `--recursive`: Search directories recursively
 - `-n`, `--line-number`: Display line numbers with output
 - `-i`, `--ignore-case`: Case-insensitive matching
@@ -349,6 +363,14 @@ Parses and validates command-line arguments using argparse.
 - `-C NUM`, `--context NUM`: Print NUM lines before and after each match
 - `--version`: Show version and exit
 - `--help`: Show help message and exit
+
+**Pattern Sources:**
+
+- Patterns can be specified via positional argument, `-e` flag(s), or `-f` file
+- Multiple `-e` flags can be used to specify multiple patterns
+- Pattern file (`-f`) contains one pattern per line (UTF-8 encoding)
+- All sources are combined: a line matches if it matches ANY pattern (OR logic)
+- At least one pattern must be provided from any source
 
 **Context Behavior:**
 
@@ -363,12 +385,15 @@ Parses and validates command-line arguments using argparse.
 **Validation:**
 
 - Recursive mode requires at least one file path
-- Pattern is always required (positional argument)
+- At least one pattern must be provided (via positional, `-e`, or `-f`)
+- Pattern file (`-f`) must exist and be readable
 
 **Error Handling:**
 
 - Argparse automatically handles invalid arguments
 - Custom validation for recursive mode without files
+- Custom validation for missing patterns
+- File reading errors for pattern files
 - Professional error messages with usage hints
 
 **Example:**
@@ -380,7 +405,8 @@ from src.cli import parse_arguments
 args = parse_arguments()
 
 # Access arguments as attributes
-pattern = args.pattern
+pattern = args.pattern  # Positional pattern (may be None)
+pattern_list = args.pattern_list  # Combined patterns from all sources
 files = args.files
 recursive = args.recursive
 line_number = args.line_number

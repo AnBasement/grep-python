@@ -192,6 +192,95 @@ Options can be combined for powerful searches:
 ./pygrep.sh -r -c -E "^$" .
 ```
 
+## Multiple Patterns
+
+Search for multiple patterns at once using the `-e` flag or read patterns from a file with the `-f` flag. Lines match if **ANY** pattern matches (OR logic).
+
+### Multiple `-e` Flags
+
+Specify multiple patterns directly on the command line:
+
+```bash
+# Search for "error" OR "warning"
+./pygrep.sh -e "error" -e "warning" log.txt
+
+# Find multiple function names
+./pygrep.sh -e "^def parse" -e "^def match" code.py
+
+# Search for different severities
+./pygrep.sh -e "ERROR" -e "WARN" -e "CRITICAL" system.log
+```
+
+Output example:
+
+```text
+15:ERROR: Connection failed
+42:WARN: Retry attempt 3
+89:CRITICAL: Out of memory
+```
+
+### Pattern File (`-f`)
+
+Read patterns from a file (one pattern per line):
+
+```bash
+# Create a patterns file
+cat > patterns.txt << 'EOF'
+error
+warning
+exception
+EOF
+
+# Search using the patterns file
+./pygrep.sh -f patterns.txt log.txt
+
+# Combine with other options
+./pygrep.sh -i -n -f patterns.txt *.log
+```
+
+**Pattern file format:**
+
+- One pattern per line
+- Empty lines are ignored
+- UTF-8 encoding
+- No special syntax (each line is treated as a pattern)
+
+### Combining Pattern Sources
+
+Mix positional patterns, `-e` flags, and `-f` files:
+
+```bash
+# Combine all three sources
+./pygrep.sh -e "error" -f patterns.txt "manual" log.txt
+
+# Multiple -e flags with a pattern file
+./pygrep.sh -e "CRITICAL" -e "FATAL" -f common_errors.txt system.log
+
+# Positional pattern with -e flags
+./pygrep.sh "error" -e "warning" -e "exception" log.txt
+```
+
+All patterns are combined with OR logic—a line matches if it matches **any** of the patterns.
+
+### Practical Examples
+
+```bash
+# Monitor logs for multiple error types
+./pygrep.sh -e "error" -e "exception" -e "fatal" -A 2 /var/log/app.log
+
+# Find todos from multiple developers
+./pygrep.sh -e "TODO: alice" -e "TODO: bob" -e "FIXME" -r src/
+
+# Search for multiple file types recursively
+./pygrep.sh -e "\\.py$" -e "\\.js$" -e "\\.java$" -r .
+
+# Case-insensitive search for multiple status codes
+./pygrep.sh -i -e "200 OK" -e "404 NOT FOUND" -e "500 ERROR" access.log
+
+# Combine patterns from file with additional patterns
+./pygrep.sh -f banned_words.txt -e "URGENT" -e "ASAP" emails.txt
+```
+
 ## Pattern Examples
 
 ### Literal Text Matching

@@ -99,11 +99,18 @@ When `ignore_case=True` is passed to `match_pattern()`, both the pattern and inp
 
 **Key Functions**:
 
-- `search_file()` - Searches single file line by line with optional line numbers, case-insensitivity, match inversion, counting, and context lines
+- `search_file()` - Searches single file line by line with optional line numbers, case-insensitivity, match inversion, counting, context lines, and multiple patterns
 - `search_multiple_files()` - Handles multiple file operations with all output options
 - `search_directory_recursively()` - Recursive directory traversal (when `-r` flag used)
 - `get_files_recursively()` - Recursively finds all files in a directory
 - `_format_line_output()` - Helper function for consistent output formatting
+
+**Multiple Pattern Support**:
+
+- `patterns` parameter accepts list of additional patterns
+- Combines with positional `pattern` parameter
+- OR logic: line matches if ANY pattern matches
+- Loops through all patterns, returns on first match
 
 **Output Options**:
 
@@ -138,14 +145,25 @@ When `ignore_case=True` is passed to `match_pattern()`, both the pattern and inp
 
 **Key Functions**:
 
-- `parse_arguments()` - Returns argparse namespace object with parsed arguments
+- `parse_arguments()` - Returns argparse namespace object with parsed arguments and combined pattern list
 - `get_version()` - Retrieves version from package metadata
+
+**Pattern Argument Handling**:
+
+- Positional `pattern` argument is optional (`nargs="?"`)
+- `-e` / `--regexp` flag can be used multiple times (`action="append"`)
+- `-f` / `--file` flag reads patterns from file (UTF-8, one per line)
+- Combines all sources into `args.pattern_list`
+- Validates at least one pattern provided
+- Pattern file errors handled with descriptive messages
 
 **Supported Arguments**:
 
-- `pattern` - Required positional argument for regex pattern
+- `pattern` - Optional positional argument for regex pattern
 - `files` - Optional positional arguments for file paths
 - `-E`, `--extended-regexp` - Extended regex mode (always enabled, for compatibility)
+- `-e PATTERNS`, `--regexp PATTERNS` - Specify pattern(s) (can be used multiple times)
+- `-f FILE`, `--file FILE` - Read patterns from file
 - `-r`, `-R`, `--recursive` - Search directories recursively
 - `-n`, `--line-number` - Display line numbers with matches
 - `-i`, `--ignore-case` - Case-insensitive matching

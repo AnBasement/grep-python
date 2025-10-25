@@ -7,6 +7,7 @@ A grep tool written in Python while following the [Codecrafters.io guide](https:
 ## Features
 
 - **Custom regex engine**: Supports literals, groups `()`, alternation `|`, quantifiers `+` and `?`, character classes `[]`, start `^` and end `$` anchors, and backreferences (`\1`, `\2`, etc.).
+- **Multiple patterns**: Search for multiple patterns at once with `-e` flag or read patterns from a file with `-f` flag. Lines match if ANY pattern matches.
 - **Recursive search**: Search directories recursively with `-r` flag.
 - **Multiple file support**: Search one or more files at once.
 - **Standard input support**: Reads from stdin if no files are specified.
@@ -61,6 +62,15 @@ echo "hello world" | ./pygrep.sh -E "hello"
 
 # Show 2 lines before and after each match
 ./pygrep.sh -C 2 -E "TODO" notes.txt
+
+# Search for multiple patterns (OR logic)
+./pygrep.sh -e "error" -e "warning" log.txt
+
+# Read patterns from a file
+./pygrep.sh -f patterns.txt log.txt
+
+# Combine patterns from different sources
+./pygrep.sh -e "error" -f patterns.txt "manual" log.txt
 ```
 
 ## Documentation
