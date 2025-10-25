@@ -29,6 +29,8 @@ def main() -> None:
     try:
         args = parse_arguments()
 
+        # Context flags (-A, -B, -C) do not apply to stdin input.
+        # Streaming lines from stdin prevents buffering for before/after context.
         if len(args.files) == 0:
             match_count = 0
             match_found = False
@@ -70,6 +72,8 @@ def main() -> None:
                         ignore_case=args.ignore_case,
                         invert_match=args.invert_match,
                         count_only=args.count,
+                        after_context=args.after_context,
+                        before_context=args.before_context,
                     ):
                         any_match_found = True
                 except (PermissionError, OSError, FileNotFoundError):
@@ -108,6 +112,8 @@ def main() -> None:
                         ignore_case=args.ignore_case,
                         invert_match=args.invert_match,
                         count_only=args.count,
+                        after_context=args.after_context,
+                        before_context=args.before_context,
                     ):
                         sys.exit(EXIT_MATCH_FOUND)
                     else:
