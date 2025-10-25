@@ -271,6 +271,7 @@ def search_directory_recursively(
     count_only: bool = False,
     after_context: int = 0,
     before_context: int = 0,
+    patterns: Optional[list[str]] = None,
 ) -> bool:
     """
     Recursively search all files in a directory for lines matching a pattern.
@@ -288,6 +289,8 @@ def search_directory_recursively(
         count_only (bool): Print only the number of matching lines.
         after_context (int): Number of lines to print after a matching line.
         before_context (int): Number of lines to print before a matching line.
+        patterns (list[str], optional): Alternative patterns to match against.
+            Overrides pattern parameter. Defaults to None.
 
     Returns:
         bool: True if at least one matching line is found, else False.
@@ -306,6 +309,7 @@ def search_directory_recursively(
             count_only=count_only,
             after_context=after_context,
             before_context=before_context,
+            patterns=patterns,
         )
         if file_had_match:
             any_match_found = True
