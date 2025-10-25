@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.14] - 2025-10-25
+
 ### Added
 
 - Comprehensive tests for quiet mode functionality covering output suppression, return values, and early exit behavior.
