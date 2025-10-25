@@ -131,3 +131,37 @@ class TestContextLines:
         out = capsys.readouterr().out
         expected_output = "match\n"
         assert expected_output in out
+
+    def test_combined_before_and_after_context(self, tmp_path, capsys):
+        """Test that both before and after context lines are printed correctly."""
+        p = tmp_path / "data.txt"
+        p.write_text("line1\nline2\nmatch\nline4\nline5\nline6")
+        assert search_file(
+            str(p), "match", before_context=4, after_context=2
+        ) is True
+        out = capsys.readouterr().out
+        expected_output = "line1\nline2\nmatch\nline4\nline5\n"
+        assert expected_output in out
+
+    def test_no_duplicate_lines_in_context(self, tmp_path, capsys):
+        """Ensure no duplicate lines are printed when contexts overlap."""
+        p = tmp_path / "data.txt"
+        p.write_text("line1\nmatch\nline3\nmatch\nline5")
+        assert search_file(
+            str(p), "match", before_context=1, after_context=1
+        ) is True
+        out = capsys.readouterr().out
+        expected_output = "line1\nmatch\nline3\nmatch\nline5\n"
+        assert out.count("match") == 2
+        assert expected_output in out
+
+    def test_multiple_matches_with_varied_spacing(self, tmp_path, capsys):
+        """Check context lines for multiple matches with different spacing."""
+        p = tmp_path / "data.txt"
+        p.write_text("line1\nmatch1\nline3\nline4\nmatch2\nline6")
+        assert search_file(
+            str(p), "match", before_context=1, after_context=1
+        ) is True
+        out = capsys.readouterr().out
+        expected_output = "line1\nmatch1\nline3\nline4\nmatch2\nline6\n"
+        assert expected_output in out
