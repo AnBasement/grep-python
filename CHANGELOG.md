@@ -11,7 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Support for specifying patterns with the `-e` / `--regexp` flag (can be used multiple times).
-- Support for reading patterns from a file with the `-f` / `--file` flag.
+- Pattern validation logic: pygrep now requires at least one pattern to be specified via positional argument, `-e`, or `-f` flag.
+- Support for reading patterns from a file with the `-f` / `--file` flag. Blank lines are skipped and an error is shown if the file does not exist.
 
 ### Changed
 

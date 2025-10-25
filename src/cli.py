@@ -25,7 +25,8 @@ def parse_arguments() -> argparse.Namespace:
     Uses argparse to define available options and positional arguments,
     including pattern, files, and flags for extended regex, recursion, line
     numbers, case sensitivity, inverted matches, and count mode. Validates
-    that at least one file is provided for recursive searches.
+    that at least one pattern is specified and at least one file is provided
+    for recursive searches.
 
     Returns:
         argparse.Namespace: Parsed command-line arguments as attributes.
@@ -175,6 +176,33 @@ def parse_arguments() -> argparse.Namespace:
     )
 
     args = parser.parse_args()
+
+    all_patterns = []
+
+    if args.pattern:
+        all_patterns.append(args.pattern)
+
+    if args.patterns:
+        all_patterns.extend(args.patterns)
+
+    if args.pattern_file:
+        try:
+            with open(args.pattern_file, encoding="utf-8") as f:
+                for line in f:
+                    line = line.strip()
+                    if line:
+                        all_patterns.append(line)
+        except FileNotFoundError:
+            parser.error(f"pattern file not found: {args.pattern_file}")
+        except IsADirectoryError:
+            parser.error(f"pattern file is a directory: {args.pattern_file}")
+        except PermissionError:
+            parser.error(f"permission denied: {args.pattern_file}")
+
+    if not all_patterns:
+        parser.error("no pattern specified")
+
+    args.pattern_list = all_patterns
 
     if args.recursive and not args.files:
         parser.error("at least one FILE required for recursive search")

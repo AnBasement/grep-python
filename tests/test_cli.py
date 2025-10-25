@@ -45,7 +45,6 @@ class TestParseArguments:
         assert args.pattern == "test"
         assert args.files == []
 
-    @pytest.mark.skip(reason="Pattern argument validation will be fixed in a future PR")
     def test_insufficient_arguments_exits(self, monkeypatch):
         """Test that insufficient arguments causes exit"""
         monkeypatch.setattr(sys, "argv", ["pygrep"])
