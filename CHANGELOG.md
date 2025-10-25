@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.15] - 2025-10-25
+
 ### Added
 
 - Max count support via `-m` / `--max-count` CLI flag to stop searching after N matches (0 = unlimited).
