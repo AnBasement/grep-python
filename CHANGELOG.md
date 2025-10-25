@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Added the `-e` flag to specify patterns to the argument parser.
+- Added the `-f` flag to read patterns from a file.
 
 ### Changed
 
