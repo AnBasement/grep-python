@@ -48,7 +48,7 @@ def search_file(
     count_only: bool = False,
     after_context: int = 0,
     before_context: int = 0,
-    patterns: list[str] = None,
+    patterns: Optional[list[str]] = None,
 ) -> bool:
     """
     Search a file for lines matching a pattern.
