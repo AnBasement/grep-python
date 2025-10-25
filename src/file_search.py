@@ -232,6 +232,8 @@ def search_multiple_files(
         )
         if file_with_match:
             match_found = True
+            if quiet:
+                return True
 
     return match_found
 
