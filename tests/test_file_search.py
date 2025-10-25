@@ -323,7 +323,9 @@ class TestMaxCount:
         result = search_file(str(p), "nomatch", max_count=2)
         assert result is False
 
-    def test_max_count_returns_false_when_fewer_matches_than_limit(self, tmp_path, capsys):
+    def test_max_count_returns_false_when_fewer_matches_than_limit(
+        self, tmp_path, capsys
+    ):
         """Verify that max_count returns False when fewer matches exist than limit."""
         p = tmp_path / "data.txt"
         p.write_text("match1\nmatch2\nline3")
