@@ -213,6 +213,8 @@ def search_multiple_files(
         patterns (list[str], optional): Alternative patterns to match against.
             Overrides pattern parameter. Defaults to None.
         quiet (bool): If True, suppress all normal output and exit on first match.
+        max_count (int): Maximum number of matching lines to find before stopping.
+            A value of 0 means no limit. Defaults to 0.
 
     Returns:
         bool: True if at least one matching line is found, else False.
@@ -312,6 +314,8 @@ def search_directory_recursively(
         patterns (list[str], optional): Alternative patterns to match against.
             Overrides pattern parameter. Defaults to None.
         quiet (bool): If True, suppress all normal output and exit on first match.
+        max_count (int): Maximum number of matching lines to find before stopping.
+            A value of 0 means no limit. Defaults to 0.
 
     Returns:
         bool: True if at least one matching line is found, else False.
