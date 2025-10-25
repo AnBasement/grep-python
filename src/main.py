@@ -51,12 +51,15 @@ def main() -> None:
 
                     if matches:
                         match_found = True
+                        match_count += 1
                         if args.quiet:
                             sys.exit(EXIT_MATCH_FOUND)
-                        if args.count:
-                            match_count += 1
-                        elif not args.quiet:
+                        if not args.count:
                             print(line)
+                        if 0 < args.max_count <= match_count:
+                            if args.count:
+                                print(match_count)
+                            sys.exit(EXIT_MATCH_FOUND)
                 except (ValueError, IndexError, KeyError):
                     print(f"grep: {ERROR_INVALID_PATTERN}", file=sys.stderr)
                     sys.exit(EXIT_ERROR)
@@ -83,6 +86,7 @@ def main() -> None:
                         before_context=args.before_context,
                         patterns=args.pattern_list,
                         quiet=args.quiet,
+                        max_count=args.max_count,
                     ):
                         any_match_found = True
                 except (PermissionError, OSError, FileNotFoundError):
@@ -110,6 +114,7 @@ def main() -> None:
                         before_context=args.before_context,
                         patterns=args.pattern_list,
                         quiet=args.quiet,
+                        max_count=args.max_count,
                     ):
                         sys.exit(EXIT_MATCH_FOUND)
                     else:
@@ -127,6 +132,7 @@ def main() -> None:
                         before_context=args.before_context,
                         patterns=args.pattern_list,
                         quiet=args.quiet,
+                        max_count=args.max_count,
                     ):
                         sys.exit(EXIT_MATCH_FOUND)
                     else:

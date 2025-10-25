@@ -50,6 +50,7 @@ def search_file(
     before_context: int = 0,
     patterns: Optional[list[str]] = None,
     quiet: bool = False,
+    max_count: int = 0,
 ) -> bool:
     """
     Search a file for lines matching a pattern.
@@ -73,6 +74,8 @@ def search_file(
         patterns (list[str], optional): Alternative patterns to match against.
             Overrides pattern parameter. Defaults to None.
         quiet (bool): If True, suppress all normal output and exit on first match.
+        max_count (int): Maximum number of matching lines to find before stopping.
+            A value of 0 means no limit. Defaults to 0.
 
     Returns:
         bool: True if at least one matching line is found, otherwise False.
@@ -89,6 +92,7 @@ def search_file(
     after_context_counter = 0
     printed_lines = set()
     patterns_to_check = []
+    matches_found = 0
     if patterns:
         patterns_to_check.extend(patterns)
     if pattern:
@@ -111,23 +115,23 @@ def search_file(
                     matches = not matches
 
                 if matches:
+                    matches_found += 1
                     match_found = True
                     if quiet:
                         return True
-                    if not quiet:
-                        if before_context_buffer:
-                            for buf_idx, buf_line in before_context_buffer:
-                                if buf_idx not in printed_lines:
-                                    print(
-                                        _format_line_output(
-                                            line_text=buf_line,
-                                            line_number=buf_idx,
-                                            filename=filename,
-                                            show_filename=print_filename,
-                                            show_line_number=print_line_number,
-                                        )
+                    if before_context_buffer:
+                        for buf_idx, buf_line in before_context_buffer:
+                            if buf_idx not in printed_lines:
+                                print(
+                                    _format_line_output(
+                                        line_text=buf_line,
+                                        line_number=buf_idx,
+                                        filename=filename,
+                                        show_filename=print_filename,
+                                        show_line_number=print_line_number,
                                     )
-                                    printed_lines.add(buf_idx)
+                                )
+                                printed_lines.add(buf_idx)
 
                     if count_only:
                         match_count += 1
@@ -144,6 +148,14 @@ def search_file(
                             )
                             printed_lines.add(idx)
                         after_context_counter = after_context
+
+                    if 0 < max_count <= matches_found:
+                        if count_only:
+                            if print_filename:
+                                print(f"{filename}:{match_count}")
+                            else:
+                                print(match_count)
+                        return True
                 elif after_context_counter > 0:
                     if idx not in printed_lines:
                         print(
@@ -158,7 +170,6 @@ def search_file(
                         printed_lines.add(idx)
                     after_context_counter -= 1
 
-                # Add line to before-context buffer after processing
                 if before_context_buffer is not None and not quiet:
                     before_context_buffer.append((idx, line))
 
@@ -190,6 +201,7 @@ def search_multiple_files(
     before_context: int = 0,
     patterns: Optional[list[str]] = None,
     quiet: bool = False,
+    max_count: int = 0,
 ) -> bool:
     """
     Searches through multiple files for lines matching a given pattern.
@@ -210,6 +222,8 @@ def search_multiple_files(
         patterns (list[str], optional): Alternative patterns to match against.
             Overrides pattern parameter. Defaults to None.
         quiet (bool): If True, suppress all normal output and exit on first match.
+        max_count (int): Maximum number of matching lines to find before stopping.
+            A value of 0 means no limit. Defaults to 0.
 
     Returns:
         bool: True if at least one matching line is found, else False.
@@ -229,6 +243,7 @@ def search_multiple_files(
             before_context=before_context,
             patterns=patterns,
             quiet=quiet,
+            max_count=max_count,
         )
         if file_with_match:
             match_found = True
@@ -287,6 +302,7 @@ def search_directory_recursively(
     before_context: int = 0,
     patterns: Optional[list[str]] = None,
     quiet: bool = False,
+    max_count: int = 0,
 ) -> bool:
     """
     Recursively search all files in a directory for lines matching a pattern.
@@ -307,6 +323,8 @@ def search_directory_recursively(
         patterns (list[str], optional): Alternative patterns to match against.
             Overrides pattern parameter. Defaults to None.
         quiet (bool): If True, suppress all normal output and exit on first match.
+        max_count (int): Maximum number of matching lines to find before stopping.
+            A value of 0 means no limit. Defaults to 0.
 
     Returns:
         bool: True if at least one matching line is found, else False.
@@ -327,6 +345,7 @@ def search_directory_recursively(
             before_context=before_context,
             patterns=patterns,
             quiet=quiet,
+            max_count=max_count,
         )
         if file_had_match:
             any_match_found = True

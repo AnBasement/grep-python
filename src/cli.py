@@ -186,6 +186,15 @@ def parse_arguments() -> argparse.Namespace:
         ),
     )
 
+    parser.add_argument(
+        "-m",
+        "--max-count",
+        type=int,
+        metavar="NUM",
+        default=0,
+        help="Stop reading a file after NUM matching lines",
+    )
+
     args = parser.parse_args()
 
     all_patterns = []
