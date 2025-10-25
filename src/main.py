@@ -54,9 +54,7 @@ def main() -> None:
                         match_count += 1
                         if args.quiet:
                             sys.exit(EXIT_MATCH_FOUND)
-                        if args.count:
-                            pass
-                        elif not args.quiet:
+                        if not args.count:
                             print(line)
                         if 0 < args.max_count <= match_count:
                             if args.count:
