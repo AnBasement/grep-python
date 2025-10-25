@@ -75,3 +75,88 @@ class TestFileSearch:
         files = get_files_recursively(str(filep))
         assert not files
         assert "not a directory" in capsys.readouterr().err
+
+
+class TestContextLines:
+    """Tests for before and after context line functionality in file searches."""
+
+    def test_after_context_shows_correct_number_of_lines(self, tmp_path, capsys):
+        """Verify after context lines are printed correctly after a match."""
+        p = tmp_path / "data.txt"
+        p.write_text("line1\nmatch\nline3\nline4\nline5\nline6")
+        assert search_file(str(p), "match", after_context=2) is True
+        out = capsys.readouterr().out
+        expected_output = "match\nline3\nline4\n"
+        assert expected_output in out
+
+    def test_after_context_without_matches_returns_nothing(self, tmp_path, capsys):
+        """Check that no output is produced when there are no matches."""
+        p = tmp_path / "data.txt"
+        p.write_text("line1\nline2\nline3")
+        assert search_file(str(p), "nomatch", after_context=2) is False
+        out = capsys.readouterr().out
+        assert out == ""
+
+    def test_after_context_within_bounds(self, tmp_path, capsys):
+        """Ensure after context does not exceed file bounds."""
+        p = tmp_path / "data.txt"
+        p.write_text("line1\nmatch\nline3")
+        assert search_file(str(p), "match", after_context=5) is True
+        out = capsys.readouterr().out
+        expected_output = "match\nline3\n"
+        assert expected_output in out
+
+    def test_before_context_shows_correct_number_of_lines(self, tmp_path, capsys):
+        """Verify before context lines are printed correctly before a match."""
+        p = tmp_path / "data.txt"
+        p.write_text("line1\nline2\nmatch\nline4\nline5")
+        assert search_file(str(p), "match", before_context=3) is True
+        out = capsys.readouterr().out
+        expected_output = "line1\nline2\nmatch\n"
+        assert expected_output in out
+
+    def test_before_context_at_start_of_file(self, tmp_path, capsys):
+        """Check that before context at start of file does not crash."""
+        p = tmp_path / "data.txt"
+        p.write_text("match\nline2\nline3")
+        assert search_file(str(p), "match", before_context=2) is True
+        out = capsys.readouterr().out
+        expected_output = "match\n"
+        assert expected_output in out
+
+    def test_before_context_with_first_line_match(self, tmp_path, capsys):
+        """Ensure before context works when the first line is a match."""
+        p = tmp_path / "data.txt"
+        p.write_text("match\nline2\nline3")
+        assert search_file(str(p), "match", before_context=1) is True
+        out = capsys.readouterr().out
+        expected_output = "match\n"
+        assert expected_output in out
+
+    def test_combined_before_and_after_context(self, tmp_path, capsys):
+        """Test that both before and after context lines are printed correctly."""
+        p = tmp_path / "data.txt"
+        p.write_text("line1\nline2\nmatch\nline4\nline5\nline6")
+        assert search_file(str(p), "match", before_context=4, after_context=2) is True
+        out = capsys.readouterr().out
+        expected_output = "line1\nline2\nmatch\nline4\nline5\n"
+        assert expected_output in out
+
+    def test_no_duplicate_lines_in_context(self, tmp_path, capsys):
+        """Ensure no duplicate lines are printed when contexts overlap."""
+        p = tmp_path / "data.txt"
+        p.write_text("line1\nmatch\nline3\nmatch\nline5")
+        assert search_file(str(p), "match", before_context=1, after_context=1) is True
+        out = capsys.readouterr().out
+        expected_output = "line1\nmatch\nline3\nmatch\nline5\n"
+        assert out.count("match") == 2
+        assert expected_output in out
+
+    def test_multiple_matches_with_varied_spacing(self, tmp_path, capsys):
+        """Check context lines for multiple matches with different spacing."""
+        p = tmp_path / "data.txt"
+        p.write_text("line1\nmatch1\nline3\nline4\nmatch2\nline6")
+        assert search_file(str(p), "match", before_context=1, after_context=1) is True
+        out = capsys.readouterr().out
+        expected_output = "line1\nmatch1\nline3\nline4\nmatch2\nline6\n"
+        assert expected_output in out

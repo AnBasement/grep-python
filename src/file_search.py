@@ -92,8 +92,6 @@ def search_file(
             for idx, line in enumerate(file, start=1):
                 line = line.rstrip("\n")
                 matches = match_pattern(line, pattern, ignore_case=ignore_case)
-                if before_context_buffer is not None:
-                    before_context_buffer.append((idx, line))
 
                 if invert_match:
                     matches = not matches
@@ -142,6 +140,10 @@ def search_file(
                         )
                         printed_lines.add(idx)
                     after_context_counter -= 1
+
+                # Add line to before-context buffer after processing
+                if before_context_buffer is not None:
+                    before_context_buffer.append((idx, line))
 
     except (PermissionError, OSError):
         print(f"{filename}: permission denied", file=sys.stderr)
