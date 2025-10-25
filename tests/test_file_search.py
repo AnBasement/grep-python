@@ -163,15 +163,15 @@ class TestContextLines:
 
 
 class TestPatternSourceMatching:
-    """Tests matching logic for multiple pattern sources:
-    -e flag, -f flag, and positional pattern.
-    Verifies that lines match if any pattern matches, patterns are loaded from files,
-    empty lines in pattern files are skipped, and
-    error handling for missing pattern files works.
+    """Tests search_file() function with multiple patterns.
+
+    Verifies that when multiple patterns are provided via the patterns parameter,
+    lines match if any pattern matches (OR logic).
     """
 
-    def test_single_e_pattern_matches(self, tmp_path, capsys):
-        """Test that a single pattern in patterns matches lines."""
+    def test_single_pattern_in_patterns_list(self, tmp_path, capsys):
+        """Test that search_file matches when a single pattern
+        is provided via patterns parameter."""
         p = tmp_path / "data.txt"
         p.write_text("foo\nbar\nbaz")
         assert search_file(str(p), "dummy", patterns=["foo"]) is True
@@ -180,8 +180,8 @@ class TestPatternSourceMatching:
         assert "bar" not in out
         assert "baz" not in out
 
-    def test_multiple_e_patterns_or_logic(self, tmp_path, capsys):
-        """Test that multiple patterns match lines with OR logic."""
+    def test_multiple_patterns_or_logic(self, tmp_path, capsys):
+        """Test that search_file uses OR logic when multiple patterns are provided."""
         p = tmp_path / "data.txt"
         p.write_text("foo\nbar\nbaz")
         assert search_file(str(p), "dummy", patterns=["foo", "baz"]) is True
@@ -190,8 +190,8 @@ class TestPatternSourceMatching:
         assert "baz" in out
         assert "bar" not in out
 
-    def test_e_and_positional_pattern_combined(self, tmp_path, capsys):
-        """Test that both patterns and positional pattern match."""
+    def test_patterns_list_and_single_pattern_combined(self, tmp_path, capsys):
+        """Test that search_file combines both patterns list and pattern parameter."""
         p = tmp_path / "data.txt"
         p.write_text("foo\nbar\nbaz")
         assert search_file(str(p), "bar", patterns=["foo", "baz"]) is True

@@ -121,30 +121,22 @@ class TestEFlagParsing:
         )
 
         args = parse_arguments()
-        assert "foo" in args.pattern_list
-        assert "baz" in args.pattern_list
+        assert args.pattern_list == ["file.txt", "foo", "baz"]
 
     def test_empty_lines_skipped_in_pattern_file(self, tmp_path, monkeypatch):
         """Test that empty lines in pattern file are skipped when using -f flag."""
         pattern_file = tmp_path / "patterns.txt"
         pattern_file.write_text("foo\n\nbaz\n")
-        data_file = tmp_path / "data.txt"
-        data_file.write_text("foo\nbar\nbaz")
-        monkeypatch.setattr(
-            sys, "argv", ["pygrep", "-f", str(pattern_file), str(data_file)]
-        )
+        monkeypatch.setattr(sys, "argv", ["pygrep", "-f", str(pattern_file)])
 
         args = parse_arguments()
-        assert "foo" in args.pattern_list
-        assert "baz" in args.pattern_list
-        assert "" not in args.pattern_list
+        assert args.pattern_list == ["foo", "baz"]
 
     def test_f_flag_missing_pattern_file_exits(self, tmp_path, monkeypatch):
         """Test that using -f with a missing pattern file
         causes parse_arguments() to exit."""
         missing = tmp_path / "missing.txt"
-        data_file = tmp_path / "data.txt"
-        data_file.write_text("foo\nbar\nbaz")
-        monkeypatch.setattr(sys, "argv", ["pygrep", "-f", str(missing), str(data_file)])
-        with pytest.raises(SystemExit):
+        monkeypatch.setattr(sys, "argv", ["pygrep", "-f", str(missing)])
+        with pytest.raises(SystemExit) as exc_info:
             parse_arguments()
+        assert exc_info.value.code == EXIT_ERROR
