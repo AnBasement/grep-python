@@ -51,9 +51,11 @@ def main() -> None:
 
                     if matches:
                         match_found = True
+                        if args.quiet:
+                            sys.exit(EXIT_MATCH_FOUND)
                         if args.count:
                             match_count += 1
-                        else:
+                        elif not args.quiet:
                             print(line)
                 except (ValueError, IndexError, KeyError):
                     print(f"grep: {ERROR_INVALID_PATTERN}", file=sys.stderr)
