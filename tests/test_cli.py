@@ -137,3 +137,12 @@ class TestEFlagParsing:
         assert "foo" in args.pattern_list
         assert "baz" in args.pattern_list
         assert "" not in args.pattern_list
+
+    def test_f_flag_missing_pattern_file_exits(self, tmp_path, monkeypatch):
+        """Test that using -f with a missing pattern file causes parse_arguments() to exit."""
+        missing = tmp_path / "missing.txt"
+        data_file = tmp_path / "data.txt"
+        data_file.write_text("foo\nbar\nbaz")
+        monkeypatch.setattr(sys, "argv", ["pygrep", "-f", str(missing), str(data_file)])
+        with pytest.raises(SystemExit):
+            parse_arguments()

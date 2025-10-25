@@ -199,12 +199,3 @@ class TestPatternSourceMatching:
         assert "foo" in out
         assert "bar" in out
         assert "baz" in out
-
-    def test_pattern_file_not_found_error(self, tmp_path):
-        """Test that missing pattern file triggers error handling."""
-        data_file = tmp_path / "data.txt"
-        data_file.write_text("foo\nbar\nbaz")
-        try:
-            search_file(str(data_file), "dummy", patterns=None)
-        except FileNotFoundError:
-            pass
