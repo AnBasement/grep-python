@@ -74,3 +74,28 @@ class TestParseArguments:
         with pytest.raises(SystemExit) as exc_info:
             parse_arguments()
         assert exc_info.value.code == EXIT_ERROR
+
+class TestEFlagParsing:
+    def test_single_e_flag(self, monkeypatch):
+        """Test that a single -e flag is parsed correctly."""
+        monkeypatch.setattr(sys, "argv", ["pygrep", "-e", "foo", "file.txt"])
+        args = parse_arguments()
+        assert args.patterns == ["foo"]
+        assert args.pattern == "file.txt"
+        assert args.files == []
+
+    def test_multiple_e_flags(self, monkeypatch):
+        """Test that multiple -e flags are combined into a list."""
+        monkeypatch.setattr(sys, "argv", ["pygrep", "-e", "foo", "-e", "bar", "file.txt"])
+        args = parse_arguments()
+        assert args.patterns == ["foo", "bar"]
+        assert args.pattern == "file.txt"
+        assert args.files == []
+
+    def test_e_flag_and_positional_pattern(self, monkeypatch):
+        """Test that both -e and positional pattern are parsed."""
+        monkeypatch.setattr(sys, "argv", ["pygrep", "-e", "foo", "bar", "file.txt"])
+        args = parse_arguments()
+        assert args.patterns == ["foo"]
+        assert args.pattern == "bar"
+        assert args.files == ["file.txt"]
