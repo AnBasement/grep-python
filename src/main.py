@@ -51,10 +51,10 @@ def main() -> None:
 
                     if matches:
                         match_found = True
+                        match_count += 1
                         if args.quiet:
                             sys.exit(EXIT_MATCH_FOUND)
                         if args.count:
-                            match_count += 1
                             if 0 < args.max_count <= match_count:
                                 print(match_count)
                                 sys.exit(EXIT_MATCH_FOUND)
