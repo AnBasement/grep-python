@@ -167,6 +167,8 @@ def search_multiple_files(
     ignore_case: bool = False,
     invert_match: bool = False,
     count_only: bool = False,
+    after_context: int = 0,
+    before_context: int = 0,
 ) -> bool:
     """
     Searches through multiple files for lines matching a given pattern.
@@ -182,6 +184,8 @@ def search_multiple_files(
         ignore_case (bool): Ignore case sensitivity if True.
         invert_match (bool): Print lines that don't match if True.
         count_only (bool): Print only the number of matching lines.
+        after_context (int): Number of lines to print after a matching line.
+        before_context (int): Number of lines to print before a matching line.
 
     Returns:
         bool: True if at least one matching line is found, else False.
@@ -197,6 +201,8 @@ def search_multiple_files(
             ignore_case=ignore_case,
             invert_match=invert_match,
             count_only=count_only,
+            after_context=after_context,
+            before_context=before_context,
         )
         if file_with_match:
             match_found = True
