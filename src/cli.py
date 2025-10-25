@@ -161,6 +161,7 @@ def parse_arguments() -> argparse.Namespace:
         "--regexp",
         action="append",
         dest="patterns",
+        default=[],
         help="Pattern to search for (can be used multiple times)",
     )
 
