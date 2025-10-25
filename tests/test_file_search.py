@@ -104,3 +104,30 @@ class TestContextLines:
         out = capsys.readouterr().out
         expected_output = "match\nline3\n"
         assert expected_output in out
+
+    def test_before_context_shows_correct_number_of_lines(self, tmp_path, capsys):
+        """Verify before context lines are printed correctly before a match."""
+        p = tmp_path / "data.txt"
+        p.write_text("line1\nline2\nmatch\nline4\nline5")
+        assert search_file(str(p), "match", before_context=3) is True
+        out = capsys.readouterr().out
+        expected_output = "line1\nline2\nmatch\n"
+        assert expected_output in out
+
+    def test_before_context_at_start_of_file(self, tmp_path, capsys):
+        """Check that before context at start of file does not crash."""
+        p = tmp_path / "data.txt"
+        p.write_text("match\nline2\nline3")
+        assert search_file(str(p), "match", before_context=2) is True
+        out = capsys.readouterr().out
+        expected_output = "match\n"
+        assert expected_output in out
+
+    def test_before_context_with_first_line_match(self, tmp_path, capsys):
+        """Ensure before context works when the first line is a match."""
+        p = tmp_path / "data.txt"
+        p.write_text("match\nline2\nline3")
+        assert search_file(str(p), "match", before_context=1) is True
+        out = capsys.readouterr().out
+        expected_output = "match\n"
+        assert expected_output in out
