@@ -163,9 +163,11 @@ class TestContextLines:
 
 
 class TestPatternSourceMatching:
-    """Tests matching logic for multiple pattern sources: -e flag, -f flag, and positional pattern.
+    """Tests matching logic for multiple pattern sources:
+    -e flag, -f flag, and positional pattern.
     Verifies that lines match if any pattern matches, patterns are loaded from files,
-    empty lines in pattern files are skipped, and error handling for missing pattern files works.
+    empty lines in pattern files are skipped, and
+    error handling for missing pattern files works.
     """
 
     def test_single_e_pattern_matches(self, tmp_path, capsys):
