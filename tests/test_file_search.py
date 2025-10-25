@@ -160,3 +160,35 @@ class TestContextLines:
         out = capsys.readouterr().out
         expected_output = "line1\nmatch1\nline3\nline4\nmatch2\nline6\n"
         assert expected_output in out
+
+class TestEFlagMatching:
+    def test_single_e_pattern_matches(self, tmp_path, capsys):
+        """Test that a single pattern in patterns matches lines."""
+        p = tmp_path / "data.txt"
+        p.write_text("foo\nbar\nbaz")
+        assert search_file(str(p), "dummy", patterns=["foo"]) is True
+        out = capsys.readouterr().out
+        assert "foo" in out
+        assert "bar" not in out
+        assert "baz" not in out
+
+    def test_multiple_e_patterns_or_logic(self, tmp_path, capsys):
+        """Test that multiple patterns match lines with OR logic."""
+        p = tmp_path / "data.txt"
+        p.write_text("foo\nbar\nbaz")
+        assert search_file(str(p), "dummy", patterns=["foo", "baz"]) is True
+        out = capsys.readouterr().out
+        assert "foo" in out
+        assert "baz" in out
+        assert "bar" not in out
+
+    def test_e_and_positional_pattern_combined(self, tmp_path, capsys):
+        """Test that both patterns and positional pattern match."""
+        p = tmp_path / "data.txt"
+        p.write_text("foo\nbar\nbaz")
+        # Should match any of "foo", "bar", or "baz"
+        assert search_file(str(p), "bar", patterns=["foo", "baz"]) is True
+        out = capsys.readouterr().out
+        assert "foo" in out
+        assert "bar" in out
+        assert "baz" in out
