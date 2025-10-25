@@ -236,9 +236,8 @@ class TestPatternSourceMatching:
         assert "baz" in out
         assert "bar" not in out
 
-    def test_pattern_file_not_found_error(self, tmp_path, capsys):
+    def test_pattern_file_not_found_error(self, tmp_path):
         """Test that missing pattern file triggers error handling."""
-        missing_file = tmp_path / "missing.txt"
         data_file = tmp_path / "data.txt"
         data_file.write_text("foo\nbar\nbaz")
         try:
