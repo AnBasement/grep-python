@@ -51,6 +51,8 @@ def search_file(
     patterns: Optional[list[str]] = None,
     quiet: bool = False,
     max_count: int = 0,
+    files_with_matches: bool = False,
+    files_without_match: bool = False,
 ) -> bool:
     """
     Search a file for lines matching a pattern.
@@ -76,6 +78,10 @@ def search_file(
         quiet (bool): If True, suppress all normal output and exit on first match.
         max_count (int): Maximum number of matching lines to find before stopping.
             A value of 0 means no limit. Defaults to 0.
+        files_with_matches (bool): If True, only print names of files with
+            matching lines.
+        files_without_match (bool): If True, only print names of files without
+            matching lines.
 
     Returns:
         bool: True if at least one matching line is found, otherwise False.
@@ -185,7 +191,7 @@ def search_file(
             print(f"{filename}:{match_count}")
         else:
             print(match_count)
-    
+
     if max_count > 0:
         return 0 < max_count <= matches_found
     else:
@@ -204,6 +210,8 @@ def search_multiple_files(
     patterns: Optional[list[str]] = None,
     quiet: bool = False,
     max_count: int = 0,
+    files_with_matches: bool = False,
+    files_without_match: bool = False,
 ) -> bool:
     """
     Searches through multiple files for lines matching a given pattern.
@@ -226,6 +234,10 @@ def search_multiple_files(
         quiet (bool): If True, suppress all normal output and exit on first match.
         max_count (int): Maximum number of matching lines to find before stopping.
             A value of 0 means no limit. Defaults to 0.
+        files_with_matches (bool): If True, only print names of files with
+            matching lines.
+        files_without_match (bool): If True, only print names of files without
+            matching lines.
 
     Returns:
         bool: True if at least one matching line is found, else False.
@@ -246,6 +258,8 @@ def search_multiple_files(
             patterns=patterns,
             quiet=quiet,
             max_count=max_count,
+            files_with_matches=files_with_matches,
+            files_without_match=files_without_match,
         )
         if file_with_match:
             match_found = True
@@ -305,6 +319,8 @@ def search_directory_recursively(
     patterns: Optional[list[str]] = None,
     quiet: bool = False,
     max_count: int = 0,
+    files_with_matches: bool = False,
+    files_without_match: bool = False,
 ) -> bool:
     """
     Recursively search all files in a directory for lines matching a pattern.
@@ -327,6 +343,10 @@ def search_directory_recursively(
         quiet (bool): If True, suppress all normal output and exit on first match.
         max_count (int): Maximum number of matching lines to find before stopping.
             A value of 0 means no limit. Defaults to 0.
+        files_with_matches (bool): If True, only print names of files with
+            matching lines.
+        files_without_match (bool): If True, only print names of files without
+            matching lines.
 
     Returns:
         bool: True if at least one matching line is found, else False.
@@ -348,6 +368,8 @@ def search_directory_recursively(
             patterns=patterns,
             quiet=quiet,
             max_count=max_count,
+            files_with_matches=files_with_matches,
+            files_without_match=files_without_match,
         )
         if file_had_match:
             any_match_found = True
