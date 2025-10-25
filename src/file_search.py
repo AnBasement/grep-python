@@ -184,6 +184,8 @@ def search_multiple_files(
         ignore_case (bool): Ignore case sensitivity if True.
         invert_match (bool): Print lines that don't match if True.
         count_only (bool): Print only the number of matching lines.
+        after_context (int): Number of lines to print after a matching line.
+        before_context (int): Number of lines to print before a matching line.
 
     Returns:
         bool: True if at least one matching line is found, else False.
