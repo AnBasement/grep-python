@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.11] - 2025-10-25
+
 ### Added
 
 - Implements multi-pattern matching to `search_file()`. Loops through patterns and considers a line a match if ANY pattern matches before breaking after first match.
