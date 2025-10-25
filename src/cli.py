@@ -195,9 +195,26 @@ def parse_arguments() -> argparse.Namespace:
         help="Stop reading a file after NUM matching lines",
     )
 
+    parser.add_argument(
+        "-l",
+        "--files-with-matches",
+        action="store_true",
+        help="Only print names of files with matching lines",
+    )
+
+    parser.add_argument(
+        "-L",
+        "--files-without-match",
+        action="store_true",
+        help="Only print names of files without matching lines",
+    )
+
     args = parser.parse_args()
 
     all_patterns = []
+
+    if args.files_with_matches and args.files_without_match:
+        parser.error("cannot use -l and -L together")
 
     if args.pattern:
         all_patterns.append(args.pattern)
