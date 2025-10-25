@@ -186,7 +186,7 @@ def parse_arguments() -> argparse.Namespace:
 
     if args.pattern_file:
         try:
-            with open(args.pattern_file) as f:
+            with open(args.pattern_file, encoding="utf-8") as f:
                 for line in f:
                     line = line.strip()
                     if line:
