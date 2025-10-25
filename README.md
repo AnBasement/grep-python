@@ -16,6 +16,7 @@ A grep tool written in Python while following the [Codecrafters.io guide](https:
 - **Case-insensitive**: Ignore case distinctions with `-i` flag.
 - **Inverted match**: Select non-matching lines with `-v` flag.
 - **Count matches**: Print count of matching lines with `-c` flag.
+- **Quiet mode**: Suppress output and exit immediately on first match with `-q` flag.
 
 ## Installation
 
@@ -71,6 +72,9 @@ echo "hello world" | ./pygrep.sh -E "hello"
 
 # Combine patterns from different sources
 ./pygrep.sh -e "error" -f patterns.txt "manual" log.txt
+
+# Quiet mode: suppress output, exit 0 on match
+./pygrep.sh -q -E "error" log.txt && echo "Errors found"
 ```
 
 ## Documentation

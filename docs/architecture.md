@@ -120,6 +120,7 @@ When `ignore_case=True` is passed to `match_pattern()`, both the pattern and inp
 - Count only (`count_only`) - Print count instead of matches
 - After-context (`after_context`) - Show N lines after each match
 - Before-context (`before_context`) - Show N lines before each match
+- Quiet mode (`quiet`) - Suppress all output and exit immediately on first match
 
 **Context Line Implementation**:
 
@@ -172,6 +173,7 @@ When `ignore_case=True` is passed to `match_pattern()`, both the pattern and inp
 - `-A NUM`, `--after-context NUM` - Print NUM lines after each match
 - `-B NUM`, `--before-context NUM` - Print NUM lines before each match
 - `-C NUM`, `--context NUM` - Print NUM lines before and after each match (sets both -A and -B)
+- `-q`, `--quiet`, `--silent` - Suppress all output, exit immediately on first match
 - `--version` - Show version and exit
 - `--help` - Show help message and exit
 

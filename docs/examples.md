@@ -1,3 +1,4 @@
+<!-- markdownlint-disable MD024 -->
 # Examples
 
 Usage examples for grep-python.
@@ -280,6 +281,78 @@ All patterns are combined with OR logic—a line matches if it matches **any** o
 # Combine patterns from file with additional patterns
 ./pygrep.sh -f banned_words.txt -e "URGENT" -e "ASAP" emails.txt
 ```
+
+## Quiet Mode
+
+Suppress all normal output and exit immediately with status 0 on the first match. Useful in shell scripts where you only care whether a match exists.
+
+### Basic Quiet Mode
+
+```bash
+# Check if file contains errors (no output)
+./pygrep.sh -q -E "error" log.txt
+echo $?  # 0 if match found, 1 if not
+
+# Use in conditional
+if ./pygrep.sh -q -E "CRITICAL" system.log; then
+    echo "Critical errors detected!"
+    # Send alert, restart service, etc.
+fi
+
+# Short form with --quiet or --silent
+./pygrep.sh --quiet -E "pattern" file.txt
+./pygrep.sh --silent -E "pattern" file.txt
+```
+
+### Exit Codes
+
+Quiet mode uses standard grep exit codes:
+
+- **0**: Match found (success)
+- **1**: No match found
+- **2**: Error occurred (file not found, permission denied, etc.)
+
+### Practical Examples
+
+```bash
+# Check multiple files for any matches
+if ./pygrep.sh -q -e "error" -e "warning" *.log; then
+    echo "Issues found in logs"
+fi
+
+# Exit early from script on match
+./pygrep.sh -q "BUILD FAILED" build.log && exit 1
+
+# Find first file with pattern in directory
+for file in src/*.py; do
+    if ./pygrep.sh -q "TODO" "$file"; then
+        echo "Found TODO in: $file"
+        break
+    fi
+done
+
+# Combine with other flags (quiet overrides output options)
+./pygrep.sh -q -n -i "pattern" file.txt  # -n has no effect in quiet mode
+
+# Use in monitoring script
+while true; do
+    if ./pygrep.sh -q "OutOfMemoryError" /var/log/app.log; then
+        send_alert "Memory issue detected"
+        sleep 300  # Wait 5 minutes before checking again
+    fi
+    sleep 60
+done
+```
+
+### Performance Benefits
+
+Quiet mode is optimized for performance:
+
+- **Early exit**: Stops reading file immediately after first match
+- **No formatting**: Skips all output formatting operations
+- **Minimal I/O**: Returns as soon as possible
+
+This makes it ideal for checking large files where you only need to know if a pattern exists.
 
 ## Pattern Examples
 
