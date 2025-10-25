@@ -37,9 +37,14 @@ def main() -> None:
             for line in sys.stdin:
                 line = line.rstrip("\n")
                 try:
-                    matches = match_pattern(
-                        line, args.pattern, ignore_case=args.ignore_case
+                    matches = False
+                    patterns_to_check = (
+                        args.pattern_list if args.pattern_list else [args.pattern]
                     )
+                    for p in patterns_to_check:
+                        if match_pattern(line, p, ignore_case=args.ignore_case):
+                            matches = True
+                            break
 
                     if args.invert_match:
                         matches = not matches
@@ -74,6 +79,7 @@ def main() -> None:
                         count_only=args.count,
                         after_context=args.after_context,
                         before_context=args.before_context,
+                        patterns=args.pattern_list,
                     ):
                         any_match_found = True
                 except (PermissionError, OSError, FileNotFoundError):
@@ -99,6 +105,7 @@ def main() -> None:
                         count_only=args.count,
                         after_context=args.after_context,
                         before_context=args.before_context,
+                        patterns=args.pattern_list,
                     ):
                         sys.exit(EXIT_MATCH_FOUND)
                     else:
@@ -114,6 +121,7 @@ def main() -> None:
                         count_only=args.count,
                         after_context=args.after_context,
                         before_context=args.before_context,
+                        patterns=args.pattern_list,
                     ):
                         sys.exit(EXIT_MATCH_FOUND)
                     else:

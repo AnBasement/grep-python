@@ -10,12 +10,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- `patterns` parameter to `search_file()` and updated docstring.
 - Implements multi-pattern matching to `search_file()`. Loops through patterns and considers a line a match if ANY pattern matches before breaking after first match.
+- Added `patterns` parameter to `search_file()`, `search_multiple_files()`, and `search_directory_recursively()` to support multi-pattern matching.
+- Wired CLI pattern sources (`-e`, `-f`, positional) through `main.py` and all search functions, enabling matching against multiple patterns in a single search.
+- Lines now match if any provided pattern matches.
 
 ### Changed
 
 - Removed an unnecessary `"r"` in `open()` as it is the default mode.
+- Function signatures for search functions now accept an optional `patterns` parameter for multi-pattern support.
+- CLI argument parsing and main orchestration updated to pass combined pattern list to search functions.
 
 ## [0.3.10] - 2025-10-25
 
