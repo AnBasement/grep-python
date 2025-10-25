@@ -154,6 +154,11 @@ def search_file(
                             after_context_counter = after_context
 
                         if 0 < max_count <= matches_found:
+                            if count_only:
+                                if print_filename:
+                                    print(f"{filename}:{match_count}")
+                                else:
+                                    print(match_count)
                             return True
                 elif after_context_counter > 0:
                     if idx not in printed_lines:
