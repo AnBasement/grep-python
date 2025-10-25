@@ -113,8 +113,11 @@ class TestEFlagParsing:
         """Test that -f flag loads patterns from file."""
         pattern_file = tmp_path / "patterns.txt"
         pattern_file.write_text("foo\nbaz\n")
-        monkeypatch.setattr(sys, "argv", ["pygrep", "-f", str(pattern_file), "file.txt"])
+        monkeypatch.setattr(
+            sys, "argv", ["pygrep", "-f", str(pattern_file), "file.txt"]
+        )
         from src.cli import parse_arguments
+
         args = parse_arguments()
         assert "foo" in args.pattern_list
         assert "baz" in args.pattern_list
@@ -125,8 +128,11 @@ class TestEFlagParsing:
         pattern_file.write_text("foo\n\nbaz\n")
         data_file = tmp_path / "data.txt"
         data_file.write_text("foo\nbar\nbaz")
-        monkeypatch.setattr(sys, "argv", ["pygrep", "-f", str(pattern_file), str(data_file)])
+        monkeypatch.setattr(
+            sys, "argv", ["pygrep", "-f", str(pattern_file), str(data_file)]
+        )
         from src.cli import parse_arguments
+
         args = parse_arguments()
         assert "foo" in args.pattern_list
         assert "baz" in args.pattern_list
