@@ -38,7 +38,9 @@ def main() -> None:
                 line = line.rstrip("\n")
                 try:
                     matches = False
-                    patterns_to_check = args.pattern_list if args.pattern_list else [args.pattern]
+                    patterns_to_check = (
+                        args.pattern_list if args.pattern_list else [args.pattern]
+                    )
                     for p in patterns_to_check:
                         if match_pattern(line, p, ignore_case=args.ignore_case):
                             matches = True
