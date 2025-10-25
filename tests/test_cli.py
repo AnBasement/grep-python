@@ -90,6 +90,7 @@ class TestEFlagParsing:
         assert args.patterns == ["foo"]
         assert args.pattern == "file.txt"
         assert args.files == []
+        assert args.pattern_list == ["file.txt", "foo"]
 
     def test_multiple_e_flags(self, monkeypatch):
         """Test that multiple -e flags are combined into a list."""
@@ -100,6 +101,7 @@ class TestEFlagParsing:
         assert args.patterns == ["foo", "bar"]
         assert args.pattern == "file.txt"
         assert args.files == []
+        assert args.pattern_list == ["file.txt", "foo", "bar"]
 
     def test_e_flag_and_positional_pattern(self, monkeypatch):
         """Test that both -e and positional pattern are parsed."""
@@ -108,6 +110,7 @@ class TestEFlagParsing:
         assert args.patterns == ["foo"]
         assert args.pattern == "bar"
         assert args.files == ["file.txt"]
+        assert args.pattern_list == ["bar", "foo"]
 
     def test_patterns_loaded_from_file(self, tmp_path, monkeypatch):
         """Test that -f flag loads patterns from file."""
