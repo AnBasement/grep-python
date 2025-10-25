@@ -75,3 +75,32 @@ class TestFileSearch:
         files = get_files_recursively(str(filep))
         assert not files
         assert "not a directory" in capsys.readouterr().err
+
+class TestContextLines:
+    """Tests for before and after context line functionality in file searches."""
+
+    def test_after_context_shows_correct_number_of_lines(self, tmp_path, capsys):
+        """Verify after context lines are printed correctly after a match."""
+        p = tmp_path / "data.txt"
+        p.write_text("line1\nmatch\nline3\nline4\nline5\nline6")
+        assert search_file(str(p), "match", after_context=2) is True
+        out = capsys.readouterr().out
+        expected_output = "match\nline3\nline4\n"
+        assert expected_output in out
+
+    def test_after_context_without_matches_returns_nothing(self, tmp_path, capsys):
+        """Check that no output is produced when there are no matches."""
+        p = tmp_path / "data.txt"
+        p.write_text("line1\nline2\nline3")
+        assert search_file(str(p), "nomatch", after_context=2) is False
+        out = capsys.readouterr().out
+        assert out == ""
+
+    def test_after_context_within_bounds(self, tmp_path, capsys):
+        """Ensure after context does not exceed file bounds."""
+        p = tmp_path / "data.txt"
+        p.write_text("line1\nmatch\nline3")
+        assert search_file(str(p), "match", after_context=5) is True
+        out = capsys.readouterr().out
+        expected_output = "match\nline3\n"
+        assert expected_output in out
