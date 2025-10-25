@@ -199,6 +199,8 @@ def search_multiple_files(
             ignore_case=ignore_case,
             invert_match=invert_match,
             count_only=count_only,
+            after_context=after_context,
+            before_context=before_context,
         )
         if file_with_match:
             match_found = True
