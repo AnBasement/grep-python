@@ -25,7 +25,8 @@ def parse_arguments() -> argparse.Namespace:
     Uses argparse to define available options and positional arguments,
     including pattern, files, and flags for extended regex, recursion, line
     numbers, case sensitivity, inverted matches, and count mode. Validates
-    that at least one file is provided for recursive searches.
+    that at least one pattern is specified and at least one file is provided
+    for recursive searches.
 
     Returns:
         argparse.Namespace: Parsed command-line arguments as attributes.
