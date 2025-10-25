@@ -117,41 +117,44 @@ def search_file(
                 if matches:
                     matches_found += 1
                     match_found = True
-                    if quiet:
-                        return True
-                    if not quiet:
-                        if before_context_buffer:
-                            for buf_idx, buf_line in before_context_buffer:
-                                if buf_idx not in printed_lines:
-                                    print(
-                                        _format_line_output(
-                                            line_text=buf_line,
-                                            line_number=buf_idx,
-                                            filename=filename,
-                                            show_filename=print_filename,
-                                            show_line_number=print_line_number,
+                    if matches:
+                        matches_found += 1
+                        match_found = True
+                        if quiet:
+                            return True
+                        if not quiet:
+                            if before_context_buffer:
+                                for buf_idx, buf_line in before_context_buffer:
+                                    if buf_idx not in printed_lines:
+                                        print(
+                                            _format_line_output(
+                                                line_text=buf_line,
+                                                line_number=buf_idx,
+                                                filename=filename,
+                                                show_filename=print_filename,
+                                                show_line_number=print_line_number,
+                                            )
                                         )
-                                    )
-                                    printed_lines.add(buf_idx)
+                                        printed_lines.add(buf_idx)
 
-                    if count_only:
-                        match_count += 1
-                    else:
-                        if idx not in printed_lines:
-                            print(
-                                _format_line_output(
-                                    line_text=line,
-                                    line_number=idx,
-                                    filename=filename,
-                                    show_filename=print_filename,
-                                    show_line_number=print_line_number,
+                        if count_only:
+                            match_count += 1
+                        else:
+                            if idx not in printed_lines:
+                                print(
+                                    _format_line_output(
+                                        line_text=line,
+                                        line_number=idx,
+                                        filename=filename,
+                                        show_filename=print_filename,
+                                        show_line_number=print_line_number,
+                                    )
                                 )
-                            )
-                            printed_lines.add(idx)
-                        after_context_counter = after_context
+                                printed_lines.add(idx)
+                            after_context_counter = after_context
+
                         if 0 < max_count <= matches_found:
                             return True
-                        return True
                 elif after_context_counter > 0:
                     if idx not in printed_lines:
                         print(
