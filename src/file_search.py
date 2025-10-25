@@ -48,6 +48,7 @@ def search_file(
     count_only: bool = False,
     after_context: int = 0,
     before_context: int = 0,
+    patterns: list[str] = None,
 ) -> bool:
     """
     Search a file for lines matching a pattern.
@@ -68,6 +69,8 @@ def search_file(
         count_only (bool): Print only the number of matching lines.
         after_context (int): Number of lines to print after a matching line.
         before_context (int): Number of lines to print before a matching line.
+        patterns (list[str], optional): Additional patterns to match against.
+            Defaults to None.
 
     Returns:
         bool: True if at least one matching line is found, otherwise False.
