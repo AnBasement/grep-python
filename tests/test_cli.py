@@ -118,3 +118,16 @@ class TestEFlagParsing:
         args = parse_arguments()
         assert "foo" in args.pattern_list
         assert "baz" in args.pattern_list
+
+    def test_empty_lines_skipped_in_pattern_file(self, tmp_path, monkeypatch):
+        """Test that empty lines in pattern file are skipped when using -f flag."""
+        pattern_file = tmp_path / "patterns.txt"
+        pattern_file.write_text("foo\n\nbaz\n")
+        data_file = tmp_path / "data.txt"
+        data_file.write_text("foo\nbar\nbaz")
+        monkeypatch.setattr(sys, "argv", ["pygrep", "-f", str(pattern_file), str(data_file)])
+        from src.cli import parse_arguments
+        args = parse_arguments()
+        assert "foo" in args.pattern_list
+        assert "baz" in args.pattern_list
+        assert "" not in args.pattern_list
