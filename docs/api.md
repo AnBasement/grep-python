@@ -177,7 +177,7 @@ Handles file operations and search across files with output formatting.
 
 #### Functions
 
-##### `search_file(filename: str, pattern: str, print_filename: bool = False, print_line_number: bool = False, ignore_case: bool = False, invert_match: bool = False, count_only: bool = False, after_context: int = 0, before_context: int = 0, patterns: Optional[list[str]] = None) -> bool`
+##### `search_file(filename: str, pattern: str, print_filename: bool = False, print_line_number: bool = False, ignore_case: bool = False, invert_match: bool = False, count_only: bool = False, after_context: int = 0, before_context: int = 0, patterns: Optional[list[str]] = None, quiet: bool = False) -> bool`
 
 Searches a file for pattern matches with configurable output options.
 
@@ -193,6 +193,7 @@ Searches a file for pattern matches with configurable output options.
 - `after_context` (int): Number of lines to print after each match (default: 0)
 - `before_context` (int): Number of lines to print before each match (default: 0)
 - `patterns` (Optional[list[str]]): Additional patterns to match (default: None)
+- `quiet` (bool): Whether to suppress all output and exit on first match (default: False)
 
 **Returns:**
 
@@ -202,6 +203,7 @@ Searches a file for pattern matches with configurable output options.
 
 - **Multiple patterns**: If `patterns` list is provided, combines it with the positional `pattern` parameter
 - **OR logic**: A line matches if it matches ANY of the patterns (from both sources)
+- **Quiet mode**: When `quiet=True`, suppresses all output and returns immediately on first match (performance optimization)
 - Line numbers start at 1 (not 0)
 - Context lines are automatically deduplicated when regions overlap
 - Each line is printed at most once, even if it appears in multiple context windows
@@ -229,6 +231,9 @@ found = search_file("log.txt", "error", print_line_number=True)
 # Multiple patterns
 found = search_file("log.txt", "error", patterns=["warning", "exception"])
 
+# Quiet mode (no output, early exit)
+found = search_file("file.txt", "pattern", quiet=True)
+
 # Case-insensitive with count
 found = search_file("file.txt", "TODO", ignore_case=True, count_only=True)
 
@@ -236,7 +241,7 @@ found = search_file("file.txt", "TODO", ignore_case=True, count_only=True)
 found = search_file("config.txt", "^#", invert_match=True)
 ```
 
-##### `search_multiple_files(filenames: List[str], pattern: str, print_line_number: bool = False, ignore_case: bool = False, invert_match: bool = False, count_only: bool = False, after_context: int = 0, before_context: int = 0, patterns: Optional[list[str]] = None) -> bool`
+##### `search_multiple_files(filenames: List[str], pattern: str, print_line_number: bool = False, ignore_case: bool = False, invert_match: bool = False, count_only: bool = False, after_context: int = 0, before_context: int = 0, patterns: Optional[list[str]] = None, quiet: bool = False) -> bool`
 
 Searches multiple files for pattern matches.
 
@@ -261,10 +266,11 @@ Searches multiple files for pattern matches.
 - Always prints filenames when searching multiple files
 - **Multiple patterns**: Passes `patterns` parameter to `search_file()` for each file
 - **OR logic**: Lines match if they match ANY pattern from either source
+- **Quiet mode**: Passes `quiet` parameter through to enable early exit across files
 - Continues searching remaining files after errors
 - Passes all flags to `search_file()`, including context parameters
 
-##### `search_directory_recursively(directory: str, pattern: str, print_line_number: bool = False, ignore_case: bool = False, invert_match: bool = False, count_only: bool = False, after_context: int = 0, before_context: int = 0, patterns: Optional[list[str]] = None) -> bool`
+##### `search_directory_recursively(directory: str, pattern: str, print_line_number: bool = False, ignore_case: bool = False, invert_match: bool = False, count_only: bool = False, after_context: int = 0, before_context: int = 0, patterns: Optional[list[str]] = None, quiet: bool = False) -> bool`
 
 Recursively searches directories for pattern matches.
 
@@ -279,6 +285,7 @@ Recursively searches directories for pattern matches.
 - `after_context` (int): Number of lines to print after each match (default: 0)
 - `before_context` (int): Number of lines to print before each match (default: 0)
 - `patterns` (Optional[list[str]]): Additional patterns to match (default: None)
+- `quiet` (bool): Whether to suppress all output and exit on first match (default: False)
 
 **Returns:**
 
@@ -289,6 +296,7 @@ Recursively searches directories for pattern matches.
 - Recursively finds all files in directories
 - **Multiple patterns**: Passes `patterns` parameter through to file search functions
 - **OR logic**: Lines match if they match ANY pattern from either source
+- **Quiet mode**: Passes `quiet` parameter through to enable early exit
 - Searches each file with `search_file()`
 - Passes all flags through, including context parameters
 
@@ -361,6 +369,7 @@ Parses and validates command-line arguments using argparse.
 - `-A NUM`, `--after-context NUM`: Print NUM lines after each match
 - `-B NUM`, `--before-context NUM`: Print NUM lines before each match
 - `-C NUM`, `--context NUM`: Print NUM lines before and after each match
+- `-q`, `--quiet`, `--silent`: Suppress all output, exit immediately on first match
 - `--version`: Show version and exit
 - `--help`: Show help message and exit
 
@@ -378,8 +387,17 @@ Parses and validates command-line arguments using argparse.
 - Context lines are deduplicated when regions overlap
 - Context is not applied to stdin input (streaming limitation)
 
+**Quiet Mode:**
+
+- Suppresses all normal output (match lines, filenames, counts, etc.)
+- Returns immediately after first match (early exit optimization)
+- Exit code indicates match status: 0 if match found, 1 if not, 2 on error
+- Useful in shell scripts for checking if pattern exists without processing output
+
 **Exit Codes:**
 
+- `EXIT_MATCH_FOUND (0)`: Pattern matched (normal operation or quiet mode)
+- `EXIT_NO_MATCH (1)`: No matches found
 - `EXIT_ERROR (2)`: Invalid arguments or validation failure
 
 **Validation:**

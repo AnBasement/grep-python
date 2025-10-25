@@ -8,7 +8,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Comprehensive tests for quiet mode functionality covering output suppression, return values, and early exit behavior.
+- Added documentation and examples for the new quiet mode functionality.
+
 ## [0.3.13] - 2025-10-25
+
+### Added
+
+- Quiet mode support via `-q`, `--quiet`, and `--silent` flags to suppress all output and exit immediately on first match.
+- `quiet` parameter to all search functions (`search_file`, `search_multiple_files`, `search_directory_recursively`).
+- Early exit optimization in quiet mode for improved performance with large files.
 
 ## [0.3.12] - 2025-10-25
 
