@@ -75,7 +75,7 @@ def parse_arguments() -> argparse.Namespace:
     parser.add_argument(
         "pattern",
         nargs="?",
-        help="Regular expression pattern to search for",
+        help="Regular expression pattern to search for (optional if -e or -f is used)",
     )
 
     parser.add_argument(
