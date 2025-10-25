@@ -309,7 +309,7 @@ class TestMaxCount:
         out = capsys.readouterr().out
         assert out.count("match") == 5
 
-    def test_max_count_returns_true_when_limit_reached(self, tmp_path, capsys):
+    def test_max_count_returns_true_when_limit_reached(self, tmp_path):
         """Verify that max_count returns True when the limit is reached."""
         p = tmp_path / "data.txt"
         p.write_text("match1\nmatch2\nmatch3")
