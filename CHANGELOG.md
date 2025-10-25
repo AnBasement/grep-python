@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.8] - 2025-10-25
+
 ### Added
 
 - Adding `after_context` and `before_context` params to `search_multiple_files()` function and passing them through calls to `search_file()`.
