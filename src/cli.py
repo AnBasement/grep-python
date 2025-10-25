@@ -185,7 +185,14 @@ def parse_arguments() -> argparse.Namespace:
         all_patterns.extend(args.patterns)
 
     if args.pattern_file:
-        pass
+        try:
+            with open(args.pattern_file) as f:
+                for line in f:
+                    line = line.strip()
+                    if line:
+                        all_patterns.append(line)
+        except FileNotFoundError:
+            parser.error(f"pattern file not found: {args.pattern_file}")
 
     if not all_patterns:
         parser.error("no pattern specified")
