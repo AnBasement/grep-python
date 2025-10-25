@@ -194,6 +194,10 @@ def parse_arguments() -> argparse.Namespace:
                         all_patterns.append(line)
         except FileNotFoundError:
             parser.error(f"pattern file not found: {args.pattern_file}")
+        except IsADirectoryError:
+            parser.error(f"pattern file is a directory: {args.pattern_file}")
+        except PermissionError:
+            parser.error(f"permission denied: {args.pattern_file}")
 
     if not all_patterns:
         parser.error("no pattern specified")
