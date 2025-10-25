@@ -74,7 +74,8 @@ def parse_arguments() -> argparse.Namespace:
 
     parser.add_argument(
         "pattern",
-        help="Regular expression pattern to search for",
+        nargs="?",
+        help="Regular expression pattern to search for (optional if -e or -f is used)",
     )
 
     parser.add_argument(
@@ -153,6 +154,24 @@ def parse_arguments() -> argparse.Namespace:
         type=int,
         default=0,
         metavar="NUM",
+    )
+
+    parser.add_argument(
+        "-e",
+        "--regexp",
+        action="append",
+        dest="patterns",
+        default=[],
+        help="Pattern to search for (can be used multiple times)",
+    )
+
+    parser.add_argument(
+        "-f",
+        "--file",
+        dest="pattern_file",
+        metavar="FILE",
+        type=str,
+        help="Read patterns from FILE, one per line",
     )
 
     args = parser.parse_args()
