@@ -280,3 +280,72 @@ class TestQuietMode:
         assert result is True
         out = capsys.readouterr().out
         assert out == ""
+
+
+class TestMaxCount:
+    """Tests for max_count functionality in file search."""
+
+    def test_max_count_stops_after_limit(self, tmp_path, capsys):
+        """Verify that max_count stops printing after reaching the limit."""
+        p = tmp_path / "data.txt"
+        p.write_text("match1\nmatch2\nmatch3\nmatch4\nmatch5")
+        assert search_file(str(p), "match", max_count=2) is True
+        out = capsys.readouterr().out
+        assert out.count("match") == 2
+
+    def test_max_count_with_count_only_flag(self, tmp_path, capsys):
+        """Verify that max_count respects count_only flag and stops at limit."""
+        p = tmp_path / "data.txt"
+        p.write_text("match1\nmatch2\nmatch3\nmatch4")
+        assert search_file(str(p), "match", max_count=3, count_only=True) is True
+        out = capsys.readouterr().out
+        assert "3" in out
+
+    def test_max_count_zero_means_no_limit(self, tmp_path, capsys):
+        """Verify that max_count=0 (default) means no limit on matches."""
+        p = tmp_path / "data.txt"
+        p.write_text("match1\nmatch2\nmatch3\nmatch4\nmatch5")
+        assert search_file(str(p), "match", max_count=0) is True
+        out = capsys.readouterr().out
+        assert out.count("match") == 5
+
+    def test_max_count_returns_true_when_limit_reached(self, tmp_path, capsys):
+        """Verify that max_count returns True when the limit is reached."""
+        p = tmp_path / "data.txt"
+        p.write_text("match1\nmatch2\nmatch3")
+        result = search_file(str(p), "match", max_count=2)
+        assert result is True
+
+    def test_max_count_returns_false_when_no_matches(self, tmp_path):
+        """Verify that max_count returns False when no matches are found."""
+        p = tmp_path / "data.txt"
+        p.write_text("line1\nline2\nline3")
+        result = search_file(str(p), "nomatch", max_count=2)
+        assert result is False
+
+    def test_max_count_returns_false_when_fewer_matches_than_limit(self, tmp_path, capsys):
+        """Verify that max_count returns False when fewer matches exist than limit."""
+        p = tmp_path / "data.txt"
+        p.write_text("match1\nmatch2\nline3")
+        result = search_file(str(p), "match", max_count=10)
+        assert result is False
+        out = capsys.readouterr().out
+        assert out.count("match") == 2
+
+    def test_max_count_with_patterns_list(self, tmp_path, capsys):
+        """Verify that max_count works with multiple patterns (OR logic)."""
+        p = tmp_path / "data.txt"
+        p.write_text("foo\nbar\nbaz\nfoo\nbar\nbaz")
+        result = search_file(str(p), "dummy", patterns=["foo", "bar"], max_count=3)
+        assert result is True
+        out = capsys.readouterr().out
+        assert out.count("\n") == 3
+
+    def test_max_count_with_before_context(self, tmp_path, capsys):
+        """Verify that max_count stops after N matches even with before_context."""
+        p = tmp_path / "data.txt"
+        p.write_text("line0\nmatch1\nline2\nmatch2\nline4\nmatch3")
+        result = search_file(str(p), "match", max_count=2, before_context=1)
+        assert result is True
+        out = capsys.readouterr().out
+        assert out.count("match") == 2
