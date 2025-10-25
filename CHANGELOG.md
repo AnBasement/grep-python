@@ -10,6 +10,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.3.12] - 2025-10-25
 
+### Added
+
+- Comprehensive tests for `-e` flag parsing and matching behavior.
+- Comprehensive tests for `-f` flag pattern loading and error handling.
+
+### Changed
+
+- Comprehensive update of documentation, including examples and OR logic explanation.
+
 ## [0.3.11] - 2025-10-25
 
 ### Added
@@ -19,8 +28,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Pattern validation requiring at least one pattern from any source (positional, `-e`, or `-f`).
 - OR logic for multiple patterns: a line matches if it matches ANY of the provided patterns.
 - Added `patterns` parameter to `search_file()`, `search_multiple_files()`, and `search_directory_recursively()` functions.
-- Comprehensive tests for `-e` flag parsing and matching behavior.
-- Comprehensive tests for `-f` flag pattern loading and error handling.
 
 ### Changed
 
