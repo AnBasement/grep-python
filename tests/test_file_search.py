@@ -160,3 +160,42 @@ class TestContextLines:
         out = capsys.readouterr().out
         expected_output = "line1\nmatch1\nline3\nline4\nmatch2\nline6\n"
         assert expected_output in out
+
+
+class TestPatternSourceMatching:
+    """Tests search_file() function with multiple patterns.
+
+    Verifies that when multiple patterns are provided via the patterns parameter,
+    lines match if any pattern matches (OR logic).
+    """
+
+    def test_single_pattern_in_patterns_list(self, tmp_path, capsys):
+        """Test that search_file matches when a single pattern
+        is provided via patterns parameter."""
+        p = tmp_path / "data.txt"
+        p.write_text("foo\nbar\nbaz")
+        assert search_file(str(p), "dummy", patterns=["foo"]) is True
+        out = capsys.readouterr().out
+        assert "foo" in out
+        assert "bar" not in out
+        assert "baz" not in out
+
+    def test_multiple_patterns_or_logic(self, tmp_path, capsys):
+        """Test that search_file uses OR logic when multiple patterns are provided."""
+        p = tmp_path / "data.txt"
+        p.write_text("foo\nbar\nbaz")
+        assert search_file(str(p), "dummy", patterns=["foo", "baz"]) is True
+        out = capsys.readouterr().out
+        assert "foo" in out
+        assert "baz" in out
+        assert "bar" not in out
+
+    def test_patterns_list_and_single_pattern_combined(self, tmp_path, capsys):
+        """Test that search_file combines both patterns list and pattern parameter."""
+        p = tmp_path / "data.txt"
+        p.write_text("foo\nbar\nbaz")
+        assert search_file(str(p), "bar", patterns=["foo", "baz"]) is True
+        out = capsys.readouterr().out
+        assert "foo" in out
+        assert "bar" in out
+        assert "baz" in out

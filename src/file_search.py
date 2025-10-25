@@ -86,7 +86,11 @@ def search_file(
     match_found = False
     after_context_counter = 0
     printed_lines = set()
-    patterns_to_check = patterns if patterns else [pattern]
+    patterns_to_check = []
+    if patterns:
+        patterns_to_check.extend(patterns)
+    if pattern:
+        patterns_to_check.append(pattern)
     if before_context > 0:
         before_context_buffer = deque(maxlen=before_context)
     else:

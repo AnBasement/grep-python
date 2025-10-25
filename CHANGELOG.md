@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Automated tests for the `-e` flag: verified single and multiple `-e` patterns match lines with OR logic, and that `-e` patterns combine correctly with positional patterns.
+- Automated tests for the `-f` flag: confirmed patterns are loaded from file, empty lines are skipped, and missing pattern files trigger error handling.
+
 ## [0.3.11] - 2025-10-25
 
 ### Added

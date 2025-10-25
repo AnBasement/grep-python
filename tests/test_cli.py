@@ -74,3 +74,69 @@ class TestParseArguments:
         with pytest.raises(SystemExit) as exc_info:
             parse_arguments()
         assert exc_info.value.code == EXIT_ERROR
+
+
+class TestEFlagParsing:
+    """Tests CLI argument parsing for the -e flag.
+
+    Verifies that single and multiple -e flags are parsed correctly,
+    and that -e flags combine with positional patterns as expected.
+    """
+
+    def test_single_e_flag(self, monkeypatch):
+        """Test that a single -e flag is parsed correctly."""
+        monkeypatch.setattr(sys, "argv", ["pygrep", "-e", "foo", "file.txt"])
+        args = parse_arguments()
+        assert args.patterns == ["foo"]
+        assert args.pattern == "file.txt"
+        assert args.files == []
+        assert args.pattern_list == ["file.txt", "foo"]
+
+    def test_multiple_e_flags(self, monkeypatch):
+        """Test that multiple -e flags are combined into a list."""
+        monkeypatch.setattr(
+            sys, "argv", ["pygrep", "-e", "foo", "-e", "bar", "file.txt"]
+        )
+        args = parse_arguments()
+        assert args.patterns == ["foo", "bar"]
+        assert args.pattern == "file.txt"
+        assert args.files == []
+        assert args.pattern_list == ["file.txt", "foo", "bar"]
+
+    def test_e_flag_and_positional_pattern(self, monkeypatch):
+        """Test that both -e and positional pattern are parsed."""
+        monkeypatch.setattr(sys, "argv", ["pygrep", "-e", "foo", "bar", "file.txt"])
+        args = parse_arguments()
+        assert args.patterns == ["foo"]
+        assert args.pattern == "bar"
+        assert args.files == ["file.txt"]
+        assert args.pattern_list == ["bar", "foo"]
+
+    def test_patterns_loaded_from_file(self, tmp_path, monkeypatch):
+        """Test that -f flag loads patterns from file."""
+        pattern_file = tmp_path / "patterns.txt"
+        pattern_file.write_text("foo\nbaz\n")
+        monkeypatch.setattr(
+            sys, "argv", ["pygrep", "-f", str(pattern_file), "file.txt"]
+        )
+
+        args = parse_arguments()
+        assert args.pattern_list == ["file.txt", "foo", "baz"]
+
+    def test_empty_lines_skipped_in_pattern_file(self, tmp_path, monkeypatch):
+        """Test that empty lines in pattern file are skipped when using -f flag."""
+        pattern_file = tmp_path / "patterns.txt"
+        pattern_file.write_text("foo\n\nbaz\n")
+        monkeypatch.setattr(sys, "argv", ["pygrep", "-f", str(pattern_file)])
+
+        args = parse_arguments()
+        assert args.pattern_list == ["foo", "baz"]
+
+    def test_f_flag_missing_pattern_file_exits(self, tmp_path, monkeypatch):
+        """Test that using -f with a missing pattern file
+        causes parse_arguments() to exit."""
+        missing = tmp_path / "missing.txt"
+        monkeypatch.setattr(sys, "argv", ["pygrep", "-f", str(missing)])
+        with pytest.raises(SystemExit) as exc_info:
+            parse_arguments()
+        assert exc_info.value.code == EXIT_ERROR
