@@ -149,7 +149,8 @@ def search_file(
                             )
                             printed_lines.add(idx)
                         after_context_counter = after_context
-                    if max_count > 0 and matches_found >= max_count:
+                        if 0 < max_count <= matches_found:
+                            return True
                         return True
                 elif after_context_counter > 0:
                     if idx not in printed_lines:
