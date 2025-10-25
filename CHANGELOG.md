@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Added the `-e` flag to specify patterns to the argument parser.
+
 ### Changed
 
 - Made the pattern argument optional by adding `nargs="?"`
