@@ -75,6 +75,7 @@ class TestParseArguments:
             parse_arguments()
         assert exc_info.value.code == EXIT_ERROR
 
+
 class TestEFlagParsing:
     def test_single_e_flag(self, monkeypatch):
         """Test that a single -e flag is parsed correctly."""
@@ -86,7 +87,9 @@ class TestEFlagParsing:
 
     def test_multiple_e_flags(self, monkeypatch):
         """Test that multiple -e flags are combined into a list."""
-        monkeypatch.setattr(sys, "argv", ["pygrep", "-e", "foo", "-e", "bar", "file.txt"])
+        monkeypatch.setattr(
+            sys, "argv", ["pygrep", "-e", "foo", "-e", "bar", "file.txt"]
+        )
         args = parse_arguments()
         assert args.patterns == ["foo", "bar"]
         assert args.pattern == "file.txt"
