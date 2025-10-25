@@ -10,12 +10,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- The `-e` flag to specify patterns to the argument parser.
-- The `-f` flag to read patterns from a file.
+- Support for specifying patterns with the `-e` / `--regexp` flag (can be used multiple times).
+- Support for reading patterns from a file with the `-f` / `--file` flag.
 
 ### Changed
 
-- Made the pattern argument optional by adding `nargs="?"`
+- Made the positional pattern argument optional by adding `nargs="?"`
 
 ## [0.3.9] - 2025-10-25
 
