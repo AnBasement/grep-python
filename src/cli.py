@@ -156,6 +156,14 @@ def parse_arguments() -> argparse.Namespace:
         metavar="NUM",
     )
 
+    parser.add_argument(
+        "-e",
+        "--regexp",
+        action="append",
+        dest="patterns",
+        help="Pattern to search for (can be used multiple times)"
+    )
+
     args = parser.parse_args()
 
     if args.recursive and not args.files:
