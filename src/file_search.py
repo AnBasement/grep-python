@@ -186,6 +186,7 @@ def search_multiple_files(
     after_context: int = 0,
     before_context: int = 0,
     patterns: Optional[list[str]] = None,
+    quiet: bool = False,
 ) -> bool:
     """
     Searches through multiple files for lines matching a given pattern.
@@ -205,6 +206,7 @@ def search_multiple_files(
         before_context (int): Number of lines to print before a matching line.
         patterns (list[str], optional): Alternative patterns to match against.
             Overrides pattern parameter. Defaults to None.
+        quiet (bool): If True, suppress all normal output and exit on first match.
 
     Returns:
         bool: True if at least one matching line is found, else False.
