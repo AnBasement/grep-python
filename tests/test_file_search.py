@@ -76,6 +76,7 @@ class TestFileSearch:
         assert not files
         assert "not a directory" in capsys.readouterr().err
 
+
 class TestContextLines:
     """Tests for before and after context line functionality in file searches."""
 
@@ -136,9 +137,7 @@ class TestContextLines:
         """Test that both before and after context lines are printed correctly."""
         p = tmp_path / "data.txt"
         p.write_text("line1\nline2\nmatch\nline4\nline5\nline6")
-        assert search_file(
-            str(p), "match", before_context=4, after_context=2
-        ) is True
+        assert search_file(str(p), "match", before_context=4, after_context=2) is True
         out = capsys.readouterr().out
         expected_output = "line1\nline2\nmatch\nline4\nline5\n"
         assert expected_output in out
@@ -147,9 +146,7 @@ class TestContextLines:
         """Ensure no duplicate lines are printed when contexts overlap."""
         p = tmp_path / "data.txt"
         p.write_text("line1\nmatch\nline3\nmatch\nline5")
-        assert search_file(
-            str(p), "match", before_context=1, after_context=1
-        ) is True
+        assert search_file(str(p), "match", before_context=1, after_context=1) is True
         out = capsys.readouterr().out
         expected_output = "line1\nmatch\nline3\nmatch\nline5\n"
         assert out.count("match") == 2
@@ -159,9 +156,7 @@ class TestContextLines:
         """Check context lines for multiple matches with different spacing."""
         p = tmp_path / "data.txt"
         p.write_text("line1\nmatch1\nline3\nline4\nmatch2\nline6")
-        assert search_file(
-            str(p), "match", before_context=1, after_context=1
-        ) is True
+        assert search_file(str(p), "match", before_context=1, after_context=1) is True
         out = capsys.readouterr().out
         expected_output = "line1\nmatch1\nline3\nline4\nmatch2\nline6\n"
         assert expected_output in out
