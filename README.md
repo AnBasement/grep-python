@@ -17,6 +17,7 @@ A grep tool written in Python while following the [Codecrafters.io guide](https:
 - **Inverted match**: Select non-matching lines with `-v` flag.
 - **Count matches**: Print count of matching lines with `-c` flag.
 - **Quiet mode**: Suppress output and exit immediately on first match with `-q` flag.
+- **Max count**: Stop searching after N matches with `-m` flag.
 
 ## Installation
 
@@ -75,6 +76,12 @@ echo "hello world" | ./pygrep.sh -E "hello"
 
 # Quiet mode: suppress output, exit 0 on match
 ./pygrep.sh -q -E "error" log.txt && echo "Errors found"
+
+# Stop after first 5 matches
+./pygrep.sh -m 5 -E "error" log.txt
+
+# Limit matches with other flags
+./pygrep.sh -m 3 -n -E "TODO" src/*.py
 ```
 
 ## Documentation

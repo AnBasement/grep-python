@@ -8,6 +8,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Max count support via `-m` / `--max-count` CLI flag to stop searching after N matches (0 = unlimited).
+- `max_count` parameter to all search functions (`search_file`, `search_multiple_files`, `search_directory_recursively`).
+- Early exit optimization when max count limit is reached for improved performance on large files or recursive searches.
+- Comprehensive tests for max count functionality covering basic usage, edge cases (first match, no matches, fewer than limit, patterns list, context combinations).
+- Detailed documentation and examples for max count feature including basic usage, flag combinations, and practical use cases.
+
+### Changed
+
+- Return semantics for max count mode: returns `True` if limit reached, `False` if fewer matches exist than the limit.
+- CLI exit codes now include max count behavior: 0 if max count reached, 1 if fewer matches found than limit.
+
 ## [0.3.14] - 2025-10-25
 
 ### Added

@@ -354,6 +354,94 @@ Quiet mode is optimized for performance:
 
 This makes it ideal for checking large files where you only need to know if a pattern exists.
 
+## Max Count
+
+Stop searching after N matches with the `-m` flag. Useful for finding the first few occurrences without processing the entire file.
+
+### Basic Max Count Usage
+
+```bash
+# Stop after first match
+./pygrep.sh -m 1 -E "error" log.txt
+
+# Find first 5 errors
+./pygrep.sh -m 5 -E "ERROR" system.log
+
+# Combine with line numbers
+./pygrep.sh -m 3 -n -E "warning" output.log
+
+# Use with case-insensitive search
+./pygrep.sh -m 10 -i -E "todo" src/*.py
+```
+
+### Max Count with Other Features
+
+```bash
+# Max count with context (show first 2 matches with context)
+./pygrep.sh -m 2 -A 2 -B 1 -E "exception" app.log
+
+# Max count with multiple patterns
+./pygrep.sh -m 5 -e "error" -e "critical" log.txt
+
+# Max count with inverted match
+./pygrep.sh -m 10 -v -E "^#" config.txt
+
+# Max count with count-only flag
+./pygrep.sh -m 100 -c -E "request" access.log
+
+# Quiet mode with max count (useful in scripts)
+if ./pygrep.sh -q -m 1 "CRITICAL" system.log; then
+    echo "Critical error found"
+    alert_admin
+fi
+```
+
+### Practical Examples
+
+```bash
+# Monitor logs - show first 3 critical events
+./pygrep.sh -m 3 -n -A 2 "CRITICAL" /var/log/app.log
+
+# Find first few files with issues
+for file in src/*.py; do
+    if ./pygrep.sh -m 1 -q "TODO" "$file"; then
+        echo "TODO in: $file"
+    fi
+done
+
+# Get limited sample of matches for review
+./pygrep.sh -m 20 -E "deprecated_function" codebase.txt | head -20
+
+# Combined with recursive search - find first occurrence in any file
+./pygrep.sh -r -m 1 "TODO" src/
+
+# Process matches in batches
+batch_size=10
+offset=0
+while true; do
+    count=$(./pygrep.sh -m $((offset + batch_size)) "pattern" file.txt | wc -l)
+    if [ $count -lt $batch_size ]; then
+        break
+    fi
+    offset=$((offset + batch_size))
+done
+```
+
+### Performance Benefits
+
+Max count is optimized for performance:
+
+- **Early exit**: Stops searching immediately after reaching the limit
+- **Reduced I/O**: Doesn't read the entire file if limit is reached
+- **Lower memory**: Doesn't need to store all matches
+
+Especially useful for:
+
+- Large log files (millions of lines)
+- Recursive searches across many files
+- Monitoring scripts that just need to know if matches exist
+- Sampling/previewing matches without full processing
+
 ## Pattern Examples
 
 ### Literal Text Matching

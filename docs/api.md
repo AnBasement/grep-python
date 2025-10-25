@@ -177,7 +177,7 @@ Handles file operations and search across files with output formatting.
 
 #### Functions
 
-##### `search_file(filename: str, pattern: str, print_filename: bool = False, print_line_number: bool = False, ignore_case: bool = False, invert_match: bool = False, count_only: bool = False, after_context: int = 0, before_context: int = 0, patterns: Optional[list[str]] = None, quiet: bool = False) -> bool`
+##### `search_file(filename: str, pattern: str, print_filename: bool = False, print_line_number: bool = False, ignore_case: bool = False, invert_match: bool = False, count_only: bool = False, after_context: int = 0, before_context: int = 0, patterns: Optional[list[str]] = None, quiet: bool = False, max_count: int = 0) -> bool`
 
 Searches a file for pattern matches with configurable output options.
 
@@ -194,16 +194,19 @@ Searches a file for pattern matches with configurable output options.
 - `before_context` (int): Number of lines to print before each match (default: 0)
 - `patterns` (Optional[list[str]]): Additional patterns to match (default: None)
 - `quiet` (bool): Whether to suppress all output and exit on first match (default: False)
+- `max_count` (int): Maximum number of matches to find before stopping (0 = unlimited) (default: 0)
 
 **Returns:**
 
-- `True` if any matches found in file (or non-matches with `invert_match`)
+- `True` if `max_count` reached (or if any matches found and `max_count` is 0)
+- `False` if no matches found (or fewer matches than `max_count` when `max_count` > 0)
 
 **Behavior:**
 
 - **Multiple patterns**: If `patterns` list is provided, combines it with the positional `pattern` parameter
 - **OR logic**: A line matches if it matches ANY of the patterns (from both sources)
-- **Quiet mode**: When `quiet=True`, suppresses all output and returns immediately on first match (performance optimization)
+- **Quiet mode**: When `quiet=True`, suppresses all output and exits immediately on first match (performance optimization)
+- **Max count**: When `max_count` > 0, stops searching and returns `True` once limit is reached; returns `False` if fewer matches exist than the limit
 - Line numbers start at 1 (not 0)
 - Context lines are automatically deduplicated when regions overlap
 - Each line is printed at most once, even if it appears in multiple context windows
@@ -241,7 +244,7 @@ found = search_file("file.txt", "TODO", ignore_case=True, count_only=True)
 found = search_file("config.txt", "^#", invert_match=True)
 ```
 
-##### `search_multiple_files(filenames: List[str], pattern: str, print_line_number: bool = False, ignore_case: bool = False, invert_match: bool = False, count_only: bool = False, after_context: int = 0, before_context: int = 0, patterns: Optional[list[str]] = None, quiet: bool = False) -> bool`
+##### `search_multiple_files(filenames: List[str], pattern: str, print_line_number: bool = False, ignore_case: bool = False, invert_match: bool = False, count_only: bool = False, after_context: int = 0, before_context: int = 0, patterns: Optional[list[str]] = None, quiet: bool = False, max_count: int = 0) -> bool`
 
 Searches multiple files for pattern matches.
 
@@ -256,10 +259,12 @@ Searches multiple files for pattern matches.
 - `after_context` (int): Number of lines to print after each match (default: 0)
 - `before_context` (int): Number of lines to print before each match (default: 0)
 - `patterns` (Optional[list[str]]): Additional patterns to match (default: None)
+- `quiet` (bool): Whether to suppress all output and exit on first match (default: False)
+- `max_count` (int): Maximum number of matches to find before stopping (0 = unlimited) (default: 0)
 
 **Returns:**
 
-- `True` if any matches found in any file
+- `True` if any matches found in any file (or if `max_count` reached)
 
 **Behavior:**
 
@@ -270,7 +275,7 @@ Searches multiple files for pattern matches.
 - Continues searching remaining files after errors
 - Passes all flags to `search_file()`, including context parameters
 
-##### `search_directory_recursively(directory: str, pattern: str, print_line_number: bool = False, ignore_case: bool = False, invert_match: bool = False, count_only: bool = False, after_context: int = 0, before_context: int = 0, patterns: Optional[list[str]] = None, quiet: bool = False) -> bool`
+##### `search_directory_recursively(directory: str, pattern: str, print_line_number: bool = False, ignore_case: bool = False, invert_match: bool = False, count_only: bool = False, after_context: int = 0, before_context: int = 0, patterns: Optional[list[str]] = None, quiet: bool = False, max_count: int = 0) -> bool`
 
 Recursively searches directories for pattern matches.
 
@@ -286,10 +291,11 @@ Recursively searches directories for pattern matches.
 - `before_context` (int): Number of lines to print before each match (default: 0)
 - `patterns` (Optional[list[str]]): Additional patterns to match (default: None)
 - `quiet` (bool): Whether to suppress all output and exit on first match (default: False)
+- `max_count` (int): Maximum number of matches to find before stopping (0 = unlimited) (default: 0)
 
 **Returns:**
 
-- `True` if any matches found in any file
+- `True` if any matches found in any file (or if `max_count` reached)
 
 **Behavior:**
 
@@ -370,6 +376,7 @@ Parses and validates command-line arguments using argparse.
 - `-B NUM`, `--before-context NUM`: Print NUM lines before each match
 - `-C NUM`, `--context NUM`: Print NUM lines before and after each match
 - `-q`, `--quiet`, `--silent`: Suppress all output, exit immediately on first match
+- `-m NUM`, `--max-count NUM`: Stop searching after NUM matches (0 = unlimited)
 - `--version`: Show version and exit
 - `--help`: Show help message and exit
 
@@ -394,10 +401,18 @@ Parses and validates command-line arguments using argparse.
 - Exit code indicates match status: 0 if match found, 1 if not, 2 on error
 - Useful in shell scripts for checking if pattern exists without processing output
 
+**Max Count Mode:**
+
+- When `-m NUM` is specified with `NUM > 0`, stops after finding NUM matches
+- Returns 0 (match found) if limit is reached
+- Returns 1 (no match) if fewer matches exist than the limit
+- Useful for finding first N occurrences or sampling large files
+- Combines with other options: `-m 3 -n` prints first 3 matches with line numbers
+
 **Exit Codes:**
 
-- `EXIT_MATCH_FOUND (0)`: Pattern matched (normal operation or quiet mode)
-- `EXIT_NO_MATCH (1)`: No matches found
+- `EXIT_MATCH_FOUND (0)`: Pattern matched (normal operation or quiet/max-count mode)
+- `EXIT_NO_MATCH (1)`: No matches found (or fewer than max-count)
 - `EXIT_ERROR (2)`: Invalid arguments or validation failure
 
 **Validation:**
