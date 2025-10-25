@@ -159,7 +159,7 @@ def search_file(
                     after_context_counter -= 1
 
                 # Add line to before-context buffer after processing
-                if before_context_buffer is not None:
+                if before_context_buffer is not None and not quiet:
                     before_context_buffer.append((idx, line))
 
     except (PermissionError, OSError):
