@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.10] - 2025-10-25
+
 ### Added
 
 - Support for specifying patterns with the `-e` / `--regexp` flag (can be used multiple times).
