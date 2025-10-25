@@ -228,6 +228,7 @@ def search_multiple_files(
             after_context=after_context,
             before_context=before_context,
             patterns=patterns,
+            quiet=quiet,
         )
         if file_with_match:
             match_found = True
@@ -323,6 +324,7 @@ def search_directory_recursively(
             after_context=after_context,
             before_context=before_context,
             patterns=patterns,
+            quiet=quiet,
         )
         if file_had_match:
             any_match_found = True
