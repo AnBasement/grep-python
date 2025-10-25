@@ -29,6 +29,8 @@ def main() -> None:
     try:
         args = parse_arguments()
 
+        # Context flags (-A, -B, -C) do not apply to stdin input.
+        # Streaming lines from stdin prevents buffering for before/after context.
         if len(args.files) == 0:
             match_count = 0
             match_found = False
