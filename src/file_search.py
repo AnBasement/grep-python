@@ -167,6 +167,8 @@ def search_multiple_files(
     ignore_case: bool = False,
     invert_match: bool = False,
     count_only: bool = False,
+    after_context: int = 0,
+    before_context: int = 0,
 ) -> bool:
     """
     Searches through multiple files for lines matching a given pattern.
