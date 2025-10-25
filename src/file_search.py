@@ -92,6 +92,7 @@ def search_file(
     after_context_counter = 0
     printed_lines = set()
     patterns_to_check = []
+    matches_found = 0
     if patterns:
         patterns_to_check.extend(patterns)
     if pattern:
@@ -114,6 +115,7 @@ def search_file(
                     matches = not matches
 
                 if matches:
+                    matches_found += 1
                     match_found = True
                     if quiet:
                         return True
@@ -147,6 +149,8 @@ def search_file(
                             )
                             printed_lines.add(idx)
                         after_context_counter = after_context
+                    if max_count > 0 and matches_found >= max_count:
+                        return True
                 elif after_context_counter > 0:
                     if idx not in printed_lines:
                         print(
