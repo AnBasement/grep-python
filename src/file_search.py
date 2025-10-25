@@ -288,6 +288,8 @@ def search_directory_recursively(
             ignore_case=ignore_case,
             invert_match=invert_match,
             count_only=count_only,
+            after_context=after_context,
+            before_context=before_context,
         )
         if file_had_match:
             any_match_found = True
