@@ -176,6 +176,22 @@ def parse_arguments() -> argparse.Namespace:
 
     args = parser.parse_args()
 
+    all_patterns = []
+
+    if args.pattern:
+        all_patterns.append(args.pattern)
+
+    if args.patterns:
+        all_patterns.extend(args.patterns)
+
+    if args.pattern_file:
+        pass
+
+    if not all_patterns:
+        parser.error("no pattern specified")
+
+    args.pattern_list = all_patterns
+
     if args.recursive and not args.files:
         parser.error("at least one FILE required for recursive search")
 
