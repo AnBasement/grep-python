@@ -199,3 +199,84 @@ class TestPatternSourceMatching:
         assert "foo" in out
         assert "bar" in out
         assert "baz" in out
+
+
+class TestQuietMode:
+    """Tests for quiet mode functionality in file search."""
+
+    def test_quiet_mode_no_output_when_match_found(self, tmp_path, capsys):
+        """Verify that quiet mode suppresses all output when a match is found."""
+        p = tmp_path / "data.txt"
+        p.write_text("line1\nmatch\nline3")
+        assert search_file(str(p), "match", quiet=True) is True
+        out = capsys.readouterr().out
+        assert out == ""
+
+    def test_quiet_mode_returns_true_on_first_match(self, tmp_path):
+        """Verify that quiet mode returns True when a match is found."""
+        p = tmp_path / "data.txt"
+        p.write_text("line1\nmatch\nline3")
+        result = search_file(str(p), "match", quiet=True)
+        assert result is True
+
+    def test_quiet_mode_returns_false_when_no_match(self, tmp_path):
+        """Verify that quiet mode returns False when no match is found."""
+        p = tmp_path / "data.txt"
+        p.write_text("line1\nline2\nline3")
+        result = search_file(str(p), "nomatch", quiet=True)
+        assert result is False
+
+    def test_quiet_mode_exits_early_on_first_match(self, tmp_path, capsys):
+        """
+        Verify that quiet mode exits immediately on first match without
+        processing remaining lines.
+        """
+        p = tmp_path / "data.txt"
+        lines = [f"line{i}" for i in range(1000)]
+        lines[100] = "match"
+        p.write_text("\n".join(lines))
+
+        result = search_file(str(p), "match", quiet=True)
+        assert result is True
+        out = capsys.readouterr().out
+        assert out == ""
+
+    def test_quiet_mode_with_patterns_list(self, tmp_path, capsys):
+        """Verify that quiet mode works with patterns list parameter."""
+        p = tmp_path / "data.txt"
+        p.write_text("foo\nbar\nbaz")
+        result = search_file(str(p), "dummy", patterns=["foo", "baz"], quiet=True)
+        assert result is True
+        out = capsys.readouterr().out
+        assert out == ""
+
+    def test_quiet_mode_search_multiple_files_returns_true(self, tmp_path, capsys):
+        """
+        Verify that quiet mode in search_multiple_files returns True on first match.
+        """
+        p1 = tmp_path / "a.txt"
+        p2 = tmp_path / "b.txt"
+        p1.write_text("line1\nline2")
+        p2.write_text("match\nline4")
+        result = search_multiple_files([str(p1), str(p2)], "match", quiet=True)
+        assert result is True
+        out = capsys.readouterr().out
+        assert out == ""
+
+    def test_quiet_mode_search_directory_recursively_returns_true(
+        self, tmp_path, capsys
+    ):
+        """
+        Verify that quiet mode in search_directory_recursively returns True
+        on first match.
+        """
+        sub = tmp_path / "sub"
+        sub.mkdir()
+        f1 = tmp_path / "root.txt"
+        f2 = sub / "nested.txt"
+        f1.write_text("line1\nline2")
+        f2.write_text("match\nline4")
+        result = search_directory_recursively(str(tmp_path), "match", quiet=True)
+        assert result is True
+        out = capsys.readouterr().out
+        assert out == ""
