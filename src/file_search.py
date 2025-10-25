@@ -92,7 +92,7 @@ def search_file(
     else:
         before_context_buffer = None
     try:
-        with open(filename, "r", encoding="utf-8") as file:
+        with open(filename, encoding="utf-8") as file:
             for idx, line in enumerate(file, start=1):
                 line = line.rstrip("\n")
                 matches = False
