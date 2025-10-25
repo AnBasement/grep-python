@@ -86,6 +86,7 @@ def search_file(
     match_found = False
     after_context_counter = 0
     printed_lines = set()
+    patterns_to_check = patterns if patterns else [pattern]
     if before_context > 0:
         before_context_buffer = deque(maxlen=before_context)
     else:
@@ -94,7 +95,11 @@ def search_file(
         with open(filename, "r", encoding="utf-8") as file:
             for idx, line in enumerate(file, start=1):
                 line = line.rstrip("\n")
-                matches = match_pattern(line, pattern, ignore_case=ignore_case)
+                matches = False
+                for p in patterns_to_check:
+                    if match_pattern(line, p, ignore_case=ignore_case):
+                        matches = True
+                        break
 
                 if invert_match:
                     matches = not matches
