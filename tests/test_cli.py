@@ -77,6 +77,11 @@ class TestParseArguments:
 
 
 class TestEFlagParsing:
+    """Tests CLI argument parsing for the -e flag.
+
+    Verifies that single and multiple -e flags are parsed correctly,
+    and that -e flags combine with positional patterns as expected.
+    """
     def test_single_e_flag(self, monkeypatch):
         """Test that a single -e flag is parsed correctly."""
         monkeypatch.setattr(sys, "argv", ["pygrep", "-e", "foo", "file.txt"])
