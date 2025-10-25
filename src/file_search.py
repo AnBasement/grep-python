@@ -140,7 +140,7 @@ def search_file(
                         )
                         printed_lines.add(idx)
                     after_context_counter -= 1
-                
+
                 # Add line to before-context buffer after processing
                 if before_context_buffer is not None:
                     before_context_buffer.append((idx, line))
