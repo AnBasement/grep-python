@@ -91,6 +91,80 @@ Output format:
 log.txt:42
 ```
 
+### After-Context (`-A`, `--after-context`)
+
+Display lines after each match for additional context:
+
+```bash
+# Show 2 lines after each match
+./pygrep.sh -A 2 -E "error" log.txt
+
+# Show 5 lines after function definitions
+./pygrep.sh --after-context 5 -E "^def " code.py
+
+# Combine with line numbers
+./pygrep.sh -n -A 3 -E "TODO" notes.txt
+```
+
+Output format (example):
+
+```text
+15:Error: File not found
+16:  at line 42
+17:  in module main
+```
+
+### Before-Context (`-B`, `--before-context`)
+
+Display lines before each match to see what led up to it:
+
+```bash
+# Show 3 lines before each error
+./pygrep.sh -B 3 -E "error" log.txt
+
+# Show context before function calls
+./pygrep.sh --before-context 2 -E "execute\(" code.py
+
+# Find matches with preceding context
+./pygrep.sh -B 5 -E "CRITICAL" system.log
+```
+
+Output format (example):
+
+```text
+42:  Processing request
+43:  Validating input
+44:  Checking permissions
+45:Error: Access denied
+```
+
+### Combined Context (`-C`, `--context`)
+
+Display lines both before and after matches:
+
+```bash
+# Show 2 lines of context around each match
+./pygrep.sh -C 2 -E "exception" log.txt
+
+# Show 3 lines before and after
+./pygrep.sh --context 3 -E "TODO" code.py
+
+# Useful for understanding match context
+./pygrep.sh -C 1 -E "import numpy" *.py
+```
+
+Output format (example):
+
+```text
+10:import sys
+11:import os
+12:import numpy as np
+13:import pandas
+14:from typing import List
+```
+
+**Note:** Context lines are automatically deduplicated when match regions overlap, ensuring each line is printed only once.
+
 ### Combining Options
 
 Options can be combined for powerful searches:
@@ -104,6 +178,15 @@ Options can be combined for powerful searches:
 
 # Recursive case-insensitive search with line numbers
 ./pygrep.sh -r -i -n -E "TODO" src/
+
+# Context with line numbers for debugging
+./pygrep.sh -n -C 3 -E "exception" log.txt
+
+# Case-insensitive context search
+./pygrep.sh -i -A 2 -E "error" *.log
+
+# Recursive search with before-context
+./pygrep.sh -r -B 5 -E "def main" src/
 
 # Find and count empty lines recursively
 ./pygrep.sh -r -c -E "^$" .

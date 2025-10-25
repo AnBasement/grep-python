@@ -99,10 +99,11 @@ When `ignore_case=True` is passed to `match_pattern()`, both the pattern and inp
 
 **Key Functions**:
 
-- `search_file()` - Searches single file line by line with optional line numbers, case-insensitivity, match inversion, and counting
+- `search_file()` - Searches single file line by line with optional line numbers, case-insensitivity, match inversion, counting, and context lines
 - `search_multiple_files()` - Handles multiple file operations with all output options
 - `search_directory_recursively()` - Recursive directory traversal (when `-r` flag used)
 - `get_files_recursively()` - Recursively finds all files in a directory
+- `_format_line_output()` - Helper function for consistent output formatting
 
 **Output Options**:
 
@@ -110,6 +111,24 @@ When `ignore_case=True` is passed to `match_pattern()`, both the pattern and inp
 - Case-insensitive (`ignore_case`) - Pass-through to pattern matcher
 - Inverted match (`invert_match`) - Select non-matching lines
 - Count only (`count_only`) - Print count instead of matches
+- After-context (`after_context`) - Show N lines after each match
+- Before-context (`before_context`) - Show N lines before each match
+
+**Context Line Implementation**:
+
+- **Before-context**: Uses `collections.deque` with fixed maxlen as a circular buffer
+  - Stores tuples of `(line_number, line_text)` for recent lines
+  - Buffer size = `before_context` parameter
+  - Automatically discards oldest lines when full
+  - Printed before each match is displayed
+- **After-context**: Uses a simple counter
+  - Set to `after_context` value when match found
+  - Decrements for each subsequent line printed
+  - Resets when new match found
+- **Deduplication**: Uses a `set` to track printed line numbers
+  - Prevents duplicate output when context windows overlap
+  - Each line printed at most once
+  - Checked before printing any line (context or match)
 
 **Error Handling**: Catches and reports file access errors gracefully.
 
@@ -132,6 +151,9 @@ When `ignore_case=True` is passed to `match_pattern()`, both the pattern and inp
 - `-i`, `--ignore-case` - Case-insensitive matching
 - `-v`, `--invert-match` - Select non-matching lines
 - `-c`, `--count` - Print count of matching lines only
+- `-A NUM`, `--after-context NUM` - Print NUM lines after each match
+- `-B NUM`, `--before-context NUM` - Print NUM lines before each match
+- `-C NUM`, `--context NUM` - Print NUM lines before and after each match (sets both -A and -B)
 - `--version` - Show version and exit
 - `--help` - Show help message and exit
 
@@ -142,6 +164,7 @@ When `ignore_case=True` is passed to `match_pattern()`, both the pattern and inp
 - Professional error messages with usage hints
 - Returns namespace object with all flags as attributes
 - Exits with appropriate error codes for invalid input
+- Context flag handling: `-C` sets both `before_context` and `after_context`
 
 ### 5. Main Program (`main.py`)
 
@@ -150,9 +173,9 @@ When `ignore_case=True` is passed to `match_pattern()`, both the pattern and inp
 **Features**:
 
 - Calls `parse_arguments()` to get CLI configuration as namespace object
-- Handles stdin input when no files specified (supports all flags)
+- Handles stdin input when no files specified (note: context flags not supported for stdin)
 - Coordinates pattern matching and file searching
-- Passes feature flags to search functions (line_number, ignore_case, invert_match, count_only)
+- Passes feature flags to search functions (line_number, ignore_case, invert_match, count_only, after_context, before_context)
 - Manages exit codes based on search results
 
 ## Design Patterns
@@ -184,6 +207,37 @@ Start (`^`) and end (`$`) anchors enable significant optimization:
 - Start anchor: only try matching at position 0
 - End anchor: only accept matches that consume entire remaining input
 - Combined: only try exact-length matches
+
+### 5. Context Line Management
+
+Context lines (before/after matches) use efficient data structures and deduplication:
+
+**Before-Context Buffer**:
+
+- Uses `collections.deque` with fixed `maxlen` (circular buffer)
+- Automatically maintains sliding window of recent lines
+- O(1) append and iteration operations
+- Stores `(line_number, line_text)` tuples for complete information
+
+**After-Context Counter**:
+
+- Simple integer counter tracking remaining context lines
+- Reset to `after_context` value when match found
+- Decrements for each printed context line
+- No buffer needed (lines processed as they're read)
+
+**Deduplication Strategy**:
+
+- Maintains `set` of printed line numbers
+- Checks set before printing any line (context or match)
+- Prevents duplicate output when context windows overlap
+- Space complexity: O(printed_lines) rather than O(file_size)
+
+**Trade-offs**:
+
+- Circular buffer limits memory usage (max N lines stored)
+- Set-based deduplication is fast (O(1) lookup)
+- Lines printed in order encountered (no reordering needed)
 
 ## Error Handling Strategy
 

@@ -177,7 +177,7 @@ Handles file operations and search across files with output formatting.
 
 #### Functions
 
-##### `search_file(filename: str, pattern: str, print_filename: bool = False, print_line_number: bool = False, ignore_case: bool = False, invert_match: bool = False, count_only: bool = False) -> bool`
+##### `search_file(filename: str, pattern: str, print_filename: bool = False, print_line_number: bool = False, ignore_case: bool = False, invert_match: bool = False, count_only: bool = False, after_context: int = 0, before_context: int = 0) -> bool`
 
 Searches a file for pattern matches with configurable output options.
 
@@ -190,6 +190,8 @@ Searches a file for pattern matches with configurable output options.
 - `ignore_case` (bool): Whether to ignore case in matching (default: False)
 - `invert_match` (bool): Whether to invert match (select non-matching lines) (default: False)
 - `count_only` (bool): Whether to print only count instead of matches (default: False)
+- `after_context` (int): Number of lines to print after each match (default: 0)
+- `before_context` (int): Number of lines to print before each match (default: 0)
 
 **Returns:**
 
@@ -198,6 +200,10 @@ Searches a file for pattern matches with configurable output options.
 **Behavior:**
 
 - Line numbers start at 1 (not 0)
+- Context lines are automatically deduplicated when regions overlap
+- Each line is printed at most once, even if it appears in multiple context windows
+- Before-context uses a circular buffer to store recent lines
+- After-context uses a counter to track remaining context lines
 - With `count_only`, prints format: `filename:count` or just `count`
 - With `invert_match`, matches logic is inverted
 - Output format with line numbers: `line_number:line_content`
@@ -224,7 +230,7 @@ found = search_file("file.txt", "TODO", ignore_case=True, count_only=True)
 found = search_file("config.txt", "^#", invert_match=True)
 ```
 
-##### `search_multiple_files(filenames: List[str], pattern: str, print_line_number: bool = False, ignore_case: bool = False, invert_match: bool = False, count_only: bool = False) -> bool`
+##### `search_multiple_files(filenames: List[str], pattern: str, print_line_number: bool = False, ignore_case: bool = False, invert_match: bool = False, count_only: bool = False, after_context: int = 0, before_context: int = 0) -> bool`
 
 Searches multiple files for pattern matches.
 
@@ -236,6 +242,8 @@ Searches multiple files for pattern matches.
 - `ignore_case` (bool): Whether to ignore case (default: False)
 - `invert_match` (bool): Whether to invert match (default: False)
 - `count_only` (bool): Whether to print only counts (default: False)
+- `after_context` (int): Number of lines to print after each match (default: 0)
+- `before_context` (int): Number of lines to print before each match (default: 0)
 
 **Returns:**
 
@@ -245,20 +253,22 @@ Searches multiple files for pattern matches.
 
 - Always prints filenames when searching multiple files
 - Continues searching remaining files after errors
-- Passes all flags to `search_file()`
+- Passes all flags to `search_file()`, including context parameters
 
-##### `search_directory_recursively(directory: str, pattern: str, print_line_number: bool = False, ignore_case: bool = False, invert_match: bool = False, count_only: bool = False) -> bool`
+##### `search_directory_recursively(directory: str, pattern: str, print_line_number: bool = False, ignore_case: bool = False, invert_match: bool = False, count_only: bool = False, after_context: int = 0, before_context: int = 0) -> bool`
 
 Recursively searches directories for pattern matches.
 
 **Parameters:**
 
-- `directories` (list[str]): List of directory paths
+- `directory` (str): Directory path to search
 - `pattern` (str): Regex pattern
 - `print_line_number` (bool): Whether to print line numbers (default: False)
 - `ignore_case` (bool): Whether to ignore case (default: False)
 - `invert_match` (bool): Whether to invert match (default: False)
 - `count_only` (bool): Whether to print only counts (default: False)
+- `after_context` (int): Number of lines to print after each match (default: 0)
+- `before_context` (int): Number of lines to print before each match (default: 0)
 
 **Returns:**
 
@@ -268,7 +278,7 @@ Recursively searches directories for pattern matches.
 
 - Recursively finds all files in directories
 - Searches each file with `search_file()`
-- Passes all flags through
+- Passes all flags through, including context parameters
 
 ##### `get_files_recursively(directory: str) -> List[str]`
 
@@ -320,6 +330,9 @@ Parses and validates command-line arguments using argparse.
   - `ignore_case` (bool): Ignore case distinctions
   - `invert_match` (bool): Select non-matching lines
   - `count_only` (bool): Print count of matches instead of lines
+  - `after_context` (int): Number of lines to print after matches
+  - `before_context` (int): Number of lines to print before matches
+  - `context` (int): Number of lines to print before and after matches
 
 **Available Arguments:**
 
@@ -331,8 +344,17 @@ Parses and validates command-line arguments using argparse.
 - `-i`, `--ignore-case`: Case-insensitive matching
 - `-v`, `--invert-match`: Select lines that do NOT match
 - `-c`, `--count`: Print only count of matching lines
+- `-A NUM`, `--after-context NUM`: Print NUM lines after each match
+- `-B NUM`, `--before-context NUM`: Print NUM lines before each match
+- `-C NUM`, `--context NUM`: Print NUM lines before and after each match
 - `--version`: Show version and exit
 - `--help`: Show help message and exit
+
+**Context Behavior:**
+
+- When `-C` is specified, it sets both `before_context` and `after_context`
+- Context lines are deduplicated when regions overlap
+- Context is not applied to stdin input (streaming limitation)
 
 **Exit Codes:**
 

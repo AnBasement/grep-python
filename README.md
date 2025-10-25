@@ -10,6 +10,7 @@ A grep tool written in Python while following the [Codecrafters.io guide](https:
 - **Recursive search**: Search directories recursively with `-r` flag.
 - **Multiple file support**: Search one or more files at once.
 - **Standard input support**: Reads from stdin if no files are specified.
+- **Context lines**: Display lines before (`-B`), after (`-A`), or around (`-C`) matches.
 - **Line numbers**: Display line numbers with `-n` flag.
 - **Case-insensitive**: Ignore case distinctions with `-i` flag.
 - **Inverted match**: Select non-matching lines with `-v` flag.
@@ -51,6 +52,15 @@ echo "hello world" | ./pygrep.sh -E "hello"
 
 # Count matches
 ./pygrep.sh -c -E "TODO" src/*.py
+
+# Show 2 lines after each match
+./pygrep.sh -A 2 -E "error" log.txt
+
+# Show 3 lines before each match
+./pygrep.sh -B 3 -E "function" code.py
+
+# Show 2 lines before and after each match
+./pygrep.sh -C 2 -E "TODO" notes.txt
 ```
 
 ## Documentation
