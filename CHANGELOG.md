@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Adding `after_context` and `before_context` params to `search_multiple_files()` function and passing them through calls to `search_file()`.
+- Adding `after_context` and `before_context` params to `search_directory_recursively()` function and passing them through calls to `search_file()`.
 
 ## [0.3.7] - 2025-10-25
 
