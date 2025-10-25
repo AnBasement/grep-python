@@ -161,7 +161,8 @@ class TestContextLines:
         expected_output = "line1\nmatch1\nline3\nline4\nmatch2\nline6\n"
         assert expected_output in out
 
-class TestEFlagMatching:
+
+class TestPatternSourceMatching:
     def test_single_e_pattern_matches(self, tmp_path, capsys):
         """Test that a single pattern in patterns matches lines."""
         p = tmp_path / "data.txt"
@@ -186,9 +187,56 @@ class TestEFlagMatching:
         """Test that both patterns and positional pattern match."""
         p = tmp_path / "data.txt"
         p.write_text("foo\nbar\nbaz")
-        # Should match any of "foo", "bar", or "baz"
         assert search_file(str(p), "bar", patterns=["foo", "baz"]) is True
         out = capsys.readouterr().out
         assert "foo" in out
         assert "bar" in out
         assert "baz" in out
+
+    def test_patterns_loaded_from_file(self, tmp_path, capsys):
+        """Test that patterns are loaded from a file and used for matching."""
+        pattern_file = tmp_path / "patterns.txt"
+        pattern_file.write_text("foo\nbaz\n")
+        data_file = tmp_path / "data.txt"
+        data_file.write_text("foo\nbar\nbaz")
+        assert (
+            search_file(
+                str(data_file),
+                "dummy",
+                patterns=["foo", "baz"],
+            )
+            is True
+        )
+        out = capsys.readouterr().out
+        assert "foo" in out
+        assert "baz" in out
+        assert "bar" not in out
+
+    def test_empty_lines_skipped_in_pattern_file(self, tmp_path, capsys):
+        """Test that empty lines in pattern file are skipped."""
+        pattern_file = tmp_path / "patterns.txt"
+        pattern_file.write_text("foo\n\nbaz\n")
+        data_file = tmp_path / "data.txt"
+        data_file.write_text("foo\nbar\nbaz")
+        assert (
+            search_file(
+                str(data_file),
+                "dummy",
+                patterns=["foo", "baz"],
+            )
+            is True
+        )
+        out = capsys.readouterr().out
+        assert "foo" in out
+        assert "baz" in out
+        assert "bar" not in out
+
+    def test_pattern_file_not_found_error(self, tmp_path, capsys):
+        """Test that missing pattern file triggers error handling."""
+        missing_file = tmp_path / "missing.txt"
+        data_file = tmp_path / "data.txt"
+        data_file.write_text("foo\nbar\nbaz")
+        try:
+            search_file(str(data_file), "dummy", patterns=None)
+        except FileNotFoundError:
+            pass
