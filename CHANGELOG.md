@@ -8,6 +8,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `patterns` parameter to `search_file()` and updated docstring.
+- Implements multi-pattern matching to `search_file()`. Loops through patterns and considers a line a match if ANY pattern matches before breaking after first match.
+
+### Changed
+
+- Removed an unnecessary `"r"` in `open()` as it is the default mode.
+
 ## [0.3.10] - 2025-10-25
 
 ### Added

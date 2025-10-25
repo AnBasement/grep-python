@@ -48,6 +48,7 @@ def search_file(
     count_only: bool = False,
     after_context: int = 0,
     before_context: int = 0,
+    patterns: Optional[list[str]] = None,
 ) -> bool:
     """
     Search a file for lines matching a pattern.
@@ -68,6 +69,8 @@ def search_file(
         count_only (bool): Print only the number of matching lines.
         after_context (int): Number of lines to print after a matching line.
         before_context (int): Number of lines to print before a matching line.
+        patterns (list[str], optional): Alternative patterns to match against.
+            Overrides pattern parameter. Defaults to None.
 
     Returns:
         bool: True if at least one matching line is found, otherwise False.
@@ -83,15 +86,20 @@ def search_file(
     match_found = False
     after_context_counter = 0
     printed_lines = set()
+    patterns_to_check = patterns if patterns else [pattern]
     if before_context > 0:
         before_context_buffer = deque(maxlen=before_context)
     else:
         before_context_buffer = None
     try:
-        with open(filename, "r", encoding="utf-8") as file:
+        with open(filename, encoding="utf-8") as file:
             for idx, line in enumerate(file, start=1):
                 line = line.rstrip("\n")
-                matches = match_pattern(line, pattern, ignore_case=ignore_case)
+                matches = False
+                for p in patterns_to_check:
+                    if match_pattern(line, p, ignore_case=ignore_case):
+                        matches = True
+                        break
 
                 if invert_match:
                     matches = not matches
