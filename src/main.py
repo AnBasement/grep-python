@@ -83,6 +83,7 @@ def main() -> None:
                         before_context=args.before_context,
                         patterns=args.pattern_list,
                         quiet=args.quiet,
+                        max_count=args.max_count,
                     ):
                         any_match_found = True
                 except (PermissionError, OSError, FileNotFoundError):
@@ -110,6 +111,7 @@ def main() -> None:
                         before_context=args.before_context,
                         patterns=args.pattern_list,
                         quiet=args.quiet,
+                        max_count=args.max_count,
                     ):
                         sys.exit(EXIT_MATCH_FOUND)
                     else:
@@ -127,6 +129,7 @@ def main() -> None:
                         before_context=args.before_context,
                         patterns=args.pattern_list,
                         quiet=args.quiet,
+                        max_count=args.max_count,
                     ):
                         sys.exit(EXIT_MATCH_FOUND)
                     else:
