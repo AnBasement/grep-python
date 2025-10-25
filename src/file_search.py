@@ -255,6 +255,8 @@ def search_directory_recursively(
     ignore_case: bool = False,
     invert_match: bool = False,
     count_only: bool = False,
+    after_context: int = 0,
+    before_context: int = 0,
 ) -> bool:
     """
     Recursively search all files in a directory for lines matching a pattern.
