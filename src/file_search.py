@@ -330,5 +330,7 @@ def search_directory_recursively(
         )
         if file_had_match:
             any_match_found = True
+            if quiet:
+                return True
 
     return any_match_found
