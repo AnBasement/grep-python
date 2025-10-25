@@ -74,6 +74,7 @@ def main() -> None:
                         count_only=args.count,
                         after_context=args.after_context,
                         before_context=args.before_context,
+                        patterns=args.pattern_list,
                     ):
                         any_match_found = True
                 except (PermissionError, OSError, FileNotFoundError):
@@ -99,6 +100,7 @@ def main() -> None:
                         count_only=args.count,
                         after_context=args.after_context,
                         before_context=args.before_context,
+                        patterns=args.pattern_list,
                     ):
                         sys.exit(EXIT_MATCH_FOUND)
                     else:
@@ -114,6 +116,7 @@ def main() -> None:
                         count_only=args.count,
                         after_context=args.after_context,
                         before_context=args.before_context,
+                        patterns=args.pattern_list,
                     ):
                         sys.exit(EXIT_MATCH_FOUND)
                     else:
