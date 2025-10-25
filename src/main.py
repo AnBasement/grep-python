@@ -108,6 +108,8 @@ def main() -> None:
                         ignore_case=args.ignore_case,
                         invert_match=args.invert_match,
                         count_only=args.count,
+                        after_context=args.after_context,
+                        before_context=args.before_context,
                     ):
                         sys.exit(EXIT_MATCH_FOUND)
                     else:
