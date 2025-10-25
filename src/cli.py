@@ -175,6 +175,17 @@ def parse_arguments() -> argparse.Namespace:
         help="Read patterns from FILE, one per line",
     )
 
+    parser.add_argument(
+        "-q",
+        "--quiet",
+        "--silent",
+        action="store_true",
+        help=(
+            "Suppress all normal output; exit with status 0 immediately "
+            "on first match"
+        ),
+    )
+
     args = parser.parse_args()
 
     all_patterns = []
