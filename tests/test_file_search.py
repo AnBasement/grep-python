@@ -352,6 +352,7 @@ class TestMaxCount:
         out = capsys.readouterr().out
         assert out.count("match") == 2
 
+
 class TestFilesOnlyModes:
     """Tests for files-only output modes (-l and -L)."""
 

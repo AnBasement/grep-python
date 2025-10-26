@@ -149,9 +149,7 @@ class TestFlagValidation:
         self, monkeypatch
     ):
         """Test that -l and -L flags together cause an error."""
-        monkeypatch.setattr(
-            sys, "argv", ["pygrep", "-l", "-L", "pattern", "file.txt"]
-        )
+        monkeypatch.setattr(sys, "argv", ["pygrep", "-l", "-L", "pattern", "file.txt"])
         with pytest.raises(SystemExit):
             parse_arguments()
 
