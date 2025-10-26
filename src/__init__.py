@@ -2,5 +2,5 @@
 grep-python: A Python implementation of grep with extended regex support.
 """
 
-__version__ = "0.3.16"
+__version__ = "0.4.0"
 __author__ = "Kristoffer Avaldsnes Gilje"
