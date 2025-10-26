@@ -86,6 +86,16 @@ def search_file(
     Returns:
         bool: True if at least one matching line is found, otherwise False.
     """
+
+    patterns_to_check = []
+    if patterns:
+        patterns_to_check.extend(patterns)
+    if pattern:
+        patterns_to_check.append(pattern)
+
+    if not patterns_to_check:
+        return False
+
     if not os.path.isfile(filename):
         if os.path.isdir(filename):
             print(f"{filename}: is a directory", file=sys.stderr)
@@ -95,11 +105,6 @@ def search_file(
 
     if files_with_matches or files_without_match:
         match_found = False
-        patterns_to_check = []
-        if patterns:
-            patterns_to_check.extend(patterns)
-        if pattern:
-            patterns_to_check.append(pattern)
 
         try:
             with open(filename, encoding="utf-8") as file:
@@ -142,16 +147,13 @@ def search_file(
     match_found = False
     after_context_counter = 0
     printed_lines = set()
-    patterns_to_check = []
     matches_found = 0
-    if patterns:
-        patterns_to_check.extend(patterns)
-    if pattern:
-        patterns_to_check.append(pattern)
+
     if before_context > 0:
         before_context_buffer = deque(maxlen=before_context)
     else:
         before_context_buffer = None
+
     try:
         with open(filename, encoding="utf-8") as file:
             for idx, line in enumerate(file, start=1):
@@ -238,9 +240,9 @@ def search_file(
             print(match_count)
 
     if max_count > 0:
-        return 0 < max_count <= matches_found
-    else:
-        return match_found
+        return matches_found >= max_count
+
+    return match_found
 
 
 def search_multiple_files(

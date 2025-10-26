@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Fixed `-e` and `-f` flags incorrectly consuming filename arguments, causing the program to hang waiting for stdin input instead of reading specified files.
+
 ## [0.3.16] - 2025-10-26
 
 ### Added

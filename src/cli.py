@@ -1,6 +1,7 @@
 import importlib
 import argparse
 import textwrap
+import sys
 
 
 def get_version() -> str:
@@ -210,6 +211,10 @@ def parse_arguments() -> argparse.Namespace:
     )
 
     args = parser.parse_args()
+
+    if (args.patterns or args.pattern_file) and args.pattern and not args.files:
+        args.files = [args.pattern]
+        args.pattern = None
 
     all_patterns = []
 
