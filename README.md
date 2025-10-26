@@ -203,7 +203,7 @@ grep-python/
 
 ## Test Coverage
 
-Current coverage: ~75%
+Current coverage: ~67%
 
 The pattern matching engine uses recursive backtracking, which makes 100% coverage impractical without artificial test cases. Coverage focuses on:
 
