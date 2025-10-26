@@ -150,11 +150,19 @@ class TestFlagValidation:
     ):
         """Test that -l and -L flags together cause an error."""
         monkeypatch.setattr(sys, "argv", ["pygrep", "-l", "-L", "pattern", "file.txt"])
-        with pytest.raises(SystemExit):
+        with pytest.raises(SystemExit) as exc_info:
             parse_arguments()
+        assert exc_info.value.code == EXIT_ERROR
 
     def test_files_only_modes_rejected_with_stdin(self, monkeypatch):
         """Test that -l or -L with stdin input causes an error."""
         monkeypatch.setattr(sys, "argv", ["pygrep", "-l", "pattern"])
         with pytest.raises(SystemExit):
             parse_arguments()
+
+    def test_files_without_match_rejected_with_stdin(self, monkeypatch):
+        """Test that -L with stdin input causes an error."""
+        monkeypatch.setattr(sys, "argv", ["pygrep", "-L", "pattern"])
+        with pytest.raises(SystemExit) as exc_info:
+            parse_arguments()
+        assert exc_info.value.code == EXIT_ERROR
