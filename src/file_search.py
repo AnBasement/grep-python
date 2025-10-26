@@ -119,7 +119,10 @@ def search_file(
             print(f"{filename}: permission denied", file=sys.stderr)
             return False
         except UnicodeDecodeError:
-            print(f"{filename}: could not decode file with UTF-8 encoding", file=sys.stderr)
+            print(
+                f"{filename}: could not decode file with UTF-8 encoding",
+                file=sys.stderr,
+            )
             return False
 
         if files_with_matches:
@@ -290,7 +293,7 @@ def search_multiple_files(
         file_with_match = search_file(
             filename,
             pattern,
-            print_filename=True,
+            print_filename=not (files_with_matches or files_without_match),
             print_line_number=print_line_number,
             ignore_case=ignore_case,
             invert_match=invert_match,
@@ -400,7 +403,7 @@ def search_directory_recursively(
         file_had_match = search_file(
             filepath,
             pattern,
-            print_filename=True,
+            print_filename=not (files_with_matches or files_without_match),
             print_line_number=print_line_number,
             ignore_case=ignore_case,
             invert_match=invert_match,
