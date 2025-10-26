@@ -8,9 +8,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Comprehensive integration test suite covering all feature combinations and edge cases.
+- Validated essential grep parity across all supported flags and operations.
+
 ### Fixed
 
-- Fixed `-e` and `-f` flags incorrectly consuming filename arguments, causing the program to hang waiting for stdin input instead of reading specified files.
+- Context buffer handling with multiple patterns: buffer now clears after printing to prevent duplicate output.
+- Max count exit code behavior: now returns exit code 0 when any matches found, matching standard grep semantics.
+- CLI argument parsing for `-e` and `-f` flags: fixed issue where filename arguments were incorrectly consumed as patterns, causing stdin hang.
+- Integration test infrastructure: moved log files outside test directories to prevent interference with recursive searches.
+
+### Changed
+
+- **BREAKING**: Achieved essential grep parity - project considered feature-complete for core grep functionality.
+- Exit code semantics for max count mode (`-m`): returns 0 if any matches found (not just when limit reached).
+- Documentation reorganized to emphasize learning-focused nature of the project.
+- README rewritten to highlight educational value and implementation details.
+- Complete rewrite of README.md emphasizing learning project status and computer science concepts.
+- Updated all documentation in `docs/` to reflect current feature set and API.
+- Added comprehensive usage examples for all flag combinations.
+- Clarified limitations and design trade-offs for educational transparency.
 
 ## [0.3.16] - 2025-10-26
 
