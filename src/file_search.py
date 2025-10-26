@@ -3,6 +3,7 @@ import os
 import sys
 from collections import deque
 from .pattern_matcher import match_pattern
+from .output_formatters import MatchResult
 
 
 def _format_line_output(
@@ -53,7 +54,8 @@ def search_file(
     max_count: int = 0,
     files_with_matches: bool = False,
     files_without_match: bool = False,
-) -> bool:
+    collect_results: bool = False,
+) -> bool | list[MatchResult]:
     """
     Search a file for lines matching a pattern.
 
@@ -82,9 +84,11 @@ def search_file(
             matching lines.
         files_without_match (bool): If True, only print names of files without
             matching lines.
+        collect_results (bool): If True, return list of MatchResult objects.
 
     Returns:
-        bool: True if at least one matching line is found, otherwise False.
+        bool: If collect_results is False.
+        list[MatchResult]: If collect_results is True.
     """
 
     patterns_to_check = []
@@ -92,6 +96,9 @@ def search_file(
         patterns_to_check.extend(patterns)
     if pattern:
         patterns_to_check.append(pattern)
+
+    if collect_results:
+        results = []
 
     if not patterns_to_check:
         return False
@@ -172,6 +179,14 @@ def search_file(
                     match_found = True
                     if quiet:
                         return True
+                    if collect_results:
+                        results.append(MatchResult(
+                            filename=filename,
+                            line_num=idx,
+                            line_content=line,
+                            match_start=None,
+                            match_end=None,
+                        ))
                     if before_context_buffer:
                         for buf_idx, buf_line in before_context_buffer:
                             if buf_idx not in printed_lines:
@@ -242,7 +257,10 @@ def search_file(
     if max_count > 0:
         return matches_found >= max_count
 
-    return match_found
+    if collect_results:
+        return results
+    else:
+        return match_found
 
 
 def search_multiple_files(

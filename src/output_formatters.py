@@ -1,4 +1,5 @@
 import json
+from typing import Optional
 from dataclasses import dataclass, asdict
 
 @dataclass
@@ -16,8 +17,8 @@ class MatchResult:
     filename: str
     line_num: int
     line_content: str
-    match_start: int
-    match_end: int
+    match_start: Optional[int] = None
+    match_end: Optional[int] = None
 
     def to_dict(self):
         """
