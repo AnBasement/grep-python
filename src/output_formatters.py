@@ -100,4 +100,4 @@ class JSONFormatter(OutputFormatter):
             }
             output["results"].append(file_entry)
 
-        return json.dumps(output, indent=2)
+        return json.dumps(output, indent=2, ensure_ascii=False)
