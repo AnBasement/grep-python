@@ -2,6 +2,7 @@ import unittest
 import json
 from src.output_formatters import JSONFormatter, MatchResult
 
+
 class TestJSONFormatter(unittest.TestCase):
     """Test the JSON output formatter"""
 
@@ -90,11 +91,11 @@ class TestJSONFormatter(unittest.TestCase):
         Integration test: Run the CLI with --json flag
         This goes in a separate test file like tests/test_cli_integration.py
         """
-        
+
         import subprocess
         import tempfile
 
-        with tempfile.NamedTemporaryFile(mode='w', delete=False) as f:
+        with tempfile.NamedTemporaryFile(mode="w", delete=False) as f:
             f.write("test line 1\n")
             f.write("another line\n")
             f.write("test line 3\n")
@@ -102,9 +103,9 @@ class TestJSONFormatter(unittest.TestCase):
 
         try:
             result = subprocess.run(
-                ['./pygrep.sh', '--json', 'test', test_file],
+                ["./pygrep.sh", "--json", "test", test_file],
                 capture_output=True,
-                text=True
+                text=True,
             )
 
             output = json.loads(result.stdout)
@@ -114,4 +115,5 @@ class TestJSONFormatter(unittest.TestCase):
 
         finally:
             import os
+
             os.unlink(test_file)
