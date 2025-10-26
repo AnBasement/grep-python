@@ -88,7 +88,7 @@ class TestEFlagParsing:
         monkeypatch.setattr(sys, "argv", ["pygrep", "-e", "foo", "file.txt"])
         args = parse_arguments()
         assert args.patterns == ["foo"]
-        assert args.pattern == None
+        assert args.pattern is None
         assert args.files == ["file.txt"]
         assert args.pattern_list == ["foo"]
 
@@ -99,7 +99,7 @@ class TestEFlagParsing:
         )
         args = parse_arguments()
         assert args.patterns == ["foo", "bar"]
-        assert args.pattern == None
+        assert args.pattern is None
         assert args.files == ["file.txt"]
         assert args.pattern_list == ["foo", "bar"]
 
