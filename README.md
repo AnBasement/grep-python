@@ -18,6 +18,7 @@ A grep tool written in Python while following the [Codecrafters.io guide](https:
 - **Count matches**: Print count of matching lines with `-c` flag.
 - **Quiet mode**: Suppress output and exit immediately on first match with `-q` flag.
 - **Max count**: Stop searching after N matches with `-m` flag.
+- **Files-only output**: List only filenames with (`-l`) or without (`-L`) matches.
 
 ## Installation
 

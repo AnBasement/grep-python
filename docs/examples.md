@@ -442,6 +442,119 @@ Especially useful for:
 - Monitoring scripts that just need to know if matches exist
 - Sampling/previewing matches without full processing
 
+## Files-Only Output
+
+Print only filenames instead of matching lines, useful for finding which files need attention or processing.
+
+### Files with Matches (`-l`, `--files-with-matches`)
+
+Print only the names of files containing matches:
+
+```bash
+# List Python files containing TODO comments
+./pygrep.sh -l -E "TODO" src/*.py
+
+# Find configuration files with errors
+./pygrep.sh --files-with-matches -E "error" config/*.conf
+
+# Combine with case-insensitive search
+./pygrep.sh -l -i -E "fixme" src/*.py
+
+# Use with multiple patterns
+./pygrep.sh -l -e "TODO" -e "FIXME" -e "HACK" src/*.py
+```
+
+Output format (only filenames):
+
+```text
+src/main.py
+src/utils.py
+src/config.py
+```
+
+### Files without Matches (`-L`, `--files-without-match`)
+
+Print only the names of files that do NOT contain any matches:
+
+```bash
+# Find Python files without tests
+./pygrep.sh -L -E "def test_" src/*.py
+
+# List files without TODO comments
+./pygrep.sh --files-without-match -E "TODO" src/*.py
+
+# Find source files without documentation
+./pygrep.sh -L -E "\"\"\"" src/*.py
+
+# Combine with case-insensitive search
+./pygrep.sh -L -i -E "copyright" *.py
+```
+
+Output format (only filenames):
+
+```text
+src/helpers.py
+src/models.py
+```
+
+**Note:** The `-l` and `-L` flags are mutually exclusive and cannot be used together.
+
+### Practical Examples
+
+```bash
+# Find all files that need attention
+for file in $(./pygrep.sh -l "FIXME" src/*.py); do
+    echo "File needs fixing: $file"
+    ./pygrep.sh -n "FIXME" "$file"
+done
+
+# Check which test files are missing assertions
+./pygrep.sh -L "assert" tests/test_*.py
+
+# Find files without license headers
+./pygrep.sh -L "Copyright" src/*.py > unlicensed.txt
+
+# Combine with recursive search
+./pygrep.sh -r -l "deprecated" src/
+
+# Use in CI/CD pipeline
+if ./pygrep.sh -l "console\.log" src/*.js | grep -q .; then
+    echo "Error: Debug statements found in source"
+    exit 1
+fi
+
+# Find files that need documentation
+./pygrep.sh -L -E "^def \w+.*:" src/*.py
+
+# Compare files with and without matches
+echo "Files with TODOs:"
+./pygrep.sh -l "TODO" src/*.py
+echo -e "\nFiles without TODOs:"
+./pygrep.sh -L "TODO" src/*.py
+
+# Process only files containing a pattern
+for file in $(./pygrep.sh -l -E "class \w+" src/*.py); do
+    echo "Processing $file..."
+    python analyze.py "$file"
+done
+```
+
+### Performance Benefits
+
+Files-only modes are optimized for efficiency:
+
+- **Early exit**: `-l` stops reading a file after the first match
+- **Minimal output**: No line formatting or processing overhead
+- **Fast scanning**: Ideal for checking many files quickly
+
+This makes files-only modes perfect for:
+
+- Finding files that need updates across a large codebase
+- CI/CD checks to detect prohibited patterns
+- Pre-commit hooks to validate code quality
+- Build scripts that process only relevant files
+- Quick audits of project structure
+
 ## Pattern Examples
 
 ### Literal Text Matching
