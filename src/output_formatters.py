@@ -39,6 +39,7 @@ class OutputFormatter:
     Methods:
         format(results): Format a list of MatchResult objects.
     """
+
     # pylint: disable=too-few-public-methods
 
     def format(self, results: list[MatchResult]) -> str:
@@ -65,6 +66,7 @@ class JSONFormatter(OutputFormatter):
     Methods:
         format(results): Convert match results to a JSON string.
     """
+
     # pylint: disable=too-few-public-methods
 
     def __init__(self, pattern: str, flags: dict):
