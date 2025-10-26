@@ -100,6 +100,10 @@ def search_file(
     if collect_results:
         results = []
 
+    if collect_results and quiet:
+        print("warning: collect_results not supported with quiet mode")
+        collect_results = False
+
     if not patterns_to_check:
         return False
 
@@ -178,7 +182,10 @@ def search_file(
                     matches_found += 1
                     match_found = True
                     if quiet:
-                        return True
+                        if collect_results:
+                            return results
+                        else:
+                            return True
                     if collect_results:
                         results.append(MatchResult(
                             filename=filename,
@@ -187,44 +194,45 @@ def search_file(
                             match_start=None,
                             match_end=None,
                         ))
-                    if before_context_buffer:
-                        for buf_idx, buf_line in before_context_buffer:
-                            if buf_idx not in printed_lines:
+                    else:
+                        if before_context_buffer:
+                            for buf_idx, buf_line in before_context_buffer:
+                                if buf_idx not in printed_lines:
+                                    print(
+                                        _format_line_output(
+                                            line_text=buf_line,
+                                            line_number=buf_idx,
+                                            filename=filename,
+                                            show_filename=print_filename,
+                                            show_line_number=print_line_number,
+                                        )
+                                    )
+                                    printed_lines.add(buf_idx)
+
+                        if count_only:
+                            match_count += 1
+                        else:
+                            if idx not in printed_lines:
                                 print(
                                     _format_line_output(
-                                        line_text=buf_line,
-                                        line_number=buf_idx,
+                                        line_text=line,
+                                        line_number=idx,
                                         filename=filename,
                                         show_filename=print_filename,
                                         show_line_number=print_line_number,
                                     )
                                 )
-                                printed_lines.add(buf_idx)
+                                printed_lines.add(idx)
+                            after_context_counter = after_context
 
-                    if count_only:
-                        match_count += 1
-                    else:
-                        if idx not in printed_lines:
-                            print(
-                                _format_line_output(
-                                    line_text=line,
-                                    line_number=idx,
-                                    filename=filename,
-                                    show_filename=print_filename,
-                                    show_line_number=print_line_number,
-                                )
-                            )
-                            printed_lines.add(idx)
-                        after_context_counter = after_context
-
-                    if 0 < max_count <= matches_found:
-                        if count_only:
-                            if print_filename:
-                                print(f"{filename}:{match_count}")
-                            else:
-                                print(match_count)
-                        return True
-                elif after_context_counter > 0:
+                        if 0 < max_count <= matches_found:
+                            if count_only:
+                                if print_filename:
+                                    print(f"{filename}:{match_count}")
+                                else:
+                                    print(match_count)
+                            return True
+                elif after_context_counter > 0 and not collect_results:
                     if idx not in printed_lines:
                         print(
                             _format_line_output(
@@ -248,7 +256,7 @@ def search_file(
         print(f"{filename}: could not decode file with UTF-8 encoding", file=sys.stderr)
         return False
 
-    if count_only:
+    if count_only and not collect_results:
         if print_filename:
             print(f"{filename}:{match_count}")
         else:
