@@ -177,7 +177,7 @@ Handles file operations and search across files with output formatting.
 
 #### Functions
 
-##### `search_file(filename: str, pattern: str, print_filename: bool = False, print_line_number: bool = False, ignore_case: bool = False, invert_match: bool = False, count_only: bool = False, after_context: int = 0, before_context: int = 0, patterns: Optional[list[str]] = None, quiet: bool = False, max_count: int = 0, files_with_matchs: bool = False, files_without_match: bool = False) -> bool`
+##### `search_file(filename: str, pattern: str, print_filename: bool = False, print_line_number: bool = False, ignore_case: bool = False, invert_match: bool = False, count_only: bool = False, after_context: int = 0, before_context: int = 0, patterns: Optional[list[str]] = None, quiet: bool = False, max_count: int = 0, files_with_matches: bool = False, files_without_match: bool = False) -> bool`
 
 Searches a file for pattern matches with configurable output options.
 
