@@ -92,7 +92,7 @@ def search_file(
         else:
             print(f"{filename}: no such file or directory", file=sys.stderr)
         return False
-    
+
     if files_with_matches or files_without_match:
         match_found = False
         patterns_to_check = []
@@ -100,7 +100,7 @@ def search_file(
             patterns_to_check.extend(patterns)
         if pattern:
             patterns_to_check.append(pattern)
-        
+
         try:
             with open(filename, encoding="utf-8") as file:
                 for line in file:
@@ -119,7 +119,10 @@ def search_file(
             print(f"{filename}: permission denied", file=sys.stderr)
             return False
         except UnicodeDecodeError:
-            print(f"{filename}: could not decode file with UTF-8 encoding", file=sys.stderr)
+            print(
+                f"{filename}: could not decode file with UTF-8 encoding",
+                file=sys.stderr,
+            )
             return False
 
         if files_with_matches and match_found:
