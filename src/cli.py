@@ -209,6 +209,12 @@ def parse_arguments() -> argparse.Namespace:
         help="Only print names of files without matching lines",
     )
 
+    parser.add_argument(
+        '--json',
+        action='store_true',
+        help='Output results as JSON format'
+    )
+
     args = parser.parse_args()
 
     if (args.patterns or args.pattern_file) and args.pattern and not args.files:
