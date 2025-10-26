@@ -185,7 +185,7 @@ def search_file(
             print(f"{filename}:{match_count}")
         else:
             print(match_count)
-    
+
     if max_count > 0:
         return 0 < max_count <= matches_found
     else:
