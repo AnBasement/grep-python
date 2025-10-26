@@ -88,9 +88,9 @@ class TestEFlagParsing:
         monkeypatch.setattr(sys, "argv", ["pygrep", "-e", "foo", "file.txt"])
         args = parse_arguments()
         assert args.patterns == ["foo"]
-        assert args.pattern == "file.txt"
-        assert args.files == []
-        assert args.pattern_list == ["file.txt", "foo"]
+        assert args.pattern == None
+        assert args.files == ["file.txt"]
+        assert args.pattern_list == ["foo"]
 
     def test_multiple_e_flags(self, monkeypatch):
         """Test that multiple -e flags are combined into a list."""
@@ -99,9 +99,9 @@ class TestEFlagParsing:
         )
         args = parse_arguments()
         assert args.patterns == ["foo", "bar"]
-        assert args.pattern == "file.txt"
-        assert args.files == []
-        assert args.pattern_list == ["file.txt", "foo", "bar"]
+        assert args.pattern == None
+        assert args.files == ["file.txt"]
+        assert args.pattern_list == ["foo", "bar"]
 
     def test_e_flag_and_positional_pattern(self, monkeypatch):
         """Test that both -e and positional pattern are parsed."""
@@ -121,7 +121,7 @@ class TestEFlagParsing:
         )
 
         args = parse_arguments()
-        assert args.pattern_list == ["file.txt", "foo", "baz"]
+        assert args.pattern_list == ["foo", "baz"]
 
     def test_empty_lines_skipped_in_pattern_file(self, tmp_path, monkeypatch):
         """Test that empty lines in pattern file are skipped when using -f flag."""
