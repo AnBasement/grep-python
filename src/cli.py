@@ -210,9 +210,7 @@ def parse_arguments() -> argparse.Namespace:
     )
 
     parser.add_argument(
-        '--json',
-        action='store_true',
-        help='Output results as JSON format'
+        "--json", action="store_true", help="Output results as JSON format"
     )
 
     args = parser.parse_args()

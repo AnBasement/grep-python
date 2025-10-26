@@ -30,7 +30,7 @@ def main() -> None:
     try:
         args = parse_arguments()
 
-        output_json = args.json if hasattr(args, 'json') else False
+        output_json = args.json if hasattr(args, "json") else False
 
         if len(args.files) == 0:
             match_count = 0

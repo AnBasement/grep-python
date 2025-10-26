@@ -2,6 +2,7 @@ import json
 from typing import Optional
 from dataclasses import dataclass, asdict
 
+
 @dataclass
 class MatchResult:
     """
@@ -14,6 +15,7 @@ class MatchResult:
         match_start (int): Start index of the match in the line.
         match_end (int): End index of the match in the line.
     """
+
     filename: str
     line_num: int
     line_content: str
@@ -89,14 +91,14 @@ class JSONFormatter(OutputFormatter):
             "metadata": {
                 "pattern": self.pattern,
                 "flags": self.flags,
-                "total_matches": len(results)
-            }
+                "total_matches": len(results),
+            },
         }
 
         for filename, matches in grouped.items():
             file_entry = {
                 "file": filename,
-                "matches": [match.to_dict() for match in matches]
+                "matches": [match.to_dict() for match in matches],
             }
             output["results"].append(file_entry)
 

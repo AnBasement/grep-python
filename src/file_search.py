@@ -187,13 +187,15 @@ def search_file(
                         else:
                             return True
                     if collect_results:
-                        results.append(MatchResult(
-                            filename=filename,
-                            line_num=idx,
-                            line_content=line,
-                            match_start=None,
-                            match_end=None,
-                        ))
+                        results.append(
+                            MatchResult(
+                                filename=filename,
+                                line_num=idx,
+                                line_content=line,
+                                match_start=None,
+                                match_end=None,
+                            )
+                        )
                     else:
                         if before_context_buffer:
                             for buf_idx, buf_line in before_context_buffer:
