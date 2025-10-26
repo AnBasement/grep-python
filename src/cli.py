@@ -1,7 +1,6 @@
 import importlib
 import argparse
 import textwrap
-import sys
 
 
 def get_version() -> str:
