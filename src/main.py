@@ -96,7 +96,8 @@ def main() -> None:
                             files_without_match=args.files_without_match,
                             collect_results=True,
                         )
-                        all_results.extend(results)
+                        if isinstance(results, list):
+                            all_results.extend(results)
                     except (PermissionError, OSError, FileNotFoundError):
                         print(f"{path}: {ERROR_SEARCH_FAILED}", file=sys.stderr)
             else:
@@ -117,7 +118,8 @@ def main() -> None:
                         files_without_match=args.files_without_match,
                         collect_results=True,
                     )
-                    all_results.extend(results)
+                    if isinstance(results, list):
+                        all_results.extend(results)
                 else:
                     results = search_multiple_files(
                         args.files,
@@ -135,7 +137,8 @@ def main() -> None:
                         files_without_match=args.files_without_match,
                         collect_results=True,
                     )
-                    all_results.extend(results)
+                    if isinstance(results, list):
+                        all_results.extend(results)
 
             formatter = JSONFormatter(args.pattern, vars(args))
             print(formatter.format(all_results))
