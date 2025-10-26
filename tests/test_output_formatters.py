@@ -1,5 +1,8 @@
 import unittest
 import json
+import subprocess
+import tempfile
+import os
 from src.output_formatters import JSONFormatter, MatchResult
 
 
@@ -82,7 +85,6 @@ class TestJSONFormatter(unittest.TestCase):
         ]
 
         output = self.formatter.format(matches)
-        data = json.loads(output)
 
         self.assertIn("Søk", output)
 
@@ -91,9 +93,6 @@ class TestJSONFormatter(unittest.TestCase):
         Integration test: Run the CLI with --json flag
         This goes in a separate test file like tests/test_cli_integration.py
         """
-
-        import subprocess
-        import tempfile
 
         with tempfile.NamedTemporaryFile(mode="w", delete=False) as f:
             f.write("test line 1\n")
@@ -106,6 +105,7 @@ class TestJSONFormatter(unittest.TestCase):
                 ["./pygrep.sh", "--json", "test", test_file],
                 capture_output=True,
                 text=True,
+                check=True,
             )
 
             output = json.loads(result.stdout)
@@ -114,6 +114,5 @@ class TestJSONFormatter(unittest.TestCase):
             self.assertEqual(len(output["results"][0]["matches"]), 2)
 
         finally:
-            import os
 
             os.unlink(test_file)
