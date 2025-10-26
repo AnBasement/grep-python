@@ -94,7 +94,7 @@ def main() -> None:
                             max_count=args.max_count,
                             files_with_matches=args.files_with_matches,
                             files_without_match=args.files_without_match,
-                            # collect_results=True,
+                            collect_results=True,
                         )
                         if isinstance(results, list):
                             all_results.extend(results)
@@ -116,7 +116,7 @@ def main() -> None:
                         max_count=args.max_count,
                         files_with_matches=args.files_with_matches,
                         files_without_match=args.files_without_match,
-                        # collect_results=True,
+                        collect_results=True,
                     )
                     if isinstance(results, list):
                         all_results.extend(results)
@@ -135,7 +135,7 @@ def main() -> None:
                         max_count=args.max_count,
                         files_with_matches=args.files_with_matches,
                         files_without_match=args.files_without_match,
-                        # collect_results=True,
+                        collect_results=True,
                     )
                     if isinstance(results, list):
                         all_results.extend(results)
