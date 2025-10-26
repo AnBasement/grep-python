@@ -351,3 +351,177 @@ class TestMaxCount:
         assert result is True
         out = capsys.readouterr().out
         assert out.count("match") == 2
+
+
+class TestFilesOnlyModes:
+    """Tests for files-only output modes (-l and -L)."""
+
+    def test_files_with_matches_shows_filename(self, tmp_path, capsys):
+        """Verify that -l flag shows only filename when match is found."""
+        p = tmp_path / "data.txt"
+        p.write_text("line1\nmatch\nline3")
+        assert search_file(str(p), "match", files_with_matches=True) is True
+        out = capsys.readouterr().out
+        assert str(p) in out
+        assert "line1" not in out
+        assert "line3" not in out
+
+    def test_files_with_matches_returns_false_on_no_match(self, tmp_path, capsys):
+        """Verify that -l flag returns False when no match is found."""
+        p = tmp_path / "data.txt"
+        p.write_text("line1\nline2\nline3")
+        assert search_file(str(p), "nomatch", files_with_matches=True) is False
+        out = capsys.readouterr().out
+        assert out == ""
+
+    def test_files_without_match_shows_filename_on_no_match(self, tmp_path, capsys):
+        """Verify that -L flag shows filename when no match is found."""
+        p = tmp_path / "data.txt"
+        p.write_text("line1\nline2\nline3")
+        assert search_file(str(p), "nomatch", files_without_match=True) is True
+        out = capsys.readouterr().out
+        assert str(p) in out
+
+    def test_files_without_match_returns_false_on_match(self, tmp_path, capsys):
+        """Verify that -L flag returns False when match is found."""
+        p = tmp_path / "data.txt"
+        p.write_text("line1\nmatch\nline3")
+        assert search_file(str(p), "match", files_without_match=True) is False
+        out = capsys.readouterr().out
+        assert out == ""
+
+    def test_files_with_matches_with_multiple_patterns(self, tmp_path, capsys):
+        """Verify that -l works with multiple patterns (OR logic)."""
+        p = tmp_path / "data.txt"
+        p.write_text("apple\nbanana\ncherry")
+        result = search_file(
+            str(p),
+            "dummy",
+            patterns=["error", "banana"],
+            files_with_matches=True,
+        )
+        assert result is True
+        out = capsys.readouterr().out
+        assert str(p) in out
+        assert "apple" not in out
+        assert "banana" not in out
+
+    def test_files_with_matches_with_invert_match(self, tmp_path, capsys):
+        """Verify that -l respects invert_match (-v) flag."""
+        p = tmp_path / "data.txt"
+        p.write_text("line1\nline2\nline3")
+        result = search_file(
+            str(p),
+            "nomatch",
+            files_with_matches=True,
+            invert_match=True,
+        )
+        assert result is True
+        out = capsys.readouterr().out
+        assert str(p) in out
+
+    def test_files_with_matches_with_ignore_case(self, tmp_path, capsys):
+        """Verify that -l respects ignore_case (-i) flag."""
+        p = tmp_path / "data.txt"
+        p.write_text("line1\nMATCH\nline3")
+        result = search_file(
+            str(p),
+            "match",
+            files_with_matches=True,
+            ignore_case=True,
+        )
+        assert result is True
+        out = capsys.readouterr().out
+        assert str(p) in out
+
+    def test_files_with_matches_multiple_files_with_matches(self, tmp_path, capsys):
+        """Verify -l shows filenames for multiple files that have matches."""
+        file1 = tmp_path / "file1.txt"
+        file1.write_text("error in file1")
+        file2 = tmp_path / "file2.txt"
+        file2.write_text("error in file2")
+        file3 = tmp_path / "file3.txt"
+        file3.write_text("no problem here")
+
+        result = search_multiple_files(
+            [str(file1), str(file2), str(file3)],
+            "error",
+            files_with_matches=True,
+        )
+        assert result is True
+        out = capsys.readouterr().out
+        assert str(file1) in out
+        assert str(file2) in out
+        assert str(file3) not in out
+
+    def test_files_without_match_multiple_files_without_matches(self, tmp_path, capsys):
+        """Verify -L shows filenames for multiple files that don't have matches."""
+        file1 = tmp_path / "file1.txt"
+        file1.write_text("no problem here")
+        file2 = tmp_path / "file2.txt"
+        file2.write_text("all good")
+        file3 = tmp_path / "file3.txt"
+        file3.write_text("error in file3")
+
+        result = search_multiple_files(
+            [str(file1), str(file2), str(file3)],
+            "error",
+            files_without_match=True,
+        )
+        assert result is True
+        out = capsys.readouterr().out
+        assert str(file1) in out
+        assert str(file2) in out
+        assert str(file3) not in out
+
+    def test_files_with_matches_mixed_files(self, tmp_path, capsys):
+        """Verify -l shows only files with matches when mixed."""
+        file1 = tmp_path / "file1.txt"
+        file1.write_text("match here")
+        file2 = tmp_path / "file2.txt"
+        file2.write_text("nothing found")
+        file3 = tmp_path / "file3.txt"
+        file3.write_text("another match")
+
+        result = search_multiple_files(
+            [str(file1), str(file2), str(file3)],
+            "match",
+            files_with_matches=True,
+        )
+        assert result is True
+        out = capsys.readouterr().out
+        assert str(file1) in out
+        assert str(file3) in out
+        assert str(file2) not in out
+
+    def test_files_only_ignores_line_numbers_flag(self, tmp_path, capsys):
+        """Verify that print_line_number is ignored in files-only mode."""
+        p = tmp_path / "data.txt"
+        p.write_text("line1\nmatch\nline3")
+        search_file(
+            str(p),
+            "match",
+            files_with_matches=True,
+            print_line_number=True,
+        )
+        out = capsys.readouterr().out
+        out_lines = out.strip().split("\n")
+        assert len(out_lines) == 1
+        assert out_lines[0] == str(p)
+
+    def test_files_only_ignores_context_flags(self, tmp_path, capsys):
+        """Verify that context flags are ignored in files-only mode."""
+        p = tmp_path / "data.txt"
+        p.write_text("line1\nmatch\nline3\nline4")
+        search_file(
+            str(p),
+            "match",
+            files_with_matches=True,
+            after_context=2,
+            before_context=2,
+        )
+        out = capsys.readouterr().out
+        assert str(p) in out
+        assert "line1" not in out
+        assert "line3" not in out
+        assert "line4" not in out

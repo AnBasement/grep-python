@@ -51,6 +51,8 @@ def search_file(
     patterns: Optional[list[str]] = None,
     quiet: bool = False,
     max_count: int = 0,
+    files_with_matches: bool = False,
+    files_without_match: bool = False,
 ) -> bool:
     """
     Search a file for lines matching a pattern.
@@ -76,6 +78,10 @@ def search_file(
         quiet (bool): If True, suppress all normal output and exit on first match.
         max_count (int): Maximum number of matching lines to find before stopping.
             A value of 0 means no limit. Defaults to 0.
+        files_with_matches (bool): If True, only print names of files with
+            matching lines.
+        files_without_match (bool): If True, only print names of files without
+            matching lines.
 
     Returns:
         bool: True if at least one matching line is found, otherwise False.
@@ -86,6 +92,51 @@ def search_file(
         else:
             print(f"{filename}: no such file or directory", file=sys.stderr)
         return False
+
+    if files_with_matches or files_without_match:
+        match_found = False
+        patterns_to_check = []
+        if patterns:
+            patterns_to_check.extend(patterns)
+        if pattern:
+            patterns_to_check.append(pattern)
+
+        try:
+            with open(filename, encoding="utf-8") as file:
+                for line in file:
+                    line = line.rstrip("\n")
+                    matches = False
+                    for p in patterns_to_check:
+                        if match_pattern(line, p, ignore_case=ignore_case):
+                            matches = True
+                            break
+                    if invert_match:
+                        matches = not matches
+                    if matches:
+                        match_found = True
+                        break
+        except (PermissionError, OSError):
+            print(f"{filename}: permission denied", file=sys.stderr)
+            return False
+        except UnicodeDecodeError:
+            print(
+                f"{filename}: could not decode file with UTF-8 encoding",
+                file=sys.stderr,
+            )
+            return False
+
+        if files_with_matches:
+            if match_found:
+                print(filename)
+                return True
+            else:
+                return False
+        elif files_without_match:
+            if not match_found:
+                print(filename)
+                return True
+            else:
+                return False
 
     match_count = 0
     match_found = False
@@ -204,6 +255,8 @@ def search_multiple_files(
     patterns: Optional[list[str]] = None,
     quiet: bool = False,
     max_count: int = 0,
+    files_with_matches: bool = False,
+    files_without_match: bool = False,
 ) -> bool:
     """
     Searches through multiple files for lines matching a given pattern.
@@ -226,6 +279,10 @@ def search_multiple_files(
         quiet (bool): If True, suppress all normal output and exit on first match.
         max_count (int): Maximum number of matching lines to find before stopping.
             A value of 0 means no limit. Defaults to 0.
+        files_with_matches (bool): If True, only print names of files with
+            matching lines.
+        files_without_match (bool): If True, only print names of files without
+            matching lines.
 
     Returns:
         bool: True if at least one matching line is found, else False.
@@ -236,7 +293,7 @@ def search_multiple_files(
         file_with_match = search_file(
             filename,
             pattern,
-            print_filename=True,
+            print_filename=not (files_with_matches or files_without_match),
             print_line_number=print_line_number,
             ignore_case=ignore_case,
             invert_match=invert_match,
@@ -246,6 +303,8 @@ def search_multiple_files(
             patterns=patterns,
             quiet=quiet,
             max_count=max_count,
+            files_with_matches=files_with_matches,
+            files_without_match=files_without_match,
         )
         if file_with_match:
             match_found = True
@@ -305,6 +364,8 @@ def search_directory_recursively(
     patterns: Optional[list[str]] = None,
     quiet: bool = False,
     max_count: int = 0,
+    files_with_matches: bool = False,
+    files_without_match: bool = False,
 ) -> bool:
     """
     Recursively search all files in a directory for lines matching a pattern.
@@ -327,6 +388,10 @@ def search_directory_recursively(
         quiet (bool): If True, suppress all normal output and exit on first match.
         max_count (int): Maximum number of matching lines to find before stopping.
             A value of 0 means no limit. Defaults to 0.
+        files_with_matches (bool): If True, only print names of files with
+            matching lines.
+        files_without_match (bool): If True, only print names of files without
+            matching lines.
 
     Returns:
         bool: True if at least one matching line is found, else False.
@@ -338,7 +403,7 @@ def search_directory_recursively(
         file_had_match = search_file(
             filepath,
             pattern,
-            print_filename=True,
+            print_filename=not (files_with_matches or files_without_match),
             print_line_number=print_line_number,
             ignore_case=ignore_case,
             invert_match=invert_match,
@@ -348,6 +413,8 @@ def search_directory_recursively(
             patterns=patterns,
             quiet=quiet,
             max_count=max_count,
+            files_with_matches=files_with_matches,
+            files_without_match=files_without_match,
         )
         if file_had_match:
             any_match_found = True

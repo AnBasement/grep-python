@@ -177,7 +177,7 @@ Handles file operations and search across files with output formatting.
 
 #### Functions
 
-##### `search_file(filename: str, pattern: str, print_filename: bool = False, print_line_number: bool = False, ignore_case: bool = False, invert_match: bool = False, count_only: bool = False, after_context: int = 0, before_context: int = 0, patterns: Optional[list[str]] = None, quiet: bool = False, max_count: int = 0) -> bool`
+##### `search_file(filename: str, pattern: str, print_filename: bool = False, print_line_number: bool = False, ignore_case: bool = False, invert_match: bool = False, count_only: bool = False, after_context: int = 0, before_context: int = 0, patterns: Optional[list[str]] = None, quiet: bool = False, max_count: int = 0, files_with_matches: bool = False, files_without_match: bool = False) -> bool`
 
 Searches a file for pattern matches with configurable output options.
 
@@ -195,6 +195,8 @@ Searches a file for pattern matches with configurable output options.
 - `patterns` (Optional[list[str]]): Additional patterns to match (default: None)
 - `quiet` (bool): Whether to suppress all output and exit on first match (default: False)
 - `max_count` (int): Maximum number of matches to find before stopping (0 = unlimited) (default: 0)
+- `files_with_matches` (bool): Whether to print only filenames containing matches (default: False)
+- `files_without_match` (bool): Whether to print only filenames without matches (default: False)
 
 **Returns:**
 
@@ -216,6 +218,7 @@ Searches a file for pattern matches with configurable output options.
 - With `invert_match`, matches logic is inverted
 - Output format with line numbers: `line_number:line_content`
 - All flags passed through to `match_pattern()`
+- When `files_with_matches=True`, prints only the filename if any match is found (early exit optimization). When `files_without_match=True`, prints only the filename if no matches are found. These flags are mutually exclusive.
 
 **Error Handling:**
 
@@ -244,7 +247,7 @@ found = search_file("file.txt", "TODO", ignore_case=True, count_only=True)
 found = search_file("config.txt", "^#", invert_match=True)
 ```
 
-##### `search_multiple_files(filenames: List[str], pattern: str, print_line_number: bool = False, ignore_case: bool = False, invert_match: bool = False, count_only: bool = False, after_context: int = 0, before_context: int = 0, patterns: Optional[list[str]] = None, quiet: bool = False, max_count: int = 0) -> bool`
+##### `search_multiple_files(filenames: List[str], pattern: str, print_line_number: bool = False, ignore_case: bool = False, invert_match: bool = False, count_only: bool = False, after_context: int = 0, before_context: int = 0, patterns: Optional[list[str]] = None, quiet: bool = False, max_count: int = 0, files_with_matches: bool = False, files_without_match: bool = False) -> bool`
 
 Searches multiple files for pattern matches.
 
@@ -261,6 +264,8 @@ Searches multiple files for pattern matches.
 - `patterns` (Optional[list[str]]): Additional patterns to match (default: None)
 - `quiet` (bool): Whether to suppress all output and exit on first match (default: False)
 - `max_count` (int): Maximum number of matches to find before stopping (0 = unlimited) (default: 0)
+- `files_with_matches` (bool): Whether to print only filenames containing matches (default: False)
+- `files_without_match` (bool): Whether to print only filenames without matches (default: False)
 
 **Returns:**
 
@@ -275,7 +280,7 @@ Searches multiple files for pattern matches.
 - Continues searching remaining files after errors
 - Passes all flags to `search_file()`, including context parameters
 
-##### `search_directory_recursively(directory: str, pattern: str, print_line_number: bool = False, ignore_case: bool = False, invert_match: bool = False, count_only: bool = False, after_context: int = 0, before_context: int = 0, patterns: Optional[list[str]] = None, quiet: bool = False, max_count: int = 0) -> bool`
+##### `search_directory_recursively(directory: str, pattern: str, print_line_number: bool = False, ignore_case: bool = False, invert_match: bool = False, count_only: bool = False, after_context: int = 0, before_context: int = 0, patterns: Optional[list[str]] = None, quiet: bool = False, max_count: int = 0, files_with_matches: bool = False, files_without_match: bool = False) -> bool`
 
 Recursively searches directories for pattern matches.
 
@@ -292,6 +297,8 @@ Recursively searches directories for pattern matches.
 - `patterns` (Optional[list[str]]): Additional patterns to match (default: None)
 - `quiet` (bool): Whether to suppress all output and exit on first match (default: False)
 - `max_count` (int): Maximum number of matches to find before stopping (0 = unlimited) (default: 0)
+- `files_with_matches` (bool): Whether to print only filenames containing matches (default: False)
+- `files_without_match` (bool): Whether to print only filenames without matches (default: False)
 
 **Returns:**
 
@@ -359,6 +366,8 @@ Parses and validates command-line arguments using argparse.
   - `after_context` (int): Number of lines to print after matches
   - `before_context` (int): Number of lines to print before matches
   - `context` (int): Number of lines to print before and after matches
+  - `files_with_matches` (bool): Print only filenames with matches
+  - `files_without_match` (bool): Print only filenames without matches
 
 **Available Arguments:**
 
@@ -377,6 +386,8 @@ Parses and validates command-line arguments using argparse.
 - `-C NUM`, `--context NUM`: Print NUM lines before and after each match
 - `-q`, `--quiet`, `--silent`: Suppress all output, exit immediately on first match
 - `-m NUM`, `--max-count NUM`: Stop searching after NUM matches (0 = unlimited)
+- `-l`, `--files-with-matches`: Print only names of files containing matches
+- `-L`, `--files-without-match`: Print only names of files without matches
 - `--version`: Show version and exit
 - `--help`: Show help message and exit
 
@@ -408,6 +419,15 @@ Parses and validates command-line arguments using argparse.
 - Returns 1 (no match) if fewer matches exist than the limit
 - Useful for finding first N occurrences or sampling large files
 - Combines with other options: `-m 3 -n` prints first 3 matches with line numbers
+
+**Files-Only Modes:**
+
+- When `-l` is specified, prints only filenames that contain at least one match
+- When `-L` is specified, prints only filenames that contain no matches
+- These flags are mutually exclusive and cannot be used together
+- `-l` uses early exit optimization (stops reading file after first match)
+- Output shows only filenames, one per line, without line content or numbers
+- Useful for finding files that need processing or validation
 
 **Exit Codes:**
 

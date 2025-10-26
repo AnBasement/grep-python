@@ -140,3 +140,30 @@ class TestEFlagParsing:
         with pytest.raises(SystemExit) as exc_info:
             parse_arguments()
         assert exc_info.value.code == EXIT_ERROR
+
+
+class TestFlagValidation:
+    """Tests CLI flag validation and mutual exclusivity."""
+
+    def test_files_with_matches_and_files_without_match_mutually_exclusive(
+        self, monkeypatch
+    ):
+        """Test that -l and -L flags together cause an error."""
+        monkeypatch.setattr(sys, "argv", ["pygrep", "-l", "-L", "pattern", "file.txt"])
+        with pytest.raises(SystemExit) as exc_info:
+            parse_arguments()
+        assert exc_info.value.code == EXIT_ERROR
+
+    def test_files_only_modes_rejected_with_stdin(self, monkeypatch):
+        """Test that -l or -L with stdin input causes an error."""
+        monkeypatch.setattr(sys, "argv", ["pygrep", "-l", "pattern"])
+        with pytest.raises(SystemExit) as exc_info:
+            parse_arguments()
+        assert exc_info.value.code == EXIT_ERROR
+
+    def test_files_without_match_rejected_with_stdin(self, monkeypatch):
+        """Test that -L with stdin input causes an error."""
+        monkeypatch.setattr(sys, "argv", ["pygrep", "-L", "pattern"])
+        with pytest.raises(SystemExit) as exc_info:
+            parse_arguments()
+        assert exc_info.value.code == EXIT_ERROR

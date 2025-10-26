@@ -121,6 +121,8 @@ When `ignore_case=True` is passed to `match_pattern()`, both the pattern and inp
 - After-context (`after_context`) - Show N lines after each match
 - Before-context (`before_context`) - Show N lines before each match
 - Quiet mode (`quiet`) - Suppress all output and exit immediately on first match
+- Files with matches (`files_with_matches`) - Print only filename if any match found (early exit)
+- Files without match (`files_without_match`) - Print only filename if no matches found
 
 **Context Line Implementation**:
 
@@ -137,6 +139,20 @@ When `ignore_case=True` is passed to `match_pattern()`, both the pattern and inp
   - Prevents duplicate output when context windows overlap
   - Each line printed at most once
   - Checked before printing any line (context or match)
+
+**Files-Only Output Implementation**:
+
+- **Files with matches (`-l`)**:
+  - Uses simplified matching logic that exits immediately after first match
+  - Prints only the filename, no line content or numbers
+  - Early exit optimization improves performance on large files
+  - Useful for finding which files contain a pattern
+- **Files without match (`-L`)**:
+  - Scans entire file to confirm no matches exist
+  - Prints only the filename if no matches found
+  - Useful for validation and finding files missing required content
+- **Mutual exclusivity**: `-l` and `-L` flags cannot be used together (validated in CLI)
+- **Compatibility**: Works with multiple patterns, case-insensitive search, and other flags
 
 **Error Handling**: Catches and reports file access errors gracefully.
 
@@ -174,6 +190,8 @@ When `ignore_case=True` is passed to `match_pattern()`, both the pattern and inp
 - `-B NUM`, `--before-context NUM` - Print NUM lines before each match
 - `-C NUM`, `--context NUM` - Print NUM lines before and after each match (sets both -A and -B)
 - `-q`, `--quiet`, `--silent` - Suppress all output, exit immediately on first match
+- `-l`, `--files-with-matches` - Print only filenames containing matches
+- `-L`, `--files-without-match` - Print only filenames without matches
 - `--version` - Show version and exit
 - `--help` - Show help message and exit
 
@@ -185,6 +203,7 @@ When `ignore_case=True` is passed to `match_pattern()`, both the pattern and inp
 - Returns namespace object with all flags as attributes
 - Exits with appropriate error codes for invalid input
 - Context flag handling: `-C` sets both `before_context` and `after_context`
+- Files-only flag validation: `-l` and `-L` are mutually exclusive
 
 ### 5. Main Program (`main.py`)
 

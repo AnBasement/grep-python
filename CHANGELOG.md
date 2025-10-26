@@ -8,6 +8,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `-l` / `--files-with-matches` flag: print only filenames of files containing matches.
+- `-L` / `--files-without-match` flag: print only filenames of files without matches.
+- Validation to prevent using `-l` and `-L` together.
+- Parameters for files-only modes added to all search functions.
+- Files-only logic: early exit after first match, prints only filename, ignores line/context/count flags.
+- Comprehensive tests for files-only modes, including single file, multiple files, and mutual exclusion.
+- Documentation and usage examples for files-only modes in `docs/examples.md` and `README.md`.
+
 ## [0.3.15] - 2025-10-25
 
 ### Added
