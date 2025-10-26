@@ -87,6 +87,8 @@ def main() -> None:
                         patterns=args.pattern_list,
                         quiet=args.quiet,
                         max_count=args.max_count,
+                        files_with_matches=args.files_with_matches,
+                        files_without_match=args.files_without_match,
                     ):
                         any_match_found = True
                 except (PermissionError, OSError, FileNotFoundError):
@@ -115,6 +117,8 @@ def main() -> None:
                         patterns=args.pattern_list,
                         quiet=args.quiet,
                         max_count=args.max_count,
+                        files_with_matches=args.files_with_matches,
+                        files_without_match=args.files_without_match,
                     ):
                         sys.exit(EXIT_MATCH_FOUND)
                     else:
@@ -133,6 +137,8 @@ def main() -> None:
                         patterns=args.pattern_list,
                         quiet=args.quiet,
                         max_count=args.max_count,
+                        files_with_matches=args.files_with_matches,
+                        files_without_match=args.files_without_match,
                     ):
                         sys.exit(EXIT_MATCH_FOUND)
                     else:
