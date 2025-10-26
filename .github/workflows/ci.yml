@@ -9,6 +9,8 @@ on:
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -57,3 +59,19 @@ jobs:
           source .venv/bin/activate
           mkdir -p .github/coverage
           coverage-badge -o .github/coverage/coverage.svg -f
+
+      - name: Update README with coverage percentage
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          source .venv/bin/activate
+          COVERAGE=$(python -m pytest --cov=src --cov-report=term tests/ | grep "TOTAL" | awk '{print $4}' | sed 's/%//')
+          sed -i "s/Current coverage: ~[0-9]\+%/Current coverage: ~${COVERAGE}%/" README.md
+
+      - name: Commit and push coverage badge and README
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add .github/coverage/coverage.svg README.md
+          git diff --staged --quiet || git commit -m "Update coverage badge and README [skip ci]"
+          git push

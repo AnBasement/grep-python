@@ -3,34 +3,69 @@ name: Release
 on:
   push:
     tags:
-      - 'v*.*.0'
+      - 'v*.*.*'
 
 jobs:
   create-release:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Extract version info
+        id: version
+        run: |
+          TAG="${GITHUB_REF_NAME}"
+          VERSION="${TAG#v}"  # Remove 'v' prefix
+          
+          # Determine release type
+          if [[ $VERSION =~ ^[0-9]+\.0\.0$ ]]; then
+            TYPE="Major"
+          elif [[ $VERSION =~ ^[0-9]+\.[0-9]+\.0$ ]]; then
+            TYPE="Minor"
+          else
+            TYPE="Patch"
+          fi
+          
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "type=$TYPE" >> $GITHUB_OUTPUT
 
       - name: Extract changelog entry
         id: changelog
         run: |
-          TAG="${GITHUB_REF_NAME}"
-          TITLE="grep-python $TAG"
-          BODY=$(awk "/^## \\[${TAG//./\\.}\\]/,/^## \\[/" CHANGELOG.md | sed '$d')
-          if [ -z "$BODY" ]; then
-            BODY="Release $TAG"
+          VERSION="${{ steps.version.outputs.version }}"
+          
+          # Extract the section for this version from CHANGELOG.md
+          BODY=$(awk "/^## \[${VERSION//./\\.}\]/,/^## \[/" CHANGELOG.md | sed '1d;$d')
+          
+          # If no changelog entry found, create a simple one
+          if [ -z "$BODY" ] || [ "$BODY" = " " ]; then
+            BODY="See [CHANGELOG.md](https://github.com/${{ github.repository }}/blob/main/CHANGELOG.md) for details."
           fi
-          echo "title=$TITLE" >> $GITHUB_OUTPUT
-          echo "body<<EOF" >> $GITHUB_OUTPUT
-          echo "$BODY" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
+          
+          # Save to output
+          {
+            echo "body<<EOF"
+            echo "$BODY"
+            echo "EOF"
+          } >> $GITHUB_OUTPUT
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ github.ref_name }}
-          name: ${{ steps.changelog.outputs.title }}
-          body: ${{ steps.changelog.outputs.body }}
+          tag_name: ${{ steps.version.outputs.tag }}
+          name: "grep-python ${{ steps.version.outputs.tag }}"
+          body: |
+            **${{ steps.version.outputs.type }} Release**
+            
+            ${{ steps.changelog.outputs.body }}
+          draft: false
+          prerelease: ${{ startsWith(steps.version.outputs.version, '0.') }}
+          generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
