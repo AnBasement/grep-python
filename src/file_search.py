@@ -285,7 +285,8 @@ def search_multiple_files(
     max_count: int = 0,
     files_with_matches: bool = False,
     files_without_match: bool = False,
-) -> bool:
+    collect_results: bool = False,
+) -> bool | list[MatchResult]:
     """
     Searches through multiple files for lines matching a given pattern.
 
@@ -394,7 +395,8 @@ def search_directory_recursively(
     max_count: int = 0,
     files_with_matches: bool = False,
     files_without_match: bool = False,
-) -> bool:
+    collect_results: bool = False,
+) -> bool | list[MatchResult]:
     """
     Recursively search all files in a directory for lines matching a pattern.
 
