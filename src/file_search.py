@@ -119,17 +119,21 @@ def search_file(
             print(f"{filename}: permission denied", file=sys.stderr)
             return False
         except UnicodeDecodeError:
-            print(
-                f"{filename}: could not decode file with UTF-8 encoding",
-                file=sys.stderr,
-            )
+            print(f"{filename}: could not decode file with UTF-8 encoding", file=sys.stderr)
             return False
 
-        if files_with_matches and match_found:
-            print(filename)
-        elif files_without_match and not match_found:
-            print(filename)
-        return match_found
+        if files_with_matches:
+            if match_found:
+                print(filename)
+                return True
+            else:
+                return False
+        elif files_without_match:
+            if not match_found:
+                print(filename)
+                return True
+            else:
+                return False
 
     match_count = 0
     match_found = False
