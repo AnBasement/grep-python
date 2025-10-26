@@ -478,7 +478,7 @@ class TestFilesOnlyModes:
         file1 = tmp_path / "file1.txt"
         file1.write_text("match here")
         file2 = tmp_path / "file2.txt"
-        file2.write_text("no match")
+        file2.write_text("nothing found")
         file3 = tmp_path / "file3.txt"
         file3.write_text("another match")
 
