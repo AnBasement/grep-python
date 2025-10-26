@@ -20,9 +20,8 @@ jobs:
         id: version
         run: |
           TAG="${GITHUB_REF_NAME}"
-          VERSION="${TAG#v}"  # Remove 'v' prefix
+          VERSION="${TAG#v}"
           
-          # Determine release type
           if [[ $VERSION =~ ^[0-9]+\.0\.0$ ]]; then
             TYPE="Major"
           elif [[ $VERSION =~ ^[0-9]+\.[0-9]+\.0$ ]]; then
@@ -40,15 +39,14 @@ jobs:
         run: |
           VERSION="${{ steps.version.outputs.version }}"
           
-          # Extract the section for this version from CHANGELOG.md
-          BODY=$(awk "/^## \[${VERSION//./\\.}\]/,/^## \[/" CHANGELOG.md | sed '1d;$d')
+          BODY=$(awk "/^## \[${VERSION}\]/{flag=1; next} /^## \[/{flag=0} flag" CHANGELOG.md)
           
-          # If no changelog entry found, create a simple one
-          if [ -z "$BODY" ] || [ "$BODY" = " " ]; then
+          BODY=$(echo "$BODY" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')
+          
+          if [ -z "$BODY" ]; then
             BODY="See [CHANGELOG.md](https://github.com/${{ github.repository }}/blob/main/CHANGELOG.md) for details."
           fi
           
-          # Save to output
           {
             echo "body<<EOF"
             echo "$BODY"
