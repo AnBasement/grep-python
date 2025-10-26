@@ -216,6 +216,9 @@ def parse_arguments() -> argparse.Namespace:
     if args.files_with_matches and args.files_without_match:
         parser.error("cannot use -l and -L together")
 
+    if len(args.files) == 0 and (args.files_with_matches or args.files_without_match):
+        parser.error("cannot use -l or -L with stdin input")
+
     if args.pattern:
         all_patterns.append(args.pattern)
 
