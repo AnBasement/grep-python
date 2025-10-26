@@ -505,8 +505,9 @@ class TestFilesOnlyModes:
             print_line_number=True,
         )
         out = capsys.readouterr().out
-        assert str(p) in out
-        assert ":" not in out or out.count(":") == 1
+        out_lines = out.strip().split("\n")
+        assert len(out_lines) == 1
+        assert out_lines[0] == str(p)
 
     def test_files_only_ignores_context_flags(self, tmp_path, capsys):
         """Verify that context flags are ignored in files-only mode."""
