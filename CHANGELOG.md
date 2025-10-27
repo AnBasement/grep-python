@@ -12,8 +12,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Support for collecting match results in `search_file()` for output formatting and advanced reporting.
-- Output formatting module (`src/output_formatters.py`) with JSON output support and MatchResult dataclass.
+- Support for JSON output format via the new --json CLI flag. Enables structured machine-readable output for integration with other tools or pipelines.
+- New module src/output_formatters.py containing:
+- MatchResult class for encapsulating match data.
+- JSONFormatter class for serializing search results to JSON.
+- New test suite tests/test_output_formatters.py for validating JSON structure, special character handling, and edge cases.
+
+### Changed
+
+- src/cli.py: Added --json argument to the CLI parser.
+- src/file_search.py: Added collect_results parameter to support result collection instead of direct printing.
+- src/main.py: Integrated JSON output path and conditional formatter usage.
 
 ## [0.4.0] - 2025-10-26
 
