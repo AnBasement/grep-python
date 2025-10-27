@@ -1,7 +1,7 @@
 import json
 import csv
 import io
-from pygments import lexers
+from pygments import lexers, highlight
 from pygments.util import ClassNotFound
 from typing import Optional
 from dataclasses import dataclass, asdict
@@ -193,3 +193,29 @@ def get_lexer_for_file(filename: str):
         return lexers.get_lexer_for_filename(filename)
     except ClassNotFound:
         return None
+    
+def highlight_line(line: str, filename: str) -> str | None:
+    """
+    Apply syntax highlighting to a single line.
+    
+    Args:
+        line: The line to highlight
+        filename: Used to detect language
+    
+    Returns:
+        Highlighted line with ANSI color codes or None if no lexer found
+    """
+    lexer = get_lexer_for_file(filename)
+
+    if lexer is None:
+        return line
+
+    from pygments.formatters import Terminal256Formatter
+
+    highlighted = highlight(
+        line,
+        lexer,
+        Terminal256Formatter(style='monokai')
+    )
+
+    return highlighted.rstrip()
