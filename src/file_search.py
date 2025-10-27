@@ -100,10 +100,6 @@ def search_file(
     if collect_results:
         results = []
 
-    if collect_results and quiet:
-        print("warning: collect_results not supported with quiet mode")
-        collect_results = False
-
     if not patterns_to_check:
         return False
 
