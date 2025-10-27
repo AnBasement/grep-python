@@ -13,6 +13,7 @@ from .constants import (
     ERROR_SEARCH_FAILED,
 )
 from .cli import parse_arguments
+from .output_formatters import JSONFormatter
 
 
 def main() -> None:
@@ -29,8 +30,6 @@ def main() -> None:
     try:
         args = parse_arguments()
 
-        # Context flags (-A, -B, -C) do not apply to stdin input.
-        # Streaming lines from stdin prevents buffering for before/after context.
         if len(args.files) == 0:
             match_count = 0
             match_found = False
@@ -69,6 +68,80 @@ def main() -> None:
                 sys.exit(EXIT_MATCH_FOUND if match_count > 0 else EXIT_NO_MATCH)
             else:
                 sys.exit(EXIT_MATCH_FOUND if match_found else EXIT_NO_MATCH)
+
+        output_json = args.json if hasattr(args, "json") else False
+        num_files = len(args.files)
+
+        if output_json:
+            all_results = []
+
+            if args.recursive:
+                for path in args.files:
+                    try:
+                        results = search_directory_recursively(
+                            path,
+                            args.pattern,
+                            print_line_number=args.line_number,
+                            ignore_case=args.ignore_case,
+                            invert_match=args.invert_match,
+                            count_only=args.count,
+                            after_context=args.after_context,
+                            before_context=args.before_context,
+                            patterns=args.pattern_list,
+                            quiet=args.quiet,
+                            max_count=args.max_count,
+                            files_with_matches=args.files_with_matches,
+                            files_without_match=args.files_without_match,
+                            collect_results=True,
+                        )
+                        if isinstance(results, list):
+                            all_results.extend(results)
+                    except (PermissionError, OSError, FileNotFoundError):
+                        print(f"{path}: {ERROR_SEARCH_FAILED}", file=sys.stderr)
+            else:
+                if num_files == 1:
+                    results = search_file(
+                        args.files[0],
+                        args.pattern,
+                        print_filename=False,
+                        print_line_number=args.line_number,
+                        ignore_case=args.ignore_case,
+                        invert_match=args.invert_match,
+                        count_only=args.count,
+                        after_context=args.after_context,
+                        before_context=args.before_context,
+                        patterns=args.pattern_list,
+                        quiet=args.quiet,
+                        max_count=args.max_count,
+                        files_with_matches=args.files_with_matches,
+                        files_without_match=args.files_without_match,
+                        collect_results=True,
+                    )
+                    if isinstance(results, list):
+                        all_results.extend(results)
+                else:
+                    results = search_multiple_files(
+                        args.files,
+                        args.pattern,
+                        print_line_number=args.line_number,
+                        ignore_case=args.ignore_case,
+                        invert_match=args.invert_match,
+                        count_only=args.count,
+                        after_context=args.after_context,
+                        before_context=args.before_context,
+                        patterns=args.pattern_list,
+                        quiet=args.quiet,
+                        max_count=args.max_count,
+                        files_with_matches=args.files_with_matches,
+                        files_without_match=args.files_without_match,
+                        collect_results=True,
+                    )
+                    if isinstance(results, list):
+                        all_results.extend(results)
+
+            formatter = JSONFormatter(args.pattern, vars(args))
+            print(formatter.format(all_results))
+            sys.exit(EXIT_MATCH_FOUND if all_results else EXIT_NO_MATCH)
 
         if args.recursive:
             any_match_found = False

@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Support for collecting match results in `search_file()` for output formatting and advanced reporting.
+- Output formatting module (`src/output_formatters.py`) with JSON output support and MatchResult dataclass.
+
 ## [0.4.0] - 2025-10-26
 
 ### Added

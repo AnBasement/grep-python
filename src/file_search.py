@@ -3,6 +3,7 @@ import os
 import sys
 from collections import deque
 from .pattern_matcher import match_pattern
+from .output_formatters import MatchResult
 
 
 def _format_line_output(
@@ -53,7 +54,8 @@ def search_file(
     max_count: int = 0,
     files_with_matches: bool = False,
     files_without_match: bool = False,
-) -> bool:
+    collect_results: bool = False,
+) -> bool | list[MatchResult]:
     """
     Search a file for lines matching a pattern.
 
@@ -82,9 +84,11 @@ def search_file(
             matching lines.
         files_without_match (bool): If True, only print names of files without
             matching lines.
+        collect_results (bool): If True, return list of MatchResult objects.
 
     Returns:
-        bool: True if at least one matching line is found, otherwise False.
+        bool: If collect_results is False.
+        list[MatchResult]: If collect_results is True.
     """
 
     patterns_to_check = []
@@ -92,6 +96,9 @@ def search_file(
         patterns_to_check.extend(patterns)
     if pattern:
         patterns_to_check.append(pattern)
+
+    if collect_results:
+        results = []
 
     if not patterns_to_check:
         return False
@@ -171,45 +178,59 @@ def search_file(
                     matches_found += 1
                     match_found = True
                     if quiet:
-                        return True
-                    if before_context_buffer:
-                        for buf_idx, buf_line in before_context_buffer:
-                            if buf_idx not in printed_lines:
+                        if collect_results:
+                            return results
+                        else:
+                            return True
+                    if collect_results:
+                        results.append(
+                            MatchResult(
+                                filename=filename,
+                                line_num=idx,
+                                line_content=line,
+                                match_start=None,
+                                match_end=None,
+                            )
+                        )
+                    else:
+                        if before_context_buffer:
+                            for buf_idx, buf_line in before_context_buffer:
+                                if buf_idx not in printed_lines:
+                                    print(
+                                        _format_line_output(
+                                            line_text=buf_line,
+                                            line_number=buf_idx,
+                                            filename=filename,
+                                            show_filename=print_filename,
+                                            show_line_number=print_line_number,
+                                        )
+                                    )
+                                    printed_lines.add(buf_idx)
+
+                        if count_only:
+                            match_count += 1
+                        else:
+                            if idx not in printed_lines:
                                 print(
                                     _format_line_output(
-                                        line_text=buf_line,
-                                        line_number=buf_idx,
+                                        line_text=line,
+                                        line_number=idx,
                                         filename=filename,
                                         show_filename=print_filename,
                                         show_line_number=print_line_number,
                                     )
                                 )
-                                printed_lines.add(buf_idx)
+                                printed_lines.add(idx)
+                            after_context_counter = after_context
 
-                    if count_only:
-                        match_count += 1
-                    else:
-                        if idx not in printed_lines:
-                            print(
-                                _format_line_output(
-                                    line_text=line,
-                                    line_number=idx,
-                                    filename=filename,
-                                    show_filename=print_filename,
-                                    show_line_number=print_line_number,
-                                )
-                            )
-                            printed_lines.add(idx)
-                        after_context_counter = after_context
-
-                    if 0 < max_count <= matches_found:
-                        if count_only:
-                            if print_filename:
-                                print(f"{filename}:{match_count}")
-                            else:
-                                print(match_count)
-                        return True
-                elif after_context_counter > 0:
+                        if 0 < max_count <= matches_found:
+                            if count_only:
+                                if print_filename:
+                                    print(f"{filename}:{match_count}")
+                                else:
+                                    print(match_count)
+                            return True
+                elif after_context_counter > 0 and not collect_results:
                     if idx not in printed_lines:
                         print(
                             _format_line_output(
@@ -233,7 +254,7 @@ def search_file(
         print(f"{filename}: could not decode file with UTF-8 encoding", file=sys.stderr)
         return False
 
-    if count_only:
+    if count_only and not collect_results:
         if print_filename:
             print(f"{filename}:{match_count}")
         else:
@@ -242,7 +263,10 @@ def search_file(
     if max_count > 0:
         return matches_found >= max_count
 
-    return match_found
+    if collect_results:
+        return results
+    else:
+        return match_found
 
 
 def search_multiple_files(
@@ -259,7 +283,8 @@ def search_multiple_files(
     max_count: int = 0,
     files_with_matches: bool = False,
     files_without_match: bool = False,
-) -> bool:
+    collect_results: bool = False,
+) -> bool | list[MatchResult]:
     """
     Searches through multiple files for lines matching a given pattern.
 
@@ -289,6 +314,30 @@ def search_multiple_files(
     Returns:
         bool: True if at least one matching line is found, else False.
     """
+    if collect_results:
+        all_results = []
+        for filename in filenames:
+            file_results = search_file(
+                filename,
+                pattern,
+                print_filename=not (files_with_matches or files_without_match),
+                print_line_number=print_line_number,
+                ignore_case=ignore_case,
+                invert_match=invert_match,
+                count_only=count_only,
+                after_context=after_context,
+                before_context=before_context,
+                patterns=patterns,
+                quiet=quiet,
+                max_count=max_count,
+                files_with_matches=files_with_matches,
+                files_without_match=files_without_match,
+                collect_results=True,
+            )
+            if isinstance(file_results, list):
+                all_results.extend(file_results)
+        return all_results
+
     match_found = False
 
     for filename in filenames:
@@ -368,7 +417,8 @@ def search_directory_recursively(
     max_count: int = 0,
     files_with_matches: bool = False,
     files_without_match: bool = False,
-) -> bool:
+    collect_results: bool = False,
+) -> bool | list[MatchResult]:
     """
     Recursively search all files in a directory for lines matching a pattern.
 
@@ -399,6 +449,33 @@ def search_directory_recursively(
         bool: True if at least one matching line is found, else False.
     """
     files = get_files_recursively(directory)
+
+    if collect_results:
+        all_results = []
+        for filepath in files:
+            file_results = search_file(
+                filepath,
+                pattern,
+                print_filename=not (files_with_matches or files_without_match),
+                print_line_number=print_line_number,
+                ignore_case=ignore_case,
+                invert_match=invert_match,
+                count_only=count_only,
+                after_context=after_context,
+                before_context=before_context,
+                patterns=patterns,
+                quiet=quiet,
+                max_count=max_count,
+                files_with_matches=files_with_matches,
+                files_without_match=files_without_match,
+                collect_results=True,
+            )
+            if isinstance(file_results, list):
+                all_results.extend(file_results)
+            if quiet and all_results:
+                return all_results
+        return all_results
+
     any_match_found = False
 
     for filepath in files:
