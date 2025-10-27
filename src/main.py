@@ -103,6 +103,7 @@ def main() -> None:
                     results = search_file(
                         args.files[0],
                         args.pattern,
+                        print_filename=False,
                         print_line_number=args.line_number,
                         ignore_case=args.ignore_case,
                         invert_match=args.invert_match,
