@@ -116,7 +116,7 @@ class TestJSONFormatter(unittest.TestCase):
 
         finally:
 
-           if os.path.exists(test_file):
+            if os.path.exists(test_file):
                 os.unlink(test_file)
 
 

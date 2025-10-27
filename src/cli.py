@@ -227,7 +227,9 @@ def parse_arguments() -> argparse.Namespace:
     if len(args.files) == 0 and (args.files_with_matches or args.files_without_match):
         parser.error("cannot use -l or -L with stdin input")
 
-    if args.json and (args.count or args.files_with_matches or args.files_without_match or args.quiet):
+    if args.json and (
+        args.count or args.files_with_matches or args.files_without_match or args.quiet
+    ):
         parser.error("--json cannot be used with -c, -l, -L, or -q flags")
 
     if args.pattern:
