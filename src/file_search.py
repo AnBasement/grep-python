@@ -197,23 +197,6 @@ def search_file(
                             )
                         )
                     else:
-                        display_line = line
-
-                        if highlight:
-                            display_line = highlight_line(display_line, filename)
-
-                        if color:
-                            display_line = apply_match_highlight(display_line, pattern)
-
-                        print(
-                            _format_line_output(
-                                line_text=display_line,
-                                line_number=idx,
-                                filename=filename,
-                                show_filename=print_filename,
-                                show_line_number=print_line_number,
-                            )
-                        )
                         if before_context_buffer:
                             for buf_idx, buf_line in before_context_buffer:
                                 if buf_idx not in printed_lines:
@@ -232,9 +215,21 @@ def search_file(
                             match_count += 1
                         else:
                             if idx not in printed_lines:
+                                display_line = line
+
+                                if highlight:
+                                    display_line = highlight_line(
+                                        display_line, filename
+                                    )
+
+                                if color:
+                                    display_line = apply_match_highlight(
+                                        display_line, pattern
+                                    )
+
                                 print(
                                     _format_line_output(
-                                        line_text=line,
+                                        line_text=display_line,
                                         line_number=idx,
                                         filename=filename,
                                         show_filename=print_filename,

@@ -13,7 +13,7 @@ from .constants import (
     ERROR_SEARCH_FAILED,
 )
 from .cli import parse_arguments
-from .output_formatters import JSONFormatter, CSVFormatter, MarkdownFormatter
+from .output_formatters import JSONFormatter
 
 
 def main() -> None:
@@ -71,7 +71,7 @@ def main() -> None:
 
         num_files = len(args.files)
 
-        if args.format:
+        if args.format or args.json_output:
             all_results = []
 
             if args.recursive:
@@ -144,12 +144,18 @@ def main() -> None:
                     if isinstance(results, list):
                         all_results.extend(results)
 
-            if args.format == "json":
+            if args.format == "json" or args.json_output:
                 formatter = JSONFormatter(args.pattern, vars(args))
             elif args.format == "csv":
+                from .output_formatters import (
+                    CSVFormatter,
+                )  # pylint: disable=import-outside-toplevel
 
                 formatter = CSVFormatter(include_header=not args.no_header)
             elif args.format == "markdown":
+                from .output_formatters import (
+                    MarkdownFormatter,
+                )  # pylint: disable=import-outside-toplevel
 
                 formatter = MarkdownFormatter()
             else:
