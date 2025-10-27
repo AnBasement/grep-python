@@ -57,6 +57,7 @@ def search_file(
     collect_results: bool = False,
     highlight: bool = False,
     color: bool = False,
+    highlight_style: str = "monokai",
 ) -> bool | list[MatchResult]:
     """
     Search a file for lines matching a pattern.
@@ -89,6 +90,7 @@ def search_file(
         collect_results (bool): If True, return list of MatchResult objects.
         highlight (bool): If True, apply syntax highlighting to matched lines.
         color (bool): If True, apply color highlighting to matched patterns.
+        highlight_style (str): Style to use for syntax highlighting.
 
     Returns:
         bool: If collect_results is False.
@@ -216,7 +218,7 @@ def search_file(
                         else:
                             if idx not in printed_lines:
                                 if highlight:
-                                    display_line = highlight_line(line, filename)
+                                    display_line = highlight_line(line, filename, style=highlight_style)
                                 elif color:
                                     display_line = apply_match_highlight(line, pattern)
                                 else:
@@ -297,6 +299,7 @@ def search_multiple_files(
     collect_results: bool = False,
     highlight: bool = False,
     color: bool = False,
+    highlight_style: str = "monokai",
 ) -> bool | list[MatchResult]:
     """
     Searches through multiple files for lines matching a given pattern.
@@ -323,6 +326,10 @@ def search_multiple_files(
             matching lines.
         files_without_match (bool): If True, only print names of files without
             matching lines.
+        collect_results (bool): If True, return list of MatchResult objects.
+        highlight (bool): If True, apply syntax highlighting to matched lines.
+        color (bool): If True, apply color highlighting to matched patterns.
+        highlight_style (str): Style to use for syntax highlighting.
 
     Returns:
         bool: True if at least one matching line is found, else False.
@@ -437,6 +444,7 @@ def search_directory_recursively(
     collect_results: bool = False,
     highlight: bool = False,
     color: bool = False,
+    highlight_style: str = "monokai",
 ) -> bool | list[MatchResult]:
     """
     Recursively search all files in a directory for lines matching a pattern.
@@ -463,6 +471,10 @@ def search_directory_recursively(
             matching lines.
         files_without_match (bool): If True, only print names of files without
             matching lines.
+        collect_results (bool): If True, return list of MatchResult objects.
+        highlight (bool): If True, apply syntax highlighting to matched lines.
+        color (bool): If True, apply color highlighting to matched patterns.
+        highlight_style (str): Style to use for syntax highlighting.
 
     Returns:
         bool: True if at least one matching line is found, else False.

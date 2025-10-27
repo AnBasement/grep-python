@@ -220,15 +220,27 @@ def parse_arguments() -> argparse.Namespace:
     )
 
     parser.add_argument(
-        "--no-header", action="store_true", help="Omit header row in CSV output"
+        "--no-header",
+        action="store_true",
+        help="Omit header row in CSV output"
     )
 
     parser.add_argument(
-        "--highlight", action="store_true", help="Syntax highlight the matched lines"
+        "--highlight",
+        action="store_true",
+        help="Syntax highlight the matched lines"
     )
 
     parser.add_argument(
-        "--color", action="store_true", help="Highlight matched text in color"
+        "--color",
+        action="store_true",
+        help="Highlight matched text in color"
+    )
+
+    parser.add_argument(
+        "--highlight-style",
+        default="monokai",
+        help="Syntax highlighting color scheme"
     )
 
     args = parser.parse_args()

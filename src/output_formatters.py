@@ -211,13 +211,14 @@ def get_lexer_for_file(filename: str):
         return None
 
 
-def highlight_line(line: str, filename: str) -> str:
+def highlight_line(line: str, filename: str, style: str = "monokai") -> str:
     """
     Apply syntax highlighting to a single line.
 
     Args:
         line: The line to highlight
         filename: Used to detect language
+        style: Pygments style to use for highlighting
 
     Returns:
         Highlighted line with ANSI color codes, or original line if no lexer found
@@ -227,8 +228,7 @@ def highlight_line(line: str, filename: str) -> str:
     if lexer is None:
         return line
 
-    highlighted = highlight(line, lexer, Terminal256Formatter(style="monokai"))
-
+    highlighted = highlight(line, lexer, Terminal256Formatter(style=style))
     return highlighted.rstrip()
 
 

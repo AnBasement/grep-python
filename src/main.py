@@ -94,7 +94,8 @@ def main() -> None:
                             collect_results=True,
                             highlight=args.highlight,
                             color=args.color,
-                        )
+                        highlight_style=args.highlight_style,
+                    )
                         if isinstance(results, list):
                             all_results.extend(results)
                     except (PermissionError, OSError, FileNotFoundError):
@@ -119,6 +120,7 @@ def main() -> None:
                         collect_results=True,
                         highlight=args.highlight,
                         color=args.color,
+                        highlight_style=args.highlight_style,
                     )
                     if isinstance(results, list):
                         all_results.extend(results)
@@ -140,6 +142,7 @@ def main() -> None:
                         collect_results=True,
                         highlight=args.highlight,
                         color=args.color,
+                        highlight_style=args.highlight_style,
                     )
                     if isinstance(results, list):
                         all_results.extend(results)
@@ -187,6 +190,7 @@ def main() -> None:
                         files_without_match=args.files_without_match,
                         highlight=args.highlight,
                         color=args.color,
+                        highlight_style=args.highlight_style,
                     ):
                         any_match_found = True
                 except (PermissionError, OSError, FileNotFoundError):
@@ -219,6 +223,7 @@ def main() -> None:
                         files_without_match=args.files_without_match,
                         highlight=args.highlight,
                         color=args.color,
+                        highlight_style=args.highlight_style,
                     ):
                         sys.exit(EXIT_MATCH_FOUND)
                     else:
@@ -241,6 +246,7 @@ def main() -> None:
                         files_without_match=args.files_without_match,
                         highlight=args.highlight,
                         color=args.color,
+                        highlight_style=args.highlight_style,
                     ):
                         sys.exit(EXIT_MATCH_FOUND)
                     else:
