@@ -221,6 +221,12 @@ def parse_arguments() -> argparse.Namespace:
         help='Output format (csv, markdown, or json)'
     )
 
+    parser.add_argument(
+        '--no-header',
+        action='store_true',
+        help='Omit header row in CSV output'
+    )
+
     args = parser.parse_args()
 
     if (args.patterns or args.pattern_file) and args.pattern and not args.files:

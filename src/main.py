@@ -143,7 +143,7 @@ def main() -> None:
                 formatter = JSONFormatter(args.pattern, vars(args))
             elif args.format == 'csv':
                 from .output_formatters import CSVFormatter
-                formatter = CSVFormatter(include_header=True)
+                formatter = CSVFormatter(include_header=not args.no_header)
             elif args.format == 'markdown':
                 from .output_formatters import MarkdownFormatter
                 formatter = MarkdownFormatter()
