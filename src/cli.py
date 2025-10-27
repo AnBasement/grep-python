@@ -210,7 +210,15 @@ def parse_arguments() -> argparse.Namespace:
     )
 
     parser.add_argument(
-        "--json", action="store_true", help="Output results as JSON format"
+        "--json",
+        action="store_true",
+        help="Output results as JSON format"
+    )
+
+    parser.add_argument(
+        '--format',
+        choices=['csv', 'markdown', 'json'],
+        help='Output format (csv, markdown, or json)'
     )
 
     args = parser.parse_args()
@@ -231,6 +239,9 @@ def parse_arguments() -> argparse.Namespace:
         args.count or args.files_with_matches or args.files_without_match or args.quiet
     ):
         parser.error("--json cannot be used with -c, -l, -L, or -q flags")
+
+    if args.json and args.format:
+        parser.error("--json cannot be used with --format flag")
 
     if args.pattern:
         all_patterns.append(args.pattern)
