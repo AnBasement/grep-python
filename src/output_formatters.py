@@ -7,9 +7,9 @@ from dataclasses import dataclass, asdict
 from abc import ABC, abstractmethod
 from pygments import lexers, highlight
 from pygments.util import ClassNotFound
-from pygments.formatters import (
+from pygments.formatters import (  # pylint: disable=no-name-in-module
     Terminal256Formatter,
-)  # pylint: disable=no-name-in-module
+)
 
 
 @dataclass

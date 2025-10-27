@@ -147,15 +147,15 @@ def main() -> None:
             if args.format == "json" or args.json_output:
                 formatter = JSONFormatter(args.pattern, vars(args))
             elif args.format == "csv":
-                from .output_formatters import (
+                from .output_formatters import (  # pylint: disable=import-outside-toplevel
                     CSVFormatter,
-                )  # pylint: disable=import-outside-toplevel
+                )
 
                 formatter = CSVFormatter(include_header=not args.no_header)
             elif args.format == "markdown":
-                from .output_formatters import (
+                from .output_formatters import (  # pylint: disable=import-outside-toplevel
                     MarkdownFormatter,
-                )  # pylint: disable=import-outside-toplevel
+                )
 
                 formatter = MarkdownFormatter()
             else:
