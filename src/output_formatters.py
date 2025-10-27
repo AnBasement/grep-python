@@ -71,9 +71,13 @@ class JSONFormatter(OutputFormatter):
 
     # pylint: disable=too-few-public-methods
 
-    def __init__(self, pattern: str, flags: dict):
+    def __init__(self, pattern: str, flags: dict) -> None:
         self.pattern = pattern
-        self.flags = flags
+        self.flags = {
+            k: v for k, v in flags.items() 
+            if k in ['ignore_case', 'invert_match', 'line_number', 'count', 
+                     'after_context', 'before_context', 'recursive']
+        }
 
     def format(self, results: list[MatchResult]) -> str:
         """
