@@ -2,11 +2,12 @@ import json
 import csv
 import io
 import re
-from pygments import lexers, highlight
-from pygments.util import ClassNotFound
 from typing import Optional
 from dataclasses import dataclass, asdict
 from abc import ABC, abstractmethod
+from pygments import lexers, highlight
+from pygments.util import ClassNotFound
+from pygments.formatters import Terminal256Formatter  # pylint: disable=no-name-in-module
 
 
 @dataclass
@@ -30,11 +31,17 @@ class MatchResult:
 
     def to_dict(self) -> dict:
         """
-        Convert the MatchResult to a dictionary for serialization.
+        Return a JSON-serializable dict of this match.
+
+        The returned dictionary includes the fields:
+        'filename', 'line_num', 'line_content', 'match_start', and
+        'match_end'. Fields with value 'None' are preserved (caller can
+        choose how to handle them during serialization).
 
         Returns:
-            dict: Dictionary representation of the match result.
+            dict: Dictionary representation of the MatchResult.
         """
+
         return asdict(self)
 
 
@@ -42,8 +49,8 @@ class OutputFormatter(ABC):
     """
     Base class for output formatters.
 
-    Methods:
-        format(results): Format a list of MatchResult objects.
+    Subclasses must implement 'format(results)' which accepts a list of
+    'MatchResult' and returns a formatted string representation.
     """
 
     # pylint: disable=too-few-public-methods
@@ -165,6 +172,8 @@ class CSVFormatter(OutputFormatter):
 class MarkdownFormatter(OutputFormatter):
     """Format results as Markdown table"""
 
+    # pylint: disable=too-few-public-methods
+
     def format(self, results: list[MatchResult]) -> str:
         """
         Create a Markdown table.
@@ -216,14 +225,24 @@ def highlight_line(line: str, filename: str) -> str:
     if lexer is None:
         return line
 
-    from pygments.formatters import Terminal256Formatter
-
     highlighted = highlight(line, lexer, Terminal256Formatter(style="monokai"))
 
     return highlighted.rstrip()
 
 
 def apply_match_highlight(line: str, pattern: str) -> str:
+    """
+    Short helper to wrap the first regex match in ANSI codes.
+
+    Args:
+        line (str): Input line to search.
+        pattern (str): Regular expression to match.
+
+    Returns:
+        str: Line with the first match wrapped in ANSI escape sequences
+        for bold red text; unchanged if no match is found.
+    """
+
     match = re.search(pattern, line)
     if match:
         start, end = match.span()
