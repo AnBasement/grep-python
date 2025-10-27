@@ -153,3 +153,28 @@ class CSVFormatter(OutputFormatter):
             ])
 
         return output.getvalue()
+    
+
+class MarkdownFormatter(OutputFormatter):
+    """Format results as Markdown table"""
+
+    def format(self, results: list[MatchResult]) -> str:
+        """
+        Create a Markdown table.
+        """
+
+        lines = []
+
+        lines.append("| File | Line | Content |")
+        lines.append("|------|------|---------|")
+
+        for result in results:
+            content = result.line_content.replace('|', '\\|')
+
+            if len(content) > 80:
+                content = content[:77] + "..."
+
+            line = f"| {result.filename} | {result.line_num} | {content} |"
+            lines.append(line)
+
+        return "\n".join(lines)
