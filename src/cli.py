@@ -210,33 +210,25 @@ def parse_arguments() -> argparse.Namespace:
     )
 
     parser.add_argument(
-        "--json",
-        action="store_true",
-        help="Output results as JSON format"
+        "--json", action="store_true", help="Output results as JSON format"
     )
 
     parser.add_argument(
-        '--format',
-        choices=['csv', 'markdown', 'json'],
-        help='Output format (csv, markdown, or json)'
+        "--format",
+        choices=["csv", "markdown", "json"],
+        help="Output format (csv, markdown, or json)",
     )
 
     parser.add_argument(
-        '--no-header',
-        action='store_true',
-        help='Omit header row in CSV output'
+        "--no-header", action="store_true", help="Omit header row in CSV output"
     )
 
     parser.add_argument(
-        '--highlight',
-        action='store_true',
-        help='Syntax highlight the matched lines'
+        "--highlight", action="store_true", help="Syntax highlight the matched lines"
     )
 
     parser.add_argument(
-        '--color',
-        action='store_true',
-        help='Highlight matched text in color'
+        "--color", action="store_true", help="Highlight matched text in color"
     )
 
     args = parser.parse_args()

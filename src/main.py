@@ -145,13 +145,15 @@ def main() -> None:
                     if isinstance(results, list):
                         all_results.extend(results)
 
-            if args.format == 'json':
+            if args.format == "json":
                 formatter = JSONFormatter(args.pattern, vars(args))
-            elif args.format == 'csv':
+            elif args.format == "csv":
                 from .output_formatters import CSVFormatter
+
                 formatter = CSVFormatter(include_header=not args.no_header)
-            elif args.format == 'markdown':
+            elif args.format == "markdown":
                 from .output_formatters import MarkdownFormatter
+
                 formatter = MarkdownFormatter()
             else:
                 print(f"Unknown format: {args.format}", file=sys.stderr)

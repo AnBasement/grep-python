@@ -149,16 +149,18 @@ class CSVFormatter(OutputFormatter):
             writer.writerow(["file", "line", "content", "match_start", "match_end"])
 
         for result in results:
-            writer.writerow([
-                result.filename,
-                result.line_num,
-                result.line_content,
-                result.match_start if result.match_start is not None else "",
-                result.match_end if result.match_end is not None else "",
-            ])
+            writer.writerow(
+                [
+                    result.filename,
+                    result.line_num,
+                    result.line_content,
+                    result.match_start if result.match_start is not None else "",
+                    result.match_end if result.match_end is not None else "",
+                ]
+            )
 
         return output.getvalue()
-    
+
 
 class MarkdownFormatter(OutputFormatter):
     """Format results as Markdown table"""
@@ -174,7 +176,7 @@ class MarkdownFormatter(OutputFormatter):
         lines.append("|------|------|---------|")
 
         for result in results:
-            content = result.line_content.replace('|', '\\|')
+            content = result.line_content.replace("|", "\\|")
 
             if len(content) > 80:
                 content = content[:77] + "..."
@@ -183,12 +185,12 @@ class MarkdownFormatter(OutputFormatter):
             lines.append(line)
 
         return "\n".join(lines)
-    
+
 
 def get_lexer_for_file(filename: str):
     """
     Get Pygments lexer for a file.
-    
+
     Returns:
         Lexer object or None if can't detect
     """
@@ -196,15 +198,16 @@ def get_lexer_for_file(filename: str):
         return lexers.get_lexer_for_filename(filename)
     except ClassNotFound:
         return None
-    
+
+
 def highlight_line(line: str, filename: str) -> str:
     """
     Apply syntax highlighting to a single line.
-    
+
     Args:
         line: The line to highlight
         filename: Used to detect language
-    
+
     Returns:
         Highlighted line with ANSI color codes, or original line if no lexer found
     """
@@ -215,11 +218,7 @@ def highlight_line(line: str, filename: str) -> str:
 
     from pygments.formatters import Terminal256Formatter
 
-    highlighted = highlight(
-        line,
-        lexer,
-        Terminal256Formatter(style='monokai')
-    )
+    highlighted = highlight(line, lexer, Terminal256Formatter(style="monokai"))
 
     return highlighted.rstrip()
 
@@ -228,11 +227,5 @@ def apply_match_highlight(line: str, pattern: str) -> str:
     match = re.search(pattern, line)
     if match:
         start, end = match.span()
-        return (
-            line[:start]
-            + "\033[1;31m"
-            + line[start:end]
-            + "\033[0m"
-            + line[end:]
-        )
+        return line[:start] + "\033[1;31m" + line[start:end] + "\033[0m" + line[end:]
     return line
