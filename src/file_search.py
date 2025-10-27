@@ -215,17 +215,12 @@ def search_file(
                             match_count += 1
                         else:
                             if idx not in printed_lines:
-                                display_line = line
-
                                 if highlight:
-                                    display_line = highlight_line(
-                                        display_line, filename
-                                    )
-
-                                if color:
-                                    display_line = apply_match_highlight(
-                                        display_line, pattern
-                                    )
+                                    display_line = highlight_line(line, filename)
+                                elif color:
+                                    display_line = apply_match_highlight(line, pattern)
+                                else:
+                                    display_line = line
 
                                 print(
                                     _format_line_output(
