@@ -2,6 +2,7 @@ import json
 import csv
 import io
 import re
+import sys
 from typing import Optional
 from dataclasses import dataclass, asdict
 from abc import ABC, abstractmethod
@@ -228,8 +229,19 @@ def highlight_line(line: str, filename: str, style: str = "monokai") -> str:
     if lexer is None:
         return line
 
-    highlighted = highlight(line, lexer, Terminal256Formatter(style=style))
-    return highlighted.rstrip()
+    try:
+        highlighted = highlight(line, lexer, Terminal256Formatter(style=style))
+        return highlighted.rstrip()
+    except (ValueError, ClassNotFound):
+        print(
+            f"Error: highlight style '{style}' is not valid. Using default 'monokai'.",
+            file=sys.stderr,
+        )
+        try:
+            highlighted = highlight(line, lexer, Terminal256Formatter(style="monokai"))
+            return highlighted.rstrip()
+        except (ValueError, ClassNotFound):
+            return line
 
 
 def apply_match_highlight(line: str, pattern: str) -> str:
