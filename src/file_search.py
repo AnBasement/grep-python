@@ -283,7 +283,7 @@ def search_multiple_files(
     max_count: int = 0,
     files_with_matches: bool = False,
     files_without_match: bool = False,
-    collect_results: bool = False,  # pylint: disable=unused-argument
+    collect_results: bool = False,
 ) -> bool | list[MatchResult]:
     """
     Searches through multiple files for lines matching a given pattern.
@@ -314,6 +314,30 @@ def search_multiple_files(
     Returns:
         bool: True if at least one matching line is found, else False.
     """
+    if collect_results:
+        all_results = []
+        for filename in filenames:
+            file_results = search_file(
+                filename,
+                pattern,
+                print_filename=not (files_with_matches or files_without_match),
+                print_line_number=print_line_number,
+                ignore_case=ignore_case,
+                invert_match=invert_match,
+                count_only=count_only,
+                after_context=after_context,
+                before_context=before_context,
+                patterns=patterns,
+                quiet=quiet,
+                max_count=max_count,
+                files_with_matches=files_with_matches,
+                files_without_match=files_without_match,
+                collect_results=True,
+            )
+            if isinstance(file_results, list):
+                all_results.extend(file_results)
+        return all_results
+
     match_found = False
 
     for filename in filenames:
@@ -393,7 +417,7 @@ def search_directory_recursively(
     max_count: int = 0,
     files_with_matches: bool = False,
     files_without_match: bool = False,
-    collect_results: bool = False,  # pylint: disable=unused-argument
+    collect_results: bool = False,
 ) -> bool | list[MatchResult]:
     """
     Recursively search all files in a directory for lines matching a pattern.
@@ -425,6 +449,33 @@ def search_directory_recursively(
         bool: True if at least one matching line is found, else False.
     """
     files = get_files_recursively(directory)
+
+    if collect_results:
+        all_results = []
+        for filepath in files:
+            file_results = search_file(
+                filepath,
+                pattern,
+                print_filename=not (files_with_matches or files_without_match),
+                print_line_number=print_line_number,
+                ignore_case=ignore_case,
+                invert_match=invert_match,
+                count_only=count_only,
+                after_context=after_context,
+                before_context=before_context,
+                patterns=patterns,
+                quiet=quiet,
+                max_count=max_count,
+                files_with_matches=files_with_matches,
+                files_without_match=files_without_match,
+                collect_results=True,
+            )
+            if isinstance(file_results, list):
+                all_results.extend(file_results)
+            if quiet and all_results:
+                return all_results
+        return all_results
+
     any_match_found = False
 
     for filepath in files:
