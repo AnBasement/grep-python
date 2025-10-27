@@ -72,7 +72,7 @@ def main() -> None:
         output_json = args.json if hasattr(args, "json") else False
         num_files = len(args.files)
 
-        if output_json:
+        if args.format:
             all_results = []
 
             if args.recursive:
@@ -139,8 +139,20 @@ def main() -> None:
                     if isinstance(results, list):
                         all_results.extend(results)
 
-            formatter = JSONFormatter(args.pattern, vars(args))
-            print(formatter.format(all_results))
+            if args.format == 'json':
+                formatter = JSONFormatter(args.pattern, vars(args))
+            elif args.format == 'csv':
+                from .output_formatters import CSVFormatter
+                formatter = CSVFormatter(include_header=True)
+            elif args.format == 'markdown':
+                from .output_formatters import MarkdownFormatter
+                formatter = MarkdownFormatter()
+            else:
+                print(f"Unknown format: {args.format}", file=sys.stderr)
+                sys.exit(EXIT_ERROR)
+
+            output = formatter.format(all_results)
+            print(output)
             sys.exit(EXIT_MATCH_FOUND if all_results else EXIT_NO_MATCH)
 
         if args.recursive:
