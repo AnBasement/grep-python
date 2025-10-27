@@ -218,7 +218,9 @@ def search_file(
                         else:
                             if idx not in printed_lines:
                                 if highlight:
-                                    display_line = highlight_line(line, filename, style=highlight_style)
+                                    display_line = highlight_line(
+                                        line, filename, style=highlight_style
+                                    )
                                 elif color:
                                     display_line = apply_match_highlight(line, pattern)
                                 else:
@@ -355,6 +357,7 @@ def search_multiple_files(
                 collect_results=True,
                 highlight=highlight,
                 color=color,
+                highlight_style=highlight_style,
             )
             if isinstance(file_results, list):
                 all_results.extend(file_results)
@@ -380,6 +383,7 @@ def search_multiple_files(
             files_without_match=files_without_match,
             highlight=highlight,
             color=color,
+            highlight_style=highlight_style,
         )
         if file_with_match:
             match_found = True
@@ -502,6 +506,7 @@ def search_directory_recursively(
                 collect_results=True,
                 highlight=highlight,
                 color=color,
+                highlight_style=highlight_style,
             )
             if isinstance(file_results, list):
                 all_results.extend(file_results)
@@ -529,6 +534,7 @@ def search_directory_recursively(
             files_without_match=files_without_match,
             highlight=highlight,
             color=color,
+            highlight_style=highlight_style,
         )
         if file_had_match:
             any_match_found = True

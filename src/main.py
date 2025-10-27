@@ -94,8 +94,8 @@ def main() -> None:
                             collect_results=True,
                             highlight=args.highlight,
                             color=args.color,
-                        highlight_style=args.highlight_style,
-                    )
+                            highlight_style=args.highlight_style,
+                        )
                         if isinstance(results, list):
                             all_results.extend(results)
                     except (PermissionError, OSError, FileNotFoundError):
