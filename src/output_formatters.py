@@ -41,6 +41,7 @@ class OutputFormatter(ABC):
         format(results): Format a list of MatchResult objects.
     """
 
+    # pylint: disable=too-few-public-methods
 
     @abstractmethod
     def format(self, results: list[MatchResult]) -> str:
