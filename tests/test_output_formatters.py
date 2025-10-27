@@ -155,7 +155,9 @@ class TestJSONFormatterIntegration(unittest.TestCase):
                 self.assertIn("filename", match)
 
     def test_json_output_recursive_search(self):
-        """Verify JSON output works with recursive directory search and contains match data."""
+        """
+        Verify JSON output works with recursive directory search & contains match data.
+        """
         sub_dir = os.path.join(self.temp_dir, "subdir")
         os.makedirs(sub_dir)
         sub_file = os.path.join(sub_dir, "subfile.txt")
