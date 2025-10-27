@@ -240,8 +240,15 @@ def parse_arguments() -> argparse.Namespace:
     ):
         parser.error("--json cannot be used with -c, -l, -L, or -q flags")
 
-    if args.json and args.format:
-        parser.error("--json cannot be used with --format flag")
+    if args.json and args.format == "json":
+        parser.error("Cannot use both --json and --format json together")
+
+    args.json_output = args.json or args.format == "json"
+
+    if args.json_output and (
+        args.count or args.files_with_matches or args.files_without_match or args.quiet
+    ):
+        parser.error("--json/--format json cannot be used with -c, -l, -L, or -q flags")
 
     if args.pattern:
         all_patterns.append(args.pattern)
