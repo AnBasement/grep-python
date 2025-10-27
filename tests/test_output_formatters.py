@@ -3,6 +3,7 @@ import json
 import subprocess
 import tempfile
 import os
+import shutil
 from src.output_formatters import JSONFormatter, MatchResult
 
 
@@ -94,7 +95,7 @@ class TestJSONFormatter(unittest.TestCase):
         This goes in a separate test file like tests/test_cli_integration.py
         """
 
-        with tempfile.NamedTemporaryFile(mode="w", delete=False) as f:
+        with tempfile.NamedTemporaryFile(mode="w", delete=False, suffix=".txt") as f:
             f.write("test line 1\n")
             f.write("another line\n")
             f.write("test line 3\n")
@@ -115,4 +116,74 @@ class TestJSONFormatter(unittest.TestCase):
 
         finally:
 
-            os.unlink(test_file)
+           if os.path.exists(test_file):
+                os.unlink(test_file)
+
+
+class TestJSONFormatterIntegration(unittest.TestCase):
+    """Integration tests for JSON output with multiple files and recursive search."""
+
+    def setUp(self):
+        """Create temp files and directories for tests."""
+        self.temp_dir = tempfile.mkdtemp()
+        self.file1 = os.path.join(self.temp_dir, "file1.txt")
+        self.file2 = os.path.join(self.temp_dir, "file2.txt")
+        with open(self.file1, "w", encoding="utf-8") as f:
+            f.write("test line 1\nno match here\nanother test line\n")
+        with open(self.file2, "w", encoding="utf-8") as f:
+            f.write("test line 2\nsomething else\nfinal test\n")
+
+    def tearDown(self):
+        """Clean up temp files and directories."""
+        shutil.rmtree(self.temp_dir)
+
+    def test_json_output_multiple_files(self):
+        """Verify JSON output works with multiple files and contains match data."""
+        result = subprocess.run(
+            ["./pygrep.sh", "--json", "test", self.file1, self.file2],
+            capture_output=True,
+            text=True,
+            check=True,
+        )
+        output = json.loads(result.stdout)
+        self.assertEqual(len(output["results"]), 2)
+        for file_entry in output["results"]:
+            self.assertGreaterEqual(len(file_entry["matches"]), 1)
+            for match in file_entry["matches"]:
+                self.assertIn("line_content", match)
+                self.assertIn("line_num", match)
+                self.assertIn("filename", match)
+
+    def test_json_output_recursive_search(self):
+        """Verify JSON output works with recursive directory search and contains match data."""
+        sub_dir = os.path.join(self.temp_dir, "subdir")
+        os.makedirs(sub_dir)
+        sub_file = os.path.join(sub_dir, "subfile.txt")
+        with open(sub_file, "w", encoding="utf-8") as f:
+            f.write("test in subdir\nno match\n")
+
+        result = subprocess.run(
+            ["./pygrep.sh", "--json", "-r", "test", self.temp_dir],
+            capture_output=True,
+            text=True,
+            check=True,
+        )
+        output = json.loads(result.stdout)
+        file_names = [entry["file"] for entry in output["results"]]
+        self.assertIn(self.file1, file_names)
+        self.assertIn(self.file2, file_names)
+        self.assertIn(sub_file, file_names)
+        for file_entry in output["results"]:
+            self.assertGreaterEqual(len(file_entry["matches"]), 1)
+
+    def test_json_output_not_empty(self):
+        """Verify results array is not empty when matches exist."""
+        result = subprocess.run(
+            ["./pygrep.sh", "--json", "test", self.file1],
+            capture_output=True,
+            text=True,
+            check=True,
+        )
+        output = json.loads(result.stdout)
+        self.assertGreater(len(output["results"]), 0)
+        self.assertGreater(len(output["results"][0]["matches"]), 0)
