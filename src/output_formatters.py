@@ -23,7 +23,7 @@ class MatchResult:
     match_start: Optional[int] = None
     match_end: Optional[int] = None
 
-    def to_dict(self):
+    def to_dict(self) -> dict:
         """
         Convert the MatchResult to a dictionary for serialization.
 
