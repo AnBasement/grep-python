@@ -1,6 +1,7 @@
 import json
 from typing import Optional
 from dataclasses import dataclass, asdict
+from abc import ABC, abstractmethod
 
 
 @dataclass
@@ -32,7 +33,7 @@ class MatchResult:
         return asdict(self)
 
 
-class OutputFormatter:
+class OutputFormatter(ABC):
     """
     Base class for output formatters.
 
@@ -40,8 +41,8 @@ class OutputFormatter:
         format(results): Format a list of MatchResult objects.
     """
 
-    # pylint: disable=too-few-public-methods
 
+    @abstractmethod
     def format(self, results: list[MatchResult]) -> str:
         """
         Format a list of MatchResult objects.
