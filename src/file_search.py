@@ -3,7 +3,7 @@ import os
 import sys
 from collections import deque
 from .pattern_matcher import match_pattern
-from .output_formatters import MatchResult
+from .output_formatters import MatchResult, highlight_line, apply_match_highlight
 
 
 def _format_line_output(
@@ -55,6 +55,8 @@ def search_file(
     files_with_matches: bool = False,
     files_without_match: bool = False,
     collect_results: bool = False,
+    highlight: bool = False,
+    color: bool = False,
 ) -> bool | list[MatchResult]:
     """
     Search a file for lines matching a pattern.
@@ -85,6 +87,8 @@ def search_file(
         files_without_match (bool): If True, only print names of files without
             matching lines.
         collect_results (bool): If True, return list of MatchResult objects.
+        highlight (bool): If True, apply syntax highlighting to matched lines.
+        color (bool): If True, apply color highlighting to matched patterns.
 
     Returns:
         bool: If collect_results is False.
@@ -193,6 +197,23 @@ def search_file(
                             )
                         )
                     else:
+                        display_line = line
+
+                        if highlight:
+                            display_line = highlight_line(display_line, filename)
+
+                        if color:
+                            display_line = apply_match_highlight(display_line, pattern)
+
+                        print(
+                            _format_line_output(
+                                line_text=display_line,
+                                line_number=idx,
+                                filename=filename,
+                                show_filename=print_filename,
+                                show_line_number=print_line_number,
+                            )
+                        )
                         if before_context_buffer:
                             for buf_idx, buf_line in before_context_buffer:
                                 if buf_idx not in printed_lines:
@@ -284,6 +305,8 @@ def search_multiple_files(
     files_with_matches: bool = False,
     files_without_match: bool = False,
     collect_results: bool = False,
+    highlight: bool = False,
+    color: bool = False,
 ) -> bool | list[MatchResult]:
     """
     Searches through multiple files for lines matching a given pattern.
@@ -333,6 +356,8 @@ def search_multiple_files(
                 files_with_matches=files_with_matches,
                 files_without_match=files_without_match,
                 collect_results=True,
+                highlight=highlight,
+                color=color,
             )
             if isinstance(file_results, list):
                 all_results.extend(file_results)
@@ -356,6 +381,8 @@ def search_multiple_files(
             max_count=max_count,
             files_with_matches=files_with_matches,
             files_without_match=files_without_match,
+            highlight=highlight,
+            color=color,
         )
         if file_with_match:
             match_found = True
@@ -418,6 +445,8 @@ def search_directory_recursively(
     files_with_matches: bool = False,
     files_without_match: bool = False,
     collect_results: bool = False,
+    highlight: bool = False,
+    color: bool = False,
 ) -> bool | list[MatchResult]:
     """
     Recursively search all files in a directory for lines matching a pattern.
@@ -469,6 +498,8 @@ def search_directory_recursively(
                 files_with_matches=files_with_matches,
                 files_without_match=files_without_match,
                 collect_results=True,
+                highlight=highlight,
+                color=color,
             )
             if isinstance(file_results, list):
                 all_results.extend(file_results)
@@ -494,6 +525,8 @@ def search_directory_recursively(
             max_count=max_count,
             files_with_matches=files_with_matches,
             files_without_match=files_without_match,
+            highlight=highlight,
+            color=color,
         )
         if file_had_match:
             any_match_found = True

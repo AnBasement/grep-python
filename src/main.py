@@ -93,6 +93,8 @@ def main() -> None:
                             files_with_matches=args.files_with_matches,
                             files_without_match=args.files_without_match,
                             collect_results=True,
+                            highlight=args.highlight,
+                            color=args.color,
                         )
                         if isinstance(results, list):
                             all_results.extend(results)
@@ -116,6 +118,8 @@ def main() -> None:
                         files_with_matches=args.files_with_matches,
                         files_without_match=args.files_without_match,
                         collect_results=True,
+                        highlight=args.highlight,
+                        color=args.color,
                     )
                     if isinstance(results, list):
                         all_results.extend(results)
@@ -135,6 +139,8 @@ def main() -> None:
                         files_with_matches=args.files_with_matches,
                         files_without_match=args.files_without_match,
                         collect_results=True,
+                        highlight=args.highlight,
+                        color=args.color,
                     )
                     if isinstance(results, list):
                         all_results.extend(results)
@@ -174,6 +180,8 @@ def main() -> None:
                         max_count=args.max_count,
                         files_with_matches=args.files_with_matches,
                         files_without_match=args.files_without_match,
+                        highlight=args.highlight,
+                        color=args.color,
                     ):
                         any_match_found = True
                 except (PermissionError, OSError, FileNotFoundError):
@@ -204,6 +212,8 @@ def main() -> None:
                         max_count=args.max_count,
                         files_with_matches=args.files_with_matches,
                         files_without_match=args.files_without_match,
+                        highlight=args.highlight,
+                        color=args.color,
                     ):
                         sys.exit(EXIT_MATCH_FOUND)
                     else:
@@ -224,6 +234,8 @@ def main() -> None:
                         max_count=args.max_count,
                         files_with_matches=args.files_with_matches,
                         files_without_match=args.files_without_match,
+                        highlight=args.highlight,
+                        color=args.color,
                     ):
                         sys.exit(EXIT_MATCH_FOUND)
                     else:

@@ -1,6 +1,7 @@
 import json
 import csv
 import io
+import re
 from pygments import lexers, highlight
 from pygments.util import ClassNotFound
 from typing import Optional
@@ -145,13 +146,15 @@ class CSVFormatter(OutputFormatter):
         writer = csv.writer(output)
 
         if self.include_header:
-            writer.writerow(["file", "line", "content"])
+            writer.writerow(["file", "line", "content", "match_start", "match_end"])
 
         for result in results:
             writer.writerow([
                 result.filename,
                 result.line_num,
-                result.line_content
+                result.line_content,
+                result.match_start if result.match_start is not None else "",
+                result.match_end if result.match_end is not None else "",
             ])
 
         return output.getvalue()
@@ -194,7 +197,7 @@ def get_lexer_for_file(filename: str):
     except ClassNotFound:
         return None
     
-def highlight_line(line: str, filename: str) -> str | None:
+def highlight_line(line: str, filename: str) -> str:
     """
     Apply syntax highlighting to a single line.
     
@@ -203,7 +206,7 @@ def highlight_line(line: str, filename: str) -> str | None:
         filename: Used to detect language
     
     Returns:
-        Highlighted line with ANSI color codes or None if no lexer found
+        Highlighted line with ANSI color codes, or original line if no lexer found
     """
     lexer = get_lexer_for_file(filename)
 
@@ -219,3 +222,17 @@ def highlight_line(line: str, filename: str) -> str | None:
     )
 
     return highlighted.rstrip()
+
+
+def apply_match_highlight(line: str, pattern: str) -> str:
+    match = re.search(pattern, line)
+    if match:
+        start, end = match.span()
+        return (
+            line[:start]
+            + "\033[1;31m"
+            + line[start:end]
+            + "\033[0m"
+            + line[end:]
+        )
+    return line

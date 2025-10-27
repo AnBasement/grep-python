@@ -233,6 +233,12 @@ def parse_arguments() -> argparse.Namespace:
         help='Syntax highlight the matched lines'
     )
 
+    parser.add_argument(
+        '--color',
+        action='store_true',
+        help='Highlight matched text in color'
+    )
+
     args = parser.parse_args()
 
     if (args.patterns or args.pattern_file) and args.pattern and not args.files:
