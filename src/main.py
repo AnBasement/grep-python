@@ -13,7 +13,7 @@ from .constants import (
     ERROR_SEARCH_FAILED,
 )
 from .cli import parse_arguments
-from .output_formatters import JSONFormatter
+from .output_formatters import JSONFormatter, CSVFormatter, MarkdownFormatter
 
 
 def main() -> None:
@@ -69,7 +69,6 @@ def main() -> None:
             else:
                 sys.exit(EXIT_MATCH_FOUND if match_found else EXIT_NO_MATCH)
 
-        output_json = args.json if hasattr(args, "json") else False
         num_files = len(args.files)
 
         if args.format:
@@ -148,11 +147,9 @@ def main() -> None:
             if args.format == "json":
                 formatter = JSONFormatter(args.pattern, vars(args))
             elif args.format == "csv":
-                from .output_formatters import CSVFormatter
 
                 formatter = CSVFormatter(include_header=not args.no_header)
             elif args.format == "markdown":
-                from .output_formatters import MarkdownFormatter
 
                 formatter = MarkdownFormatter()
             else:
