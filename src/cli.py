@@ -227,6 +227,12 @@ def parse_arguments() -> argparse.Namespace:
         help='Omit header row in CSV output'
     )
 
+    parser.add_argument(
+        '--highlight',
+        action='store_true',
+        help='Syntax highlight the matched lines'
+    )
+
     args = parser.parse_args()
 
     if (args.patterns or args.pattern_file) and args.pattern and not args.files:

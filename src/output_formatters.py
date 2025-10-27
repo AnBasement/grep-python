@@ -1,6 +1,8 @@
 import json
 import csv
 import io
+from pygments import lexers
+from pygments.util import ClassNotFound
 from typing import Optional
 from dataclasses import dataclass, asdict
 from abc import ABC, abstractmethod
@@ -178,3 +180,16 @@ class MarkdownFormatter(OutputFormatter):
             lines.append(line)
 
         return "\n".join(lines)
+    
+
+def get_lexer_for_file(filename: str):
+    """
+    Get Pygments lexer for a file.
+    
+    Returns:
+        Lexer object or None if can't detect
+    """
+    try:
+        return lexers.get_lexer_for_filename(filename)
+    except ClassNotFound:
+        return None
