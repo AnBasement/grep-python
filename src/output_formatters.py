@@ -1,4 +1,6 @@
 import json
+import csv
+import io
 from typing import Optional
 from dataclasses import dataclass, asdict
 from abc import ABC, abstractmethod
@@ -122,3 +124,32 @@ class JSONFormatter(OutputFormatter):
             output["results"].append(file_entry)
 
         return json.dumps(output, indent=2, ensure_ascii=False)
+
+
+class CSVFormatter(OutputFormatter):
+    """Format results as CSV"""
+
+    # pylint: disable=too-few-public-methods
+
+    def __init__(self, include_header=True):
+        self.include_header = include_header
+
+    def format(self, results: list[MatchResult]) -> str:
+        """
+        Convert matches to CSV format.
+        """
+
+        output = io.StringIO()
+        writer = csv.writer(output)
+
+        if self.include_header:
+            writer.writerow(["file", "line", "content"])
+
+        for result in results:
+            writer.writerow([
+                result.filename,
+                result.line_num,
+                result.line_content
+            ])
+
+        return output.getvalue()
